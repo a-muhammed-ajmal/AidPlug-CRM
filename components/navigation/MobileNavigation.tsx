@@ -2,21 +2,36 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   Home, Users, Briefcase, List, User as UserIcon, Building, CreditCard, PieChart,
-  DollarSign, Inbox, Settings, X 
+  DollarSign, Inbox, Settings, X, LogOut
 } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { useClients } from '../../hooks/useClients';
 import { useDeals } from '../../hooks/useDeals';
 import { useTasks } from '../../hooks/useTasks';
 import { mockProducts } from '../../lib/constants';
+import { useAuth } from '../../contexts/AuthContext';
+import { useUI } from '../../contexts/UIContext';
 
 const MobileNavList = ({ onClose }: { onClose: () => void }) => {
   const { leads } = useLeads();
   const { clients } = useClients();
   const { deals } = useDeals();
   const { tasks } = useTasks();
+  const { signOut } = useAuth();
+  const { showConfirmation } = useUI();
 
   const pendingTasksCount = tasks.filter(t => t.status === 'pending').length;
+
+  const handleSignOut = () => {
+    onClose(); // Close sidebar first
+    showConfirmation(
+      'Sign Out',
+      'Are you sure you want to sign out?',
+      () => {
+        signOut();
+      }
+    );
+  };
 
   const navItems = [
     { key: 'dashboard', icon: Home, label: 'Dashboard', path: '/dashboard', count: null, color: 'text-blue-600' },
@@ -30,48 +45,59 @@ const MobileNavList = ({ onClose }: { onClose: () => void }) => {
   ];
 
   return (
-    <div className="p-2 h-full overflow-y-auto">
-      <div className="mb-4">
-        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Main Menu</h3>
-        {navItems.slice(0, 7).map((item) => (
-          <NavLink
-            key={item.key}
-            to={item.path}
-            onClick={onClose}
-            className={({ isActive }) => `w-full flex items-center justify-between p-3 rounded-lg mb-1 text-left transition-all ${
-              isActive ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            <div className="flex items-center space-x-3">
-              <item.icon className={`w-5 h-5`} />
-              <span className="font-medium">{item.label}</span>
-            </div>
-            {item.count !== null && (
-              <span className={`text-xs px-2 py-1 rounded-full font-medium bg-gray-200 text-gray-600`}>
-                {item.count}
-              </span>
-            )}
-          </NavLink>
-        ))}
+    <div className="p-2 h-full flex flex-col">
+      <div className="overflow-y-auto">
+        <div className="mb-4">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Main Menu</h3>
+          {navItems.slice(0, 7).map((item) => (
+            <NavLink
+              key={item.key}
+              to={item.path}
+              onClick={onClose}
+              className={({ isActive }) => `w-full flex items-center justify-between p-3 rounded-lg mb-1 text-left transition-all ${
+                isActive ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <item.icon className={`w-5 h-5`} />
+                <span className="font-medium">{item.label}</span>
+              </div>
+              {item.count !== null && (
+                <span className={`text-xs px-2 py-1 rounded-full font-medium bg-gray-200 text-gray-600`}>
+                  {item.count}
+                </span>
+              )}
+            </NavLink>
+          ))}
+        </div>
+        
+        <div className="border-t pt-4">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Tools</h3>
+          {navItems.slice(7).map((item) => (
+            <NavLink
+              key={item.key}
+              to={item.path}
+              onClick={onClose}
+              className={({ isActive }) => `w-full flex items-center justify-between p-3 rounded-lg mb-1 text-left transition-all ${
+                isActive ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <item.icon className={`w-5 h-5`} />
+                <span className="font-medium">{item.label}</span>
+              </div>
+            </NavLink>
+          ))}
+        </div>
       </div>
-      
-      <div className="border-t pt-4">
-        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Tools</h3>
-        {navItems.slice(7).map((item) => (
-          <NavLink
-            key={item.key}
-            to={item.path}
-            onClick={onClose}
-            className={({ isActive }) => `w-full flex items-center justify-between p-3 rounded-lg mb-1 text-left transition-all ${
-              isActive ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            <div className="flex items-center space-x-3">
-              <item.icon className={`w-5 h-5`} />
-              <span className="font-medium">{item.label}</span>
-            </div>
-          </NavLink>
-        ))}
+      <div className="mt-auto border-t pt-2">
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center space-x-3 p-3 rounded-lg text-left text-red-600 hover:bg-red-50 transition-all"
+        >
+          <LogOut className="w-5 h-5" />
+          <span className="font-medium">Sign Out</span>
+        </button>
       </div>
     </div>
   );

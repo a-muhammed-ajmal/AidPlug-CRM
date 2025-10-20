@@ -2,6 +2,7 @@ import React from 'react';
 import { CheckCircle, Circle, Clock, Calendar, Trash2 } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { Task } from '../../types';
+import { useUI } from '../../contexts/UIContext';
 
 interface TaskCardProps {
   task: Task;
@@ -11,6 +12,7 @@ interface TaskCardProps {
 // where the 'key' prop was being incorrectly flagged as an error by TypeScript.
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const { toggleComplete, deleteTask } = useTasks();
+  const { showConfirmation, addNotification } = useUI();
 
   const priorityColors: { [key: string]: string } = {
     urgent: 'border-red-300',
@@ -35,6 +37,20 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   };
 
   const isOverdue = new Date(task.due_date) < new Date(new Date().toDateString()) && task.status === 'pending';
+  
+  const handleDelete = () => {
+    showConfirmation(
+      'Delete Task?',
+      'Are you sure you want to delete this task? This action cannot be undone.',
+      () => {
+        deleteTask(task.id, {
+          onSuccess: () => addNotification('Task Deleted', `"${task.title}" has been removed.`),
+          onError: (error) => addNotification('Error', (error as Error).message || 'Failed to delete task.'),
+        });
+      }
+    );
+  };
+
 
   return (
     <div className={`bg-white rounded-xl shadow-sm p-4 border-l-4 ${priorityColors[task.priority || 'low']}`}>
@@ -56,11 +72,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
               {typeIcons[task.type || 'call']} {task.title}
             </h3>
             <button
-              onClick={() => {
-                if (window.confirm('Delete this task?')) {
-                  deleteTask(task.id);
-                }
-              }}
+              onClick={handleDelete}
               className="text-gray-400 hover:text-red-600 ml-2 flex-shrink-0"
             >
               <Trash2 className="w-4 h-4" />

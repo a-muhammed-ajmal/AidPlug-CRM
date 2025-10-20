@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 import MobileHeader from './navigation/MobileHeader';
 import MobileNavigation from './navigation/MobileNavigation';
 import PWAInstallPrompt from './common/PWAInstallPrompt';
@@ -7,8 +7,10 @@ import { UIProvider } from '../contexts/UIContext';
 import ConfirmationModal from './common/ConfirmationModal';
 import NotificationPanel from './common/NotificationPanel';
 
-// FIX: Changed component definition to not use React.FC to fix children prop type error.
-const MainApp = ({ children }: { children: React.ReactNode }) => {
+// FIX: Changed component to use a React Router Outlet for rendering child routes instead of a `children` prop. This resolves a cryptic type error and simplifies the routing structure.
+// FIX: Changed to React.FC to correctly type the component. This resolves an issue where TypeScript incorrectly inferred that the 'children' prop was required.
+// FIX: Refactored from a const arrow function with React.FC to a standard function declaration to avoid potential typing issues.
+export default function MainApp() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -41,7 +43,7 @@ const MainApp = ({ children }: { children: React.ReactNode }) => {
           />
           
           <main className="px-4 py-6 max-w-md mx-auto pt-20">
-            {children}
+            <Outlet />
           </main>
 
           <MobileNavigation
@@ -57,6 +59,4 @@ const MainApp = ({ children }: { children: React.ReactNode }) => {
         </div>
     </UIProvider>
   );
-};
-
-export default MainApp;
+}

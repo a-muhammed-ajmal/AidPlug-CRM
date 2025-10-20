@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Edit3, User, Shield, Smartphone, Clock, CheckCircle, TrendingUp, List, Users, FileText, Briefcase } from 'lucide-react';
+import { Edit3, User, Shield, Smartphone, Clock, CheckCircle, TrendingUp, List, Users, FileText, Briefcase, LogOut } from 'lucide-react';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import { useSalesCycle } from '../../hooks/useSalesCycle';
 import { useDeals } from '../../hooks/useDeals';
@@ -7,6 +7,8 @@ import { useTasks } from '../../hooks/useTasks';
 import { useLeads } from '../../hooks/useLeads';
 import { mockActivity } from '../../lib/constants';
 import UserFormModal from '../settings/UserFormModal';
+import { useAuth } from '../../contexts/AuthContext';
+import { useUI } from '../../contexts/UIContext';
 
 const AccountActivityFeed = () => {
     const getActivityIcon = (type: string) => {
@@ -89,8 +91,20 @@ const AccountSecurity = () => {
 
 export default function AccountPage() {
     const { profile, isLoading } = useUserProfile();
+    const { signOut } = useAuth();
+    const { showConfirmation } = useUI();
     const [accountSubTab, setAccountSubTab] = useState('activity');
     const [isEditingUser, setIsEditingUser] = useState(false);
+
+    const handleSignOut = () => {
+        showConfirmation(
+            'Sign Out',
+            'Are you sure you want to sign out?',
+            () => {
+                signOut();
+            }
+        );
+    };
 
     if (isLoading) {
         return <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
@@ -120,6 +134,17 @@ export default function AccountPage() {
                 {accountSubTab === 'performance' && <AccountPerformance />}
                 {accountSubTab === 'security' && <AccountSecurity />}
             </div>
+
+            <div className="pt-2">
+                <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center justify-center py-3 px-4 bg-white border border-gray-200 text-red-600 rounded-lg font-semibold hover:bg-red-50 transition-colors shadow-sm"
+                >
+                    <LogOut className="w-5 h-5 mr-2" />
+                    Sign Out
+                </button>
+            </div>
+
             {isEditingUser && profile && <UserFormModal initialData={profile} onClose={() => setIsEditingUser(false)} />}
         </div>
     );

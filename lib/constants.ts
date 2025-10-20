@@ -77,13 +77,7 @@ export const mockReferrals = [
     { id: 'ref-3', name: 'Hassan Iqbal', type: 'Relative' }
 ];
 
-export const mockActivity = [
-    { id: 1, type: 'lead_add', text: 'You added a new lead: Ahmed Al Rashid', time: '2 hours ago' },
-    { id: 2, type: 'deal_update', text: 'You moved "Personal Loan - Fatima" to Verification', time: '4 hours ago' },
-    { id: 3, type: 'task_complete', text: 'You completed task: Client meeting with Mohammed', time: '1 day ago' },
-    { id: 4, type: 'client_add', text: 'You converted a deal to a new client: John Doe', time: '2 days ago' },
-    { id: 5, type: 'note_add', text: 'You added a note to Khalid Al Mansoori', time: '3 days ago' },
-];
+export const mockActivity: { id: number; type: string; text: string; time: string; }[] = [];
 
 // Data for Add Lead Form
 export const UAE_BANK_NAMES = [

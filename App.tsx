@@ -4,6 +4,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import { queryClient } from './lib/queryClient';
 import LoginPage from './components/auth/LoginPage';
 import SignupPage from './components/auth/SignupPage';
+import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
+import ResetPasswordPage from './components/auth/ResetPasswordPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import MainApp from './components/MainApp';
 import ProductsPage from './components/products/ProductsPage';
@@ -23,27 +25,28 @@ function App() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            {/* FIX: Refactored to use a layout route with an Outlet in MainApp. This is a cleaner routing pattern and resolves the children prop error. */}
             <Route
-              path="/*"
+              path="/"
               element={
                 <ProtectedRoute>
-                  <MainApp>
-                    <Routes>
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/leads" element={<LeadsPage />} />
-                      <Route path="/clients" element={<ClientsPage />} />
-                      <Route path="/deals" element={<DealsPage />} />
-                      <Route path="/tasks" element={<TasksPage />} />
-                      <Route path="/products" element={<ProductsPage />} />
-                      <Route path="/settings" element={<SettingsPage />} />
-                      <Route path="/account" element={<AccountPage />} />
-                      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                    </Routes>
-                  </MainApp>
+                  <MainApp />
                 </ProtectedRoute>
               }
-            />
-             <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            >
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="leads" element={<LeadsPage />} />
+              <Route path="clients" element={<ClientsPage />} />
+              <Route path="deals" element={<DealsPage />} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="products" element={<ProductsPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="account" element={<AccountPage />} />
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Route>
           </Routes>
         </HashRouter>
       </AuthProvider>

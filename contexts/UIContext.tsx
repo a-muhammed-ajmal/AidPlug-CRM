@@ -47,11 +47,7 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
     onCancel: () => {},
   });
 
-  const [notifications, setNotifications] = useState<Notification[]>([
-    { id: 1, title: "New lead assigned", message: "Ahmed Al Rashid - Hot lead", time: "2 mins ago", unread: true },
-    { id: 2, title: "Task overdue", message: "Documentation for Fatima", time: "1 hour ago", unread: true },
-    { id: 3, title: "Deal closed", message: "Personal loan approved", time: "3 hours ago", unread: false }
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
 
   const hideConfirmation = useCallback(() => {
