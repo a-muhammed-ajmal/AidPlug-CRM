@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export const DropdownMenuItem = ({ children, onClick, className = "", icon }: { children: React.ReactNode, onClick: (e: React.MouseEvent) => void, className?: string, icon?: React.ReactNode }) => (
+// FIX: Extracted DropdownMenuItem props to an interface for better type inference with React.cloneElement.
+interface DropdownMenuItemProps {
+    children: React.ReactNode;
+    onClick: (e: React.MouseEvent) => void;
+    className?: string;
+    icon?: React.ReactNode;
+}
+
+export const DropdownMenuItem = ({ children, onClick, className = "", icon }: DropdownMenuItemProps) => (
     <button onClick={onClick} className={`w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center ${className}`}>
         {icon} {children}
     </button>
@@ -32,12 +40,13 @@ const DropdownMenu = ({ trigger, children }: DropdownMenuProps) => {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20 border">
                     <div className="py-1">
                         {React.Children.map(children, child => 
-                            React.isValidElement(child) 
+                            // FIX: Use a generic type guard to inform TypeScript about the child's props, resolving the 'onClick' overload error.
+                            React.isValidElement<DropdownMenuItemProps>(child) 
                             ? React.cloneElement(child, { 
                                   onClick: (e: React.MouseEvent) => { 
                                       e.stopPropagation(); 
-                                      // FIX: Use type assertion to safely access and call the original onClick prop.
-                                      if((child.props as any).onClick) (child.props as any).onClick(e); 
+                                      // The child's props are now strongly typed, so we can safely call onClick.
+                                      if(child.props.onClick) child.props.onClick(e); 
                                       setIsOpen(false); 
                                   } 
                               })
