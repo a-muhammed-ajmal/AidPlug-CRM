@@ -2,7 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
 import MobileHeader from './navigation/MobileHeader';
+import DesktopHeader from './navigation/DesktopHeader';
 import MobileNavigation from './navigation/MobileNavigation';
+import DesktopSidebar from './navigation/DesktopSidebar';
 import PWAInstallPrompt from './common/PWAInstallPrompt';
 import { UIProvider } from '../contexts/UIContext';
 import ConfirmationModal from './common/ConfirmationModal';
@@ -41,11 +43,16 @@ const MainAppContent = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <MobileHeader title={title} onMenuClick={() => setIsSidebarOpen(true)} />
+            <DesktopSidebar />
             
-            <main className="pb-24 pt-20 px-4">
-                <Outlet />
-            </main>
+            <div className="lg:ml-64">
+                <MobileHeader title={title} onMenuClick={() => setIsSidebarOpen(true)} />
+                <DesktopHeader title={title} />
+                
+                <main className="pb-24 pt-20 lg:pt-[85px] lg:pb-6 px-4 lg:px-6">
+                    <Outlet />
+                </main>
+            </div>
 
             <MobileNavigation isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
             <PWAInstallPrompt />
