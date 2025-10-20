@@ -1,56 +1,37 @@
-import React, { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
-import { mockProducts } from '../../lib/constants';
-import ProductCard from './ProductCard';
-import { useUI } from '../../contexts/UIContext';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Building, ChevronRight } from 'lucide-react';
+
+const banks = [
+    { name: 'Emirates Islamic Bank', slug: 'emirates-islamic-bank', productCount: 13 }
+];
 
 export default function ProductsPage() {
-    const [searchQuery, setSearchQuery] = useState('');
-    const { addNotification } = useUI();
-
-    const filteredProducts = useMemo(() => {
-        return mockProducts.filter(product => 
-            product.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [searchQuery]);
-
     return (
         <div className="space-y-4">
             <div className="bg-white p-4 rounded-xl border shadow-sm">
-                <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                    type="text"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                />
-                </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white p-3 rounded-lg border text-center">
-                <p className="text-2xl font-bold text-blue-600">
-                    {mockProducts.length}
-                </p>
-                <p className="text-xs text-gray-600">Total Products</p>
-                </div>
-                <div className="bg-white p-3 rounded-lg border text-center">
-                <p className="text-2xl font-bold text-green-600">
-                    AED {(mockProducts.reduce((sum, p) => sum + p.total_value, 0) / 1000000).toFixed(0)}M
-                </p>
-                <p className="text-xs text-gray-600">Total Portfolio</p>
-                </div>
+                <h2 className="text-lg font-bold text-gray-900">Product Hub</h2>
+                <p className="text-sm text-gray-500 mt-1">Select a bank to view its product offerings.</p>
             </div>
 
-            <div className="space-y-4">
-                {filteredProducts.map((product) => (
-                <ProductCard 
-                    key={product.id}
-                    product={product}
-                    onClick={() => addNotification('Coming Soon', `Detailed view for ${product.name} will be available soon.`)}
-                />
+            <div className="space-y-3">
+                {banks.map((bank) => (
+                    <Link 
+                        key={bank.slug}
+                        to={`/products/${bank.slug}`}
+                        className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:shadow-sm transition-all duration-200 active:scale-98"
+                    >
+                        <div className="flex items-center space-x-4">
+                            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
+                                <Building className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-gray-800">{bank.name}</h3>
+                                <p className="text-sm text-gray-500">{bank.productCount} products</p>
+                            </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-gray-400" />
+                    </Link>
                 ))}
             </div>
         </div>

@@ -7,14 +7,29 @@ import { UIProvider } from '../contexts/UIContext';
 import ConfirmationModal from './common/ConfirmationModal';
 import NotificationPanel from './common/NotificationPanel';
 
-const MainAppContent = () => {
+// FIX: Changed to React.FC to address potential type inference issues.
+const MainAppContent: React.FC = () => {
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
     const getTitle = (pathname: string) => {
-        const path = pathname.split('/')[1] || 'dashboard';
-        if (path === 'dashboard') return 'Home';
-        return path.charAt(0).toUpperCase() + path.slice(1);
+        const segments = pathname.split('/').filter(Boolean);
+        if (segments.length === 0) return 'Home';
+        
+        const lastSegment = segments[segments.length - 1];
+        if (lastSegment === 'dashboard') return 'Home';
+        
+        // Custom titles for product pages
+        if(segments[0] === 'products') {
+            if(segments.length === 1) return 'Product Hub';
+            if(segments.length > 1) {
+                 return lastSegment
+                    .replace(/-/g, ' ')
+                    .replace(/\b\w/g, char => char.toUpperCase());
+            }
+        }
+
+        return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1);
     };
 
     const [title, setTitle] = useState(getTitle(location.pathname));
@@ -39,9 +54,8 @@ const MainAppContent = () => {
     );
 };
 
-// This component now wraps the main layout with the UIProvider.
-// FIX: Removed explicit React.FC type. Relying on type inference for functional components avoids potential issues with how different versions of @types/react handle the 'children' prop, which was causing the error.
-const MainApp = () => {
+// FIX: Changed MainApp to React.FC to resolve a TypeScript error where UIProvider was reported as missing children.
+const MainApp: React.FC = () => {
     return (
         <UIProvider>
             <MainAppContent />

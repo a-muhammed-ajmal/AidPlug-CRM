@@ -8,7 +8,6 @@ import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
 import ResetPasswordPage from './components/auth/ResetPasswordPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import MainApp from './components/MainApp';
-import ProductsPage from './components/products/ProductsPage';
 import SettingsPage from './components/settings/SettingsPage';
 import AccountPage from './components/account/AccountPage';
 import Dashboard from './components/dashboard/Dashboard';
@@ -16,6 +15,10 @@ import LeadsPage from './components/leads/LeadsPage';
 import ClientsPage from './components/clients/ClientsPage';
 import DealsPage from './components/deals/DealsPage';
 import TasksPage from './components/tasks/TasksPage';
+import ProductsPage from './components/products/ProductsPage';
+import ProductTypesPage from './components/products/ProductTypesPage';
+import ProductListPage from './components/products/ProductListPage';
+import ProductDetailPage from './components/products/ProductDetailPage';
 
 function App() {
   return (
@@ -27,7 +30,6 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            {/* FIX: Refactored to use a layout route with an Outlet in MainApp. This is a cleaner routing pattern and resolves the children prop error. */}
             <Route
               path="/"
               element={
@@ -42,9 +44,16 @@ function App() {
               <Route path="clients" element={<ClientsPage />} />
               <Route path="deals" element={<DealsPage />} />
               <Route path="tasks" element={<TasksPage />} />
-              <Route path="products" element={<ProductsPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="account" element={<AccountPage />} />
+              
+              <Route path="products">
+                <Route index element={<ProductsPage />} />
+                <Route path=":bankSlug" element={<ProductTypesPage />} />
+                <Route path=":bankSlug/:typeSlug" element={<ProductListPage />} />
+                <Route path=":bankSlug/:typeSlug/:productSlug" element={<ProductDetailPage />} />
+              </Route>
+
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>
           </Routes>

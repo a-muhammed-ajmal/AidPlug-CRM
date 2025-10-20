@@ -49,11 +49,13 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
     salary: initialData?.monthly_salary?.toString() || '',
     bank: initialData?.bank_name || 'Emirates Islamic Bank',
     productType: initialData?.product_type || 'Credit Card',
-    product: initialData?.product || EIB_CREDIT_CARDS[0],
+    // FIX: EIB_CREDIT_CARDS contains objects, so we need to use the `name` property.
+    product: initialData?.product || EIB_CREDIT_CARDS[0].name,
     referral: initialData?.referral_source || '',
   });
 
-  const [availableProducts, setAvailableProducts] = useState(EIB_CREDIT_CARDS);
+  // FIX: EIB_CREDIT_CARDS contains objects, map to strings for the select input.
+  const [availableProducts, setAvailableProducts] = useState(EIB_CREDIT_CARDS.map(card => card.name));
   const [isProductDropdownVisible, setIsProductDropdownVisible] = useState(true);
   
   const referralOptions = useMemo(() => {
@@ -66,7 +68,8 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
     let dropdownVisible = false;
 
     if (formData.bank === 'Emirates Islamic Bank' && formData.productType === 'Credit Card') {
-      newProducts = EIB_CREDIT_CARDS;
+      // FIX: Map the array of objects to an array of strings.
+      newProducts = EIB_CREDIT_CARDS.map(card => card.name);
       dropdownVisible = true;
     } else if (formData.productType === 'Account Opening') {
       newProducts = ['Personal Account', 'Business Account'];

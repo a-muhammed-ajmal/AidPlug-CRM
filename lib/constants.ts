@@ -96,20 +96,20 @@ export const UAE_BANK_NAMES = [
   'Ajman Bank',
 ];
 
-export const EIB_CREDIT_CARDS = [
-  'Skywards Black Credit Card',
-  'Skywards Infinite Credit Card',
-  'Skywards Signature Credit Card',
-  'Etihad Guest Premium',
-  'Etihad Guest Saqer',
-  'Etihad Guest Ameera',
-  'Etihad Guest Platinum',
-  'Cashback Plus',
-  'RTA Credit Card',
-  'Cashback Credit Card',
-  'Flex Elite',
-  'Emarati Credit Card',
-  'Flex Credit Card',
+export const EIB_CREDIT_CARDS: { name: string; slug: string; subtitle: string; }[] = [
+  { name: 'Skywards Black Credit Card', slug: 'skywards-black-credit-card', subtitle: 'Ultra Premium | 3.5 Miles/USD' },
+  { name: 'Skywards Infinite Credit Card', slug: 'skywards-infinite-credit-card', subtitle: 'Premium | 2 Miles/USD' },
+  { name: 'Skywards Signature Credit Card', slug: 'skywards-signature-credit-card', subtitle: 'Mid-Tier | Details coming soon' },
+  { name: 'Etihad Guest Premium', slug: 'etihad-guest-premium', subtitle: 'Ultra Premium | 3.5 Miles/USD' },
+  { name: 'Etihad Guest Saqer', slug: 'etihad-guest-saqer', subtitle: 'Mid-Premium | 3 Miles/USD' },
+  { name: 'Etihad Guest Ameera', slug: 'etihad-guest-ameera', subtitle: 'For Women | Details coming soon' },
+  { name: 'Etihad Guest Platinum', slug: 'etihad-guest-platinum', subtitle: 'Entry Level | Details coming soon' },
+  { name: 'Cashback Plus', slug: 'cashback-plus', subtitle: 'Premium Cashback | AED 299/yr' },
+  { name: 'RTA Credit Card', slug: 'rta-credit-card', subtitle: 'Transport & Fuel | No Annual Fee' },
+  { name: 'Switch Cashback Visa Signature', slug: 'switch-cashback-visa-signature', subtitle: 'Flexible Cashback | AED 299/yr' },
+  { name: 'Flex Elite', slug: 'flex-elite', subtitle: 'Premium SmartMiles | AED 700/yr' },
+  { name: 'Emarati Credit Card', slug: 'emarati-credit-card', subtitle: 'UAE Nationals | No Annual Fee' },
+  { name: 'Flex Credit Card', slug: 'flex-credit-card', subtitle: 'Flexible Rewards | No Annual Fee' },
 ];
 
 export const PRODUCT_TYPES = ['Credit Card', 'Personal Loan', 'Home Loan', 'Auto Loan', 'Account Opening'];
