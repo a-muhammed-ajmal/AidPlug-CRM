@@ -6,8 +6,7 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
-// FIX: Changed to React.FC to address type inference issues with children props.
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
 
   if (loading) {

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// FIX: Changed to React.FC to address type inference issues with children props.
-export const DropdownMenuItem: React.FC<{ children: React.ReactNode, onClick: (e: React.MouseEvent) => void, className?: string, icon?: React.ReactNode }> = ({ children, onClick, className = "", icon }) => (
+export const DropdownMenuItem = ({ children, onClick, className = "", icon }: { children: React.ReactNode, onClick: (e: React.MouseEvent) => void, className?: string, icon?: React.ReactNode }) => (
     <button onClick={onClick} className={`w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center ${className}`}>
         {icon} {children}
     </button>
@@ -12,8 +11,7 @@ interface DropdownMenuProps {
     children: React.ReactNode;
 }
 
-// FIX: Changed to React.FC to address type inference issues with children props.
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ trigger, children }) => {
+const DropdownMenu = ({ trigger, children }: DropdownMenuProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +40,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ trigger, children }) => {
                                       if((child.props as any).onClick) (child.props as any).onClick(e); 
                                       setIsOpen(false); 
                                   } 
-                              } as React.Attributes & { onClick: (e: React.MouseEvent) => void })
+                              })
                             : child
                         )}
                     </div>

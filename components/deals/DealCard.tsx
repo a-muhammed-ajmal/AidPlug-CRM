@@ -10,7 +10,7 @@ interface DealCardProps {
   onDelete: (deal: Deal) => void;
 }
 
-const DealCard: React.FC<DealCardProps> = ({ deal, onView, onEdit, onDelete }) => {
+const DealCard = React.memo(({ deal, onView, onEdit, onDelete }: DealCardProps) => {
   return (
     <div onClick={() => onView(deal)} className="bg-white rounded-lg shadow-sm p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer active:scale-95">
       <div className="flex justify-between items-start mb-2">
@@ -19,8 +19,12 @@ const DealCard: React.FC<DealCardProps> = ({ deal, onView, onEdit, onDelete }) =
           <p className="text-sm text-gray-600 mt-1">{deal.client_name}</p>
         </div>
         <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />}>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(deal); }} icon={<Edit3 className="w-4 h-4 mr-2" />}>Edit</DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete(deal); }} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(deal); }} icon={<Edit3 className="w-4 h-4 mr-2" />}>
+                Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete(deal); }} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">
+                Delete
+            </DropdownMenuItem>
         </DropdownMenu>
       </div>
 
@@ -47,6 +51,6 @@ const DealCard: React.FC<DealCardProps> = ({ deal, onView, onEdit, onDelete }) =
       </div>
     </div>
   );
-};
+});
 
 export default DealCard;

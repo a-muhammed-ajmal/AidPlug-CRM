@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ComponentType } from 'react';
 import { Plus, X, Edit3, DollarSign, Calendar, TrendingUp, Briefcase, ChevronDown } from 'lucide-react';
 import { useDeals } from '../../hooks/useDeals';
 import DealColumn from './DealColumn';
@@ -29,8 +29,7 @@ const defaultFormData = {
 // Use title property from KANBAN_STAGES
 const stageOptions = KANBAN_STAGES.map(s => ({ value: s.id, label: s.title }));
 
-// FIX: Changed component to React.FC for better type safety and consistency.
-const DetailItem: React.FC<{ icon: React.FC<any>, label: string, value: string | number | null }> = ({ icon: Icon, label, value }) => (
+const DetailItem = ({ icon: Icon, label, value }: { icon: ComponentType<any>, label: string, value: string | number | null }) => (
     <div className="flex items-start space-x-3">
         <div className="bg-gray-100 p-2 rounded-lg mt-1"><Icon className="w-4 h-4 text-gray-600" /></div>
         <div>
@@ -40,8 +39,7 @@ const DetailItem: React.FC<{ icon: React.FC<any>, label: string, value: string |
     </div>
   );
 
-// FIX: Changed component to React.FC with explicit children to resolve type errors.
-const FormInput: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
+const FormInput = ({ label, children }: { label: string; children: React.ReactNode }) => (
     <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
         {children}
@@ -135,12 +133,27 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
         ) : (
             <form onSubmit={handleSubmit}>
                 <main className="p-6 overflow-y-auto space-y-4">
-                    <FormInput label="Deal Title*"><input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Client Name*"><input type="text" name="client_name" value={formData.client_name} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Amount (AED)*"><input type="number" name="amount" value={formData.amount} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Stage"><div className="relative"><select name="stage" value={formData.stage} onChange={handleChange} className="w-full appearance-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10">{stageOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}</select><ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" /></div></FormInput>
-                    <FormInput label="Expected Close Date"><input type="date" name="expected_close_date" value={formData.expected_close_date} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label={`Probability: ${formData.probability}%`}><input type="range" name="probability" value={formData.probability} onChange={handleChange} min="0" max="100" step="5" className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" /></FormInput>
+                    <FormInput label="Deal Title*">
+                        <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Client Name*">
+                        <input type="text" name="client_name" value={formData.client_name} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Amount (AED)*">
+                        <input type="number" name="amount" value={formData.amount} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Stage">
+                        <div className="relative">
+                            <select name="stage" value={formData.stage} onChange={handleChange} className="w-full appearance-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10">{stageOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}</select>
+                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                    </FormInput>
+                    <FormInput label="Expected Close Date">
+                        <input type="date" name="expected_close_date" value={formData.expected_close_date} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label={`Probability: ${formData.probability}%`}>
+                        <input type="range" name="probability" value={formData.probability} onChange={handleChange} min="0" max="100" step="5" className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                    </FormInput>
                 </main>
                 <footer className="p-4 bg-gray-50 border-t">
                     <button type="submit" disabled={loading} className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all active:scale-95 shadow disabled:opacity-50">

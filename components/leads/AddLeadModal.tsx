@@ -14,7 +14,7 @@ interface AddLeadModalProps {
 
 // FIX: Moved component definitions outside the main component function to prevent re-creation on every render.
 // This resolves an issue where input fields would lose focus on mobile devices after typing a single character.
-const FormInput: React.FC<{ label: string, children: React.ReactNode }> = ({ label, children }) => (
+const FormInput = ({ label, children }: { label: string, children: React.ReactNode }) => (
     <div>
       <label className="flex items-center text-sm font-medium text-gray-700 mb-2">{label}</label>
       {children}

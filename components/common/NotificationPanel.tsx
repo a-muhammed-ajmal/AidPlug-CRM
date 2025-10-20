@@ -3,7 +3,7 @@ import { X, Inbox } from 'lucide-react';
 import { useUI } from '../../contexts/UIContext';
 import EmptyState from './EmptyState';
 
-const NotificationPanel: React.FC = () => {
+const NotificationPanel = () => {
     const { showNotifications, setShowNotifications, notifications, dismissNotification, clearAllNotifications } = useUI();
     const unreadCount = notifications.filter(n => n.unread).length;
 

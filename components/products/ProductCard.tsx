@@ -18,7 +18,7 @@ interface ProductCardProps {
     onClick: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
+const ProductCard = ({ product, onClick }: ProductCardProps) => {
     const colorClasses: { [key: string]: { border: string, text: string, bg: string } } = {
         blue: { border: 'border-blue-500', text: 'text-blue-600', bg: 'bg-blue-50' },
         purple: { border: 'border-purple-500', text: 'text-purple-600', bg: 'bg-purple-50' },

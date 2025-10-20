@@ -4,8 +4,7 @@ import { productDetailsData } from '../../lib/productData';
 import { Star, Percent, Shield, Award, Briefcase, FileText, ChevronUp, ChevronDown, CheckCircle, ArrowLeft } from 'lucide-react';
 import EmptyState from '../common/EmptyState';
 
-// FIX: Changed InfoSection to be a React.FC to handle special props like 'key' correctly.
-const InfoSection: React.FC<{ title: string, icon: React.ReactNode, children: React.ReactNode }> = ({ title, icon, children }) => {
+const InfoSection = React.memo(({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) => {
     const [isOpen, setIsOpen] = useState(true);
 
     return (
@@ -27,10 +26,9 @@ const InfoSection: React.FC<{ title: string, icon: React.ReactNode, children: Re
             )}
         </div>
     );
-};
+});
 
-// FIX: Changed to React.FC to address type inference issues with the `key` prop.
-const DetailsTable: React.FC<{ table: any }> = ({ table }) => (
+const DetailsTable = ({ table }: { table: any }) => (
     <div className="overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-700">
             <thead className="text-xs text-gray-800 uppercase bg-gray-50">
@@ -53,8 +51,7 @@ const DetailsTable: React.FC<{ table: any }> = ({ table }) => (
     </div>
 );
 
-// FIX: Changed to React.FC to address type inference issues with the `key` prop.
-const DetailsList: React.FC<{ items: string[] }> = ({ items }) => (
+const DetailsList = ({ items }: { items: string[] }) => (
     <ul className="space-y-2">
         {items.map((item, i) => (
             <li key={i} className="flex items-start">

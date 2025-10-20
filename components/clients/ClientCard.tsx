@@ -10,7 +10,7 @@ interface ClientCardProps {
   onEdit: (client: Client) => void;
 }
 
-const ClientCard: React.FC<ClientCardProps> = ({ client, onEdit }) => {
+const ClientCard = React.memo(({ client, onEdit }: ClientCardProps) => {
   const { deleteClient } = useClients();
   const { showConfirmation, addNotification } = useUI();
 
@@ -52,8 +52,12 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, onEdit }) => {
               {client.relationship_status}
             </span>
             <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500 ml-2" />}>
-                <DropdownMenuItem onClick={() => onEdit(client)} icon={<Edit3 className="w-4 h-4 mr-2" />}>Edit</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDelete} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">Delete</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit(client)} icon={<Edit3 className="w-4 h-4 mr-2" />}>
+                    Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDelete} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">
+                    Delete
+                </DropdownMenuItem>
             </DropdownMenu>
           </div>
         </div>
@@ -91,6 +95,6 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, onEdit }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ClientCard;

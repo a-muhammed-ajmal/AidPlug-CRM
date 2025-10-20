@@ -11,14 +11,14 @@ interface AddClientModalProps {
   initialData?: Client | null;
 }
 
-const FormInput: React.FC<{ label: string, children: React.ReactNode }> = ({ label, children }) => (
+const FormInput = ({ label, children }: { label: string, children: React.ReactNode }) => (
     <div>
       <label className="flex items-center text-sm font-medium text-gray-700 mb-2">{label}</label>
       {children}
     </div>
 );
 
-const SelectInput: React.FC<{ id: string, name: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, options: string[], required?: boolean }> = ({ id, name, value, onChange, options, required }) => (
+const SelectInput = ({ id, name, value, onChange, options, required }: { id: string, name: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, options: string[], required?: boolean }) => (
     <div className="relative">
       <select id={id} name={name} value={value} onChange={onChange} required={required} className="w-full appearance-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10">
         <option value="" disabled>Select...</option>
@@ -96,15 +96,33 @@ export default function AddClientModal({ onClose, initialData }: AddClientModalP
         <form onSubmit={handleSubmit}>
             <main className="p-6 overflow-y-auto max-h-[70vh]">
                 <div className="space-y-6">
-                    <FormInput label="Full Name*"><input type="text" name="full_name" value={formData.full_name} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Email"><input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Phone"><input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Company Name"><input type="text" name="company_name" value={formData.company_name} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Designation"><input type="text" name="designation" value={formData.designation} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Monthly Salary (AED)"><input type="number" name="monthly_salary" value={formData.monthly_salary} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Emirate"><SelectInput id="emirate" name="emirate" value={formData.emirate} onChange={handleChange} options={UAE_EMIRATES} /></FormInput>
-                    <FormInput label="Visa Status"><SelectInput id="visa_status" name="visa_status" value={formData.visa_status} onChange={handleChange} options={VISA_STATUS_OPTIONS} /></FormInput>
-                    <FormInput label="Relationship Status"><SelectInput id="relationship_status" name="relationship_status" value={formData.relationship_status} onChange={handleChange} options={['active', 'inactive']} required /></FormInput>
+                    <FormInput label="Full Name*">
+                        <input type="text" name="full_name" value={formData.full_name} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Email">
+                        <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Phone">
+                        <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Company Name">
+                        <input type="text" name="company_name" value={formData.company_name} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Designation">
+                        <input type="text" name="designation" value={formData.designation} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Monthly Salary (AED)">
+                        <input type="number" name="monthly_salary" value={formData.monthly_salary} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Emirate">
+                        <SelectInput id="emirate" name="emirate" value={formData.emirate} onChange={handleChange} options={UAE_EMIRATES} />
+                    </FormInput>
+                    <FormInput label="Visa Status">
+                        <SelectInput id="visa_status" name="visa_status" value={formData.visa_status} onChange={handleChange} options={VISA_STATUS_OPTIONS} />
+                    </FormInput>
+                    <FormInput label="Relationship Status">
+                        <SelectInput id="relationship_status" name="relationship_status" value={formData.relationship_status} onChange={handleChange} options={['active', 'inactive']} required />
+                    </FormInput>
                 </div>
             </main>
             <footer className="p-4 border-t border-gray-200">

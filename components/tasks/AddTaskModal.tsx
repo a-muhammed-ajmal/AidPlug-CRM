@@ -10,14 +10,14 @@ interface AddTaskModalProps {
   initialData?: Task | null;
 }
 
-const FormInput: React.FC<{ label: string, children: React.ReactNode }> = ({ label, children }) => (
+const FormInput = ({ label, children }: { label: string, children: React.ReactNode }) => (
     <div>
       <label className="flex items-center text-sm font-medium text-gray-700 mb-2">{label}</label>
       {children}
     </div>
 );
 
-const SelectInput: React.FC<{ id: string, name: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, options: {value: string, label: string}[], required?: boolean }> = ({ id, name, value, onChange, options, required }) => (
+const SelectInput = ({ id, name, value, onChange, options, required }: { id: string, name: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, options: {value: string, label: string}[], required?: boolean }) => (
     <div className="relative">
       <select id={id} name={name} value={value} onChange={onChange} required={required} className="w-full appearance-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10">
         {options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -122,12 +122,24 @@ export default function AddTaskModal({ onClose, initialData }: AddTaskModalProps
         <form onSubmit={handleSubmit}>
             <main className="p-6 overflow-y-auto max-h-[70vh]">
                 <div className="space-y-6">
-                    <FormInput label="Task Title*"><input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Description"><textarea name="description" value={formData.description} onChange={handleChange} rows={3} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Task Type"><SelectInput id="type" name="type" value={formData.type} onChange={handleChange} options={typeOptions} /></FormInput>
-                    <FormInput label="Priority"><SelectInput id="priority" name="priority" value={formData.priority} onChange={handleChange} options={priorityOptions} /></FormInput>
-                    <FormInput label="Due Date*"><input type="date" name="due_date" value={formData.due_date} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Time (Optional)"><input type="time" name="time" value={formData.time} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
+                    <FormInput label="Task Title*">
+                        <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Description">
+                        <textarea name="description" value={formData.description} onChange={handleChange} rows={3} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Task Type">
+                        <SelectInput id="type" name="type" value={formData.type} onChange={handleChange} options={typeOptions} />
+                    </FormInput>
+                    <FormInput label="Priority">
+                        <SelectInput id="priority" name="priority" value={formData.priority} onChange={handleChange} options={priorityOptions} />
+                    </FormInput>
+                    <FormInput label="Due Date*">
+                        <input type="date" name="due_date" value={formData.due_date} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
+                    <FormInput label="Time (Optional)">
+                        <input type="time" name="time" value={formData.time} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
+                    </FormInput>
                 </div>
             </main>
             <footer className="p-4 border-t border-gray-200">

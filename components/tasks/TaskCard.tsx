@@ -12,7 +12,7 @@ interface TaskCardProps {
 }
 
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
+const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
   const { toggleComplete, deleteTask } = useTasks();
   const { showConfirmation, addNotification } = useUI();
 
@@ -84,8 +84,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
               {typeIcons[task.type || 'call']} {task.title}
             </h3>
             <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />}>
-                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(task); }} icon={<Edit3 className="w-4 h-4 mr-2" />}>Edit</DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(); }} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">Delete</DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(task); }} icon={<Edit3 className="w-4 h-4 mr-2" />}>
+                    Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(); }} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">
+                    Delete
+                </DropdownMenuItem>
             </DropdownMenu>
           </div>
 
@@ -123,7 +127,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
       </div>
     </div>
   );
-};
+});
 
 
 export default TaskCard;
