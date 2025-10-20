@@ -7,10 +7,9 @@ import { UIProvider } from '../contexts/UIContext';
 import ConfirmationModal from './common/ConfirmationModal';
 import NotificationPanel from './common/NotificationPanel';
 
-// FIX: Changed component to use a React Router Outlet for rendering child routes instead of a `children` prop. This resolves a cryptic type error and simplifies the routing structure.
-// FIX: Changed to React.FC to correctly type the component. This resolves an issue where TypeScript incorrectly inferred that the 'children' prop was required.
-// FIX: Refactored from a const arrow function with React.FC to a standard function declaration to avoid potential typing issues.
-export default function MainApp() {
+// FIX: Changed to React.FC to explicitly type the component and resolve an issue
+// where TypeScript was incorrectly inferring that a `children` prop was required.
+const MainApp: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -59,4 +58,6 @@ export default function MainApp() {
         </div>
     </UIProvider>
   );
-}
+};
+
+export default MainApp;
