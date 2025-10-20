@@ -12,6 +12,25 @@ interface AddLeadModalProps {
   initialData?: Lead | null;
 }
 
+// FIX: Moved component definitions outside the main component function to prevent re-creation on every render.
+// This resolves an issue where input fields would lose focus on mobile devices after typing a single character.
+const FormInput: React.FC<{ label: string, children: React.ReactNode }> = ({ label, children }) => (
+    <div>
+      <label className="flex items-center text-sm font-medium text-gray-700 mb-2">{label}</label>
+      {children}
+    </div>
+);
+
+const SelectInput = ({ id, name, value, onChange, options }: { id: string, name: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, options: string[] }) => (
+    <div className="relative">
+      <select id={id} name={name} value={value} onChange={onChange} className="w-full appearance-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10">
+        {options.map(option => <option key={option} value={option}>{option}</option>)}
+      </select>
+      <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+    </div>
+);
+
+
 export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps) {
   const { createLead, updateLead } = useLeads();
   const { user } = useAuth();
@@ -115,23 +134,6 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
         },
     });
   };
-
-  // FIX: Changed to React.FC to address type inference issues with children props.
-  const FormInput: React.FC<{ label: string, children: React.ReactNode }> = ({ label, children }) => (
-    <div>
-      <label className="flex items-center text-sm font-medium text-gray-700 mb-2">{label}</label>
-      {children}
-    </div>
-  );
-  
-  const SelectInput = ({ id, name, value, onChange, options }: { id: string, name: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, options: string[] }) => (
-    <div className="relative">
-      <select id={id} name={name} value={value} onChange={onChange} className="w-full appearance-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10">
-        {options.map(option => <option key={option} value={option}>{option}</option>)}
-      </select>
-      <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-    </div>
-  );
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end animate-fade-in sm:items-center">

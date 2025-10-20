@@ -7,9 +7,8 @@ import { UIProvider } from '../contexts/UIContext';
 import ConfirmationModal from './common/ConfirmationModal';
 import NotificationPanel from './common/NotificationPanel';
 
-// FIX: Changed to React.FC to explicitly type the component and resolve an issue
-// where TypeScript was incorrectly inferring that a `children` prop was required.
-const MainApp: React.FC = () => {
+// Changed component from `React.FC` to a standard function component to resolve a potential type inference issue.
+const MainApp = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
