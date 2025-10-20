@@ -20,7 +20,8 @@ const defaultFormData = {
   title: '',
   client_name: '',
   amount: 0,
-  stage: 'application_processing' as const,
+  // FIX: Widened the type of 'stage' to allow any valid deal stage, not just the default.
+  stage: 'application_processing' as Deal['stage'],
   expected_close_date: new Date().toISOString().split('T')[0],
   probability: 10,
 };

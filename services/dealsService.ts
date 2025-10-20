@@ -1,9 +1,10 @@
 
-import { supabase } from '../lib/supabase';
-import { Deal } from '../types';
 
-type DealInsert = Omit<Deal, 'id' | 'created_at' | 'updated_at'> & { user_id: string };
-type DealUpdate = Partial<DealInsert>;
+import { supabase } from '../lib/supabase';
+import { Deal, Database } from '../types';
+
+type DealInsert = Database['public']['Tables']['deals']['Insert'];
+type DealUpdate = Database['public']['Tables']['deals']['Update'];
 
 export const dealsService = {
   getAll: async (userId: string): Promise<Deal[]> => {

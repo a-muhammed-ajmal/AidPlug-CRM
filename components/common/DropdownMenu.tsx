@@ -38,7 +38,8 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ trigger, children }) => {
                             ? React.cloneElement(child, { 
                                   onClick: (e: React.MouseEvent) => { 
                                       e.stopPropagation(); 
-                                      if(child.props.onClick) child.props.onClick(e); 
+                                      // FIX: Use type assertion to safely access and call the original onClick prop.
+                                      if((child.props as any).onClick) (child.props as any).onClick(e); 
                                       setIsOpen(false); 
                                   } 
                               } as React.Attributes & { onClick: (e: React.MouseEvent) => void })

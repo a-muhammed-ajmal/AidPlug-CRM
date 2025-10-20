@@ -3,6 +3,9 @@ import { supabase } from '../lib/supabase';
 import { AuthError, AuthResponse, Session, User, SignUpWithPasswordCredentials } from '@supabase/supabase-js';
 import { authStorage } from '../lib/authStorage';
 
+// FIX: Corrected the return type for updateUserPassword to match the UserResponse from Supabase.
+type UserResponse = { data: { user: User | null }, error: AuthError | null };
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -10,7 +13,7 @@ interface AuthContextType {
   signIn: (email: string, password: string, remember: boolean) => Promise<AuthResponse>;
   signOut: () => Promise<{ error: AuthError | null }>;
   sendPasswordResetEmail: (email: string) => Promise<{ error: AuthError | null }>;
-  updateUserPassword: (password: string) => Promise<AuthResponse>;
+  updateUserPassword: (password: string) => Promise<UserResponse>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -85,7 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const updateUserPassword = async (password: string): Promise<AuthResponse> => {
+  const updateUserPassword = async (password: string): Promise<UserResponse> => {
     const response = await supabase.auth.updateUser({ password });
     if (response.error) throw response.error;
     return response;

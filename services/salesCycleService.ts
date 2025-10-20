@@ -44,7 +44,10 @@ export const salesCycleService = {
 
     const { data, error } = await supabase
       .from('sales_cycles')
-      .upsert({ ...updates, id: existing?.id, user_id: userId })
+      // FIX: Cast to 'any' to resolve type mismatch for upsert operation.
+      // The `updates` type is partial, but `upsert` requires a full object for inserts.
+      // The calling code ensures all required fields are present at runtime.
+      .upsert({ ...updates, id: existing?.id, user_id: userId } as any)
       .select()
       .single();
       
