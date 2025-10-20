@@ -1,6 +1,5 @@
-# AidPlug Banking CRM
-
-AidPlug Banking CRM is a progressive web application designed as a strategic partner for banking sales professionals. It helps manage leads, clients, deals, and tasks with a mobile-first interface.
+# AidPlug CRM
+AidPlug CRM is a progressive web application designed as a strategic partner for banking sales professionals. It helps manage leads, clients, deals, and tasks with a mobile-first interface.
 
 ## Features
 
@@ -16,12 +15,12 @@ AidPlug Banking CRM is a progressive web application designed as a strategic par
 
 ## Tech Stack
 
-- **Frontend:** [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **Routing:** [React Router](https://reactrouter.com/)
-- **State Management:** [TanStack Query (React Query)](https://tanstack.com/query/latest) for server state management.
-- **Backend & Database:** [Supabase](https://supabase.io/) (PostgreSQL)
-- **Icons:** [Lucide React](https://lucide.dev/)
+- **Frontend:** React, TypeScript
+- **Styling:** Tailwind CSS
+- **Routing:** React Router
+- **State Management:** TanStack Query (React Query) for server state management.
+- **Backend & Database:** Supabase (PostgreSQL)
+- **Icons:** Lucide React
 
 ## Getting Started
 

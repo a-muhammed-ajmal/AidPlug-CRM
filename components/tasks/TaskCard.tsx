@@ -11,9 +11,11 @@ interface TaskCardProps {
   onEdit: (task: Task) => void;
 }
 
+
 const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
   const { toggleComplete, deleteTask } = useTasks();
   const { showConfirmation, addNotification } = useUI();
+
 
   const priorityColors: { [key: string]: string } = {
     urgent: 'border-red-300',
@@ -22,12 +24,14 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
     low: 'border-green-300',
   };
 
+
   const priorityTagColors: { [key: string]: string } = {
     urgent: 'bg-red-100 text-red-700',
     high: 'bg-orange-100 text-orange-700',
     medium: 'bg-yellow-100 text-yellow-700',
     low: 'bg-green-100 text-green-700',
   };
+
 
   const typeIcons: { [key: string]: string } = {
     call: '📞',
@@ -37,7 +41,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
     follow_up: '🔄',
   };
 
-  const isOverdue = new Date(task.due_date) < new Date(new Date().toDateString()) && task.status === 'pending';
+
+  // FIX: Refactored the overdue check to be timezone-safe by comparing YYYY-MM-DD strings.
+  const today = new Date().toISOString().split('T')[0];
+  const isOverdue = task.due_date < today && task.status === 'pending';
+
+  // Format date to DD/MM/YYYY
+  const formattedDate = new Date(task.due_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
   
   const handleDelete = () => {
     showConfirmation(
@@ -67,6 +77,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
           )}
         </button>
 
+
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <h3 className={`font-semibold text-gray-800 break-words pr-2 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
@@ -78,18 +89,21 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
             </DropdownMenu>
           </div>
 
+
           {task.description && (
             <p className="text-sm text-gray-600 mt-1 break-words">{task.description}</p>
           )}
+
 
           <div className="flex flex-wrap gap-2 mt-3">
             <div className={`flex items-center space-x-1 text-xs px-2 py-1 rounded ${
               isOverdue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
             }`}>
               <Calendar className="w-3 h-3" />
-              <span>{new Date(task.due_date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}</span>
+              <span>{formattedDate}</span>
               {isOverdue && <span className="font-semibold ml-1">OVERDUE</span>}
             </div>
+
 
             {task.time && (
               <div className="flex items-center space-x-1 text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
@@ -97,6 +111,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
                 <span>{task.time}</span>
               </div>
             )}
+
 
             {task.priority && (
                 <span className={`text-xs font-medium px-2 py-1 rounded ${priorityTagColors[task.priority]}`}>
@@ -109,5 +124,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
     </div>
   );
 };
+
 
 export default TaskCard;

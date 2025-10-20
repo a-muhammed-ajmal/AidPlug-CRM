@@ -7,7 +7,7 @@ import { UIProvider } from '../contexts/UIContext';
 import ConfirmationModal from './common/ConfirmationModal';
 import NotificationPanel from './common/NotificationPanel';
 
-const MainAppContent: React.FC = () => {
+const MainAppContent = () => {
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
@@ -40,8 +40,8 @@ const MainAppContent: React.FC = () => {
 };
 
 // This component now wraps the main layout with the UIProvider.
-// FIX: Correctly typed MainApp as a React.FC, as it does not accept children. This resolves the TypeScript error about a missing 'children' property.
-const MainApp: React.FC = () => {
+// FIX: Removed explicit React.FC type. Relying on type inference for functional components avoids potential issues with how different versions of @types/react handle the 'children' prop, which was causing the error.
+const MainApp = () => {
     return (
         <UIProvider>
             <MainAppContent />
