@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { useClients } from '../../hooks/useClients';
@@ -96,33 +97,34 @@ export default function AddClientModal({ onClose, initialData }: AddClientModalP
         <form onSubmit={handleSubmit}>
             <main className="p-6 overflow-y-auto max-h-[70vh]">
                 <div className="space-y-6">
-                    <FormInput label="Full Name*">
+                    {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
+                    <FormInput label="Full Name*" children={
                         <input type="text" name="full_name" value={formData.full_name} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Email">
+                    } />
+                    <FormInput label="Email" children={
                         <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Phone">
+                    } />
+                    <FormInput label="Phone" children={
                         <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Company Name">
+                    } />
+                    <FormInput label="Company Name" children={
                         <input type="text" name="company_name" value={formData.company_name} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Designation">
+                    } />
+                    <FormInput label="Designation" children={
                         <input type="text" name="designation" value={formData.designation} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Monthly Salary (AED)">
+                    } />
+                    <FormInput label="Monthly Salary (AED)" children={
                         <input type="number" name="monthly_salary" value={formData.monthly_salary} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Emirate">
+                    } />
+                    <FormInput label="Emirate" children={
                         <SelectInput id="emirate" name="emirate" value={formData.emirate} onChange={handleChange} options={UAE_EMIRATES} />
-                    </FormInput>
-                    <FormInput label="Visa Status">
+                    } />
+                    <FormInput label="Visa Status" children={
                         <SelectInput id="visa_status" name="visa_status" value={formData.visa_status} onChange={handleChange} options={VISA_STATUS_OPTIONS} />
-                    </FormInput>
-                    <FormInput label="Relationship Status">
+                    } />
+                    <FormInput label="Relationship Status" children={
                         <SelectInput id="relationship_status" name="relationship_status" value={formData.relationship_status} onChange={handleChange} options={['active', 'inactive']} required />
-                    </FormInput>
+                    } />
                 </div>
             </main>
             <footer className="p-4 border-t border-gray-200">

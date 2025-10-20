@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
 import MobileHeader from './navigation/MobileHeader';
@@ -57,9 +58,10 @@ const MainAppContent = () => {
 // FIX: Removed React.FC to resolve a TypeScript error where UIProvider was reported as missing children.
 const MainApp = () => {
     return (
-        <UIProvider>
+        // FIX: Explicitly pass children prop to avoid TypeScript error.
+        <UIProvider children={
             <MainAppContent />
-        </UIProvider>
+        } />
     );
 };
 

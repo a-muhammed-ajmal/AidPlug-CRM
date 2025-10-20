@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Briefcase, MoreVertical, Edit3, Trash2, Building, Folder, DollarSign, MapPin, CheckCircle, Phone, Mail, AlertCircle, Clock } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
@@ -90,10 +91,13 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
             <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(lead.qualification_status)}`}>
               {lead.qualification_status?.replace('_', ' ') || 'N/A'}
             </span>
-            <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />}>
-                <DropdownMenuItem onClick={() => onEdit(lead)} icon={<Edit3 className="w-4 h-4 mr-2" />}>Edit</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDelete} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">Delete</DropdownMenuItem>
-            </DropdownMenu>
+            {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
+            <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />} children={
+              <>
+                <DropdownMenuItem onClick={() => onEdit(lead)} icon={<Edit3 className="w-4 h-4 mr-2" />} children="Edit" />
+                <DropdownMenuItem onClick={handleDelete} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600" children="Delete" />
+              </>
+            }/>
           </div>
         </div>
         

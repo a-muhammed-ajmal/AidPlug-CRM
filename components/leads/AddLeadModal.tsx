@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
@@ -150,16 +151,17 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
         <form onSubmit={handleSubmit}>
             <main className="p-6 overflow-y-auto max-h-[70vh]">
                 <div className="space-y-6">
-                    <FormInput label="Full Name*"><input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Email"><input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" placeholder="example@email.com" /></FormInput>
-                    <FormInput label="Company Name"><input type="text" name="company" value={formData.company} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Location"><SelectInput id="location" name="location" value={formData.location} onChange={handleChange} options={UAE_EMIRATES} /></FormInput>
-                    <FormInput label="Mobile Number*"><div className="flex"><span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg">+971</span><input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-r-lg focus:ring-blue-500 focus:border-blue-500 p-3" placeholder="50 123 4567" /></div></FormInput>
-                    <FormInput label="Monthly Salary (AED)"><input type="number" name="salary" value={formData.salary} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
-                    <FormInput label="Bank Applying"><SelectInput id="bank" name="bank" value={formData.bank} onChange={handleChange} options={UAE_BANK_NAMES} /></FormInput>
-                    <FormInput label="Product Type"><SelectInput id="productType" name="productType" value={formData.productType} onChange={handleChange} options={PRODUCT_TYPES} /></FormInput>
-                    {isProductDropdownVisible && (<FormInput label="Product"><SelectInput id="product" name="product" value={formData.product} onChange={handleChange} options={availableProducts} /></FormInput>)}
-                    <FormInput label="Referral"><input type="text" name="referral" value={formData.referral} onChange={handleChange} placeholder="Type name or select from list..." className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
+                    {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
+                    <FormInput label="Full Name*" children={<input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />} />
+                    <FormInput label="Email" children={<input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" placeholder="example@email.com" />} />
+                    <FormInput label="Company Name" children={<input type="text" name="company" value={formData.company} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />} />
+                    <FormInput label="Location" children={<SelectInput id="location" name="location" value={formData.location} onChange={handleChange} options={UAE_EMIRATES} />} />
+                    <FormInput label="Mobile Number*" children={<div className="flex"><span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg">+971</span><input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-r-lg focus:ring-blue-500 focus:border-blue-500 p-3" placeholder="50 123 4567" /></div>} />
+                    <FormInput label="Monthly Salary (AED)" children={<input type="number" name="salary" value={formData.salary} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />} />
+                    <FormInput label="Bank Applying" children={<SelectInput id="bank" name="bank" value={formData.bank} onChange={handleChange} options={UAE_BANK_NAMES} />} />
+                    <FormInput label="Product Type" children={<SelectInput id="productType" name="productType" value={formData.productType} onChange={handleChange} options={PRODUCT_TYPES} />} />
+                    {isProductDropdownVisible && (<FormInput label="Product" children={<SelectInput id="product" name="product" value={formData.product} onChange={handleChange} options={availableProducts} />} />)}
+                    <FormInput label="Referral" children={<input type="text" name="referral" value={formData.referral} onChange={handleChange} placeholder="Type name or select from list..." className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />} />
                 </div>
             </main>
             <footer className="p-4 border-t border-gray-200">

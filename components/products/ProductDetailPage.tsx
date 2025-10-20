@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { productDetailsData } from '../../lib/productData';
@@ -28,7 +29,8 @@ const InfoSection = React.memo(({ title, icon, children }: { title: string, icon
     );
 });
 
-const DetailsTable = ({ table }: { table: any }) => (
+// FIX: Change to React.FC to correctly handle framework-specific props like 'key'.
+const DetailsTable: React.FC<{ table: any }> = ({ table }) => (
     <div className="overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-700">
             <thead className="text-xs text-gray-800 uppercase bg-gray-50">
@@ -51,7 +53,8 @@ const DetailsTable = ({ table }: { table: any }) => (
     </div>
 );
 
-const DetailsList = ({ items }: { items: string[] }) => (
+// FIX: Change to React.FC to correctly handle framework-specific props like 'key'.
+const DetailsList: React.FC<{ items: string[] }> = ({ items }) => (
     <ul className="space-y-2">
         {items.map((item, i) => (
             <li key={i} className="flex items-start">

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { DollarSign, Calendar, TrendingUp, MoreVertical, Edit3, Trash2 } from 'lucide-react';
 import { Deal } from '../../types';
@@ -18,14 +19,13 @@ const DealCard = React.memo(({ deal, onView, onEdit, onDelete }: DealCardProps) 
           <h4 className="font-semibold text-gray-800">{deal.title}</h4>
           <p className="text-sm text-gray-600 mt-1">{deal.client_name}</p>
         </div>
-        <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />}>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(deal); }} icon={<Edit3 className="w-4 h-4 mr-2" />}>
-                Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete(deal); }} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">
-                Delete
-            </DropdownMenuItem>
-        </DropdownMenu>
+        {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
+        <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />} children={
+          <>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(deal); }} icon={<Edit3 className="w-4 h-4 mr-2" />} children="Edit" />
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete(deal); }} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600" children="Delete" />
+          </>
+        } />
       </div>
 
       <div className="space-y-2 text-sm">

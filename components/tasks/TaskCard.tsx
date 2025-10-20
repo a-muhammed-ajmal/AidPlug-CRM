@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CheckCircle, Circle, Clock, Calendar, Trash2, MoreVertical, Edit3 } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
@@ -83,14 +84,13 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
             <h3 className={`font-semibold text-gray-800 break-words pr-2 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
               {typeIcons[task.type || 'call']} {task.title}
             </h3>
-            <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />}>
-                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(task); }} icon={<Edit3 className="w-4 h-4 mr-2" />}>
-                    Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(); }} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">
-                    Delete
-                </DropdownMenuItem>
-            </DropdownMenu>
+            {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
+            <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />} children={
+              <>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(task); }} icon={<Edit3 className="w-4 h-4 mr-2" />} children="Edit" />
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(); }} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600" children="Delete" />
+              </>
+            }/>
           </div>
 
 

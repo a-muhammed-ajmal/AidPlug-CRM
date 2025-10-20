@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, ComponentType } from 'react';
 import { Plus, X, Edit3, DollarSign, Calendar, TrendingUp, Briefcase, ChevronDown } from 'lucide-react';
 import { useDeals } from '../../hooks/useDeals';
@@ -133,27 +134,28 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
         ) : (
             <form onSubmit={handleSubmit}>
                 <main className="p-6 overflow-y-auto space-y-4">
-                    <FormInput label="Deal Title*">
+                    {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
+                    <FormInput label="Deal Title*" children={
                         <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Client Name*">
+                    } />
+                    <FormInput label="Client Name*" children={
                         <input type="text" name="client_name" value={formData.client_name} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Amount (AED)*">
+                    } />
+                    <FormInput label="Amount (AED)*" children={
                         <input type="number" name="amount" value={formData.amount} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Stage">
+                    } />
+                    <FormInput label="Stage" children={
                         <div className="relative">
                             <select name="stage" value={formData.stage} onChange={handleChange} className="w-full appearance-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10">{stageOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}</select>
                             <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
-                    </FormInput>
-                    <FormInput label="Expected Close Date">
+                    } />
+                    <FormInput label="Expected Close Date" children={
                         <input type="date" name="expected_close_date" value={formData.expected_close_date} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label={`Probability: ${formData.probability}%`}>
+                    } />
+                    <FormInput label={`Probability: ${formData.probability}%`} children={
                         <input type="range" name="probability" value={formData.probability} onChange={handleChange} min="0" max="100" step="5" className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                    </FormInput>
+                    } />
                 </main>
                 <footer className="p-4 bg-gray-50 border-t">
                     <button type="submit" disabled={loading} className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all active:scale-95 shadow disabled:opacity-50">

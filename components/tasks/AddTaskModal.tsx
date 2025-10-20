@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
@@ -122,24 +123,25 @@ export default function AddTaskModal({ onClose, initialData }: AddTaskModalProps
         <form onSubmit={handleSubmit}>
             <main className="p-6 overflow-y-auto max-h-[70vh]">
                 <div className="space-y-6">
-                    <FormInput label="Task Title*">
+                    {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
+                    <FormInput label="Task Title*" children={
                         <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Description">
+                    } />
+                    <FormInput label="Description" children={
                         <textarea name="description" value={formData.description} onChange={handleChange} rows={3} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Task Type">
+                    } />
+                    <FormInput label="Task Type" children={
                         <SelectInput id="type" name="type" value={formData.type} onChange={handleChange} options={typeOptions} />
-                    </FormInput>
-                    <FormInput label="Priority">
+                    } />
+                    <FormInput label="Priority" children={
                         <SelectInput id="priority" name="priority" value={formData.priority} onChange={handleChange} options={priorityOptions} />
-                    </FormInput>
-                    <FormInput label="Due Date*">
+                    } />
+                    <FormInput label="Due Date*" children={
                         <input type="date" name="due_date" value={formData.due_date} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
-                    <FormInput label="Time (Optional)">
+                    } />
+                    <FormInput label="Time (Optional)" children={
                         <input type="time" name="time" value={formData.time} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
-                    </FormInput>
+                    } />
                 </div>
             </main>
             <footer className="p-4 border-t border-gray-200">
