@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
@@ -8,11 +8,20 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
   const [message, setMessage] = useState(location.state?.message || '');
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+      setEmail(rememberedEmail);
+      setRemember(true);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,7 +30,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await signIn(email, password);
+      await signIn(email, password, remember);
+      if (remember) {
+        localStorage.setItem('rememberedEmail', email);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+      }
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Failed to sign in');
@@ -71,18 +85,9 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <div className="flex justify-between items-center mb-2">
-                <label htmlFor="password-input" className="block text-sm font-medium text-gray-700">
-                Password
-                </label>
-                <button
-                    type="button"
-                    onClick={() => navigate('/forgot-password')}
-                    className="text-sm font-medium text-blue-600 hover:underline"
-                >
-                    Forgot Password?
-                </button>
-            </div>
+            <label htmlFor="password-input" className="block text-sm font-medium text-gray-700 mb-2">
+              Password
+            </label>
             <div className="relative">
               <input
                 id="password-input"
@@ -106,6 +111,26 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label htmlFor="remember-me" className="flex items-center space-x-2">
+                <input
+                    id="remember-me"
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-700">Remember me</span>
+            </label>
+            <button
+                type="button"
+                onClick={() => navigate('/forgot-password')}
+                className="text-sm font-medium text-blue-600 hover:underline"
+            >
+                Forgot Password?
+            </button>
           </div>
 
           <button

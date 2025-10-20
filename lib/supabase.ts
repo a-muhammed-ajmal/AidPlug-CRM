@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types';
+import { authStorage } from './authStorage';
 
 // FIX: Updated the Supabase URL and Anon Key with the credentials provided by the user
 // to resolve the "Failed to fetch" errors. In a typical Vite project, these would be
@@ -13,6 +14,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
+    storage: authStorage,
     persistSession: true,
     autoRefreshToken: true,
   },

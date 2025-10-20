@@ -1,32 +1,39 @@
-
-import React, { useState } from 'react';
-import { Plus, Calendar } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Plus, Calendar, List, CheckCircle } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import TaskCard from './TaskCard';
 import AddTaskModal from './AddTaskModal';
+import EmptyState from '../common/EmptyState';
+import { Task } from '../../types';
 
 type FilterOption = 'all' | 'today' | 'pending' | 'completed';
 
 export default function TasksPage() {
   const { tasks, isLoading } = useTasks();
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [filter, setFilter] = useState<FilterOption>('all');
 
   const today = new Date().toISOString().split('T')[0];
   
-  const filteredTasks = tasks.filter(task => {
+  const filteredTasks = useMemo(() => tasks.filter(task => {
     if (filter === 'today') return task.due_date === today;
     if (filter === 'pending') return task.status === 'pending';
     if (filter === 'completed') return task.status === 'completed';
     return true;
-  });
+  }), [tasks, filter, today]);
 
-  const sortedTasks = [...filteredTasks].sort((a, b) => {
+  const sortedTasks = useMemo(() => [...filteredTasks].sort((a, b) => {
     if (a.status !== b.status) {
       return a.status === 'pending' ? -1 : 1;
     }
     return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-  });
+  }), [filteredTasks]);
+
+  const stats = useMemo(() => ({
+      pending: tasks.filter(t => t.status === 'pending').length,
+      completed: tasks.filter(t => t.status === 'completed').length,
+  }), [tasks]);
 
   if (isLoading) {
     return (
@@ -36,59 +43,87 @@ export default function TasksPage() {
     );
   }
 
+  const handleEdit = (task: Task) => {
+    setEditingTask(task);
+    setShowAddModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowAddModal(false);
+    setEditingTask(null);
+  };
+  
+  const handleAddNew = () => {
+    setEditingTask(null);
+    setShowAddModal(true);
+  };
+
   const filterOptions: FilterOption[] = ['all', 'today', 'pending', 'completed'];
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">Tasks</h2>
-          <p className="text-gray-600 text-sm mt-1">{tasks.length} total tasks</p>
+    <div className="relative pb-20">
+      <div className="space-y-4">
+        <div className="bg-white p-4 rounded-xl border shadow-sm">
+            <div className="flex items-start justify-between mb-4">
+                <div>
+                    <h3 className="font-bold text-lg">My Tasks</h3>
+                    <p className="text-sm text-gray-500">{tasks.length} total tasks</p>
+                </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-center">
+                <div className="bg-orange-50 text-orange-700 p-2 rounded-lg">
+                    <p className="font-bold text-xl">{stats.pending}</p>
+                    <p className="text-xs">Pending</p>
+                </div>
+                <div className="bg-green-50 text-green-700 p-2 rounded-lg">
+                    <p className="font-bold text-xl">{stats.completed}</p>
+                    <p className="text-xs">Completed</p>
+                </div>
+            </div>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700"
-        >
-          <Plus className="w-6 h-6" />
-        </button>
-      </div>
-
-      <div className="flex space-x-2 overflow-x-auto pb-2">
-        {filterOptions.map((filterOption) => (
-          <button
-            key={filterOption}
-            onClick={() => setFilter(filterOption)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              filter === filterOption
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            {filterOption.charAt(0).toUpperCase() + filterOption.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {sortedTasks.length === 0 ? (
-        <div className="text-center py-12">
-          <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">No tasks found</p>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="mt-4 text-blue-600 font-medium hover:underline"
-          >
-            Add your first task
-          </button>
+        
+        <div className="bg-white p-4 rounded-xl border shadow-sm">
+            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+                {filterOptions.map((filterOption) => (
+                <button
+                    key={filterOption}
+                    onClick={() => setFilter(filterOption)}
+                    className={`flex-1 py-2 px-3 text-xs font-medium rounded-md transition-all ${
+                    filter === filterOption
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                >
+                    {filterOption.charAt(0).toUpperCase() + filterOption.slice(1)}
+                </button>
+                ))}
+            </div>
         </div>
-      ) : (
+
         <div className="space-y-3">
-          {sortedTasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
-          ))}
+          {sortedTasks.length > 0 ? (
+            sortedTasks.map((task) => (
+              <TaskCard key={task.id} task={task} onEdit={handleEdit} />
+            ))
+          ) : (
+             <EmptyState
+              icon={<List className="w-12 h-12 text-gray-300" />}
+              title="No Tasks Found"
+              message={filter === 'all' ? "Add your first task to get started." : "Try adjusting your filter."}
+            />
+          )}
         </div>
-      )}
+      </div>
+      
+      <button
+        onClick={handleAddNew}
+        className="fixed bottom-20 right-5 z-30 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-90"
+        aria-label="Add new task"
+      >
+        <Plus className="w-7 h-7" />
+      </button>
 
-      {showAddModal && <AddTaskModal onClose={() => setShowAddModal(false)} />}
+      {showAddModal && <AddTaskModal onClose={handleCloseModal} initialData={editingTask} />}
     </div>
   );
 }

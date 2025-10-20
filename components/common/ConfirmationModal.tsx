@@ -1,8 +1,8 @@
 import React from 'react';
 import { useUI } from '../../contexts/UIContext';
 
-// FIX: Changed to React.FC to address potential type inference issues.
-const ConfirmationModal: React.FC = () => {
+// FIX: Changed to React.FC<{}> to be more explicit and address potential type inference issues.
+const ConfirmationModal: React.FC<{}> = () => {
     const { confirmation, hideConfirmation } = useUI();
     const { isOpen, title, message, onConfirm, onCancel } = confirmation;
 

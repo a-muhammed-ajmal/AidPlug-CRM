@@ -1,8 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
-  Home, Users, Briefcase, List, User as UserIcon, Building, CreditCard, PieChart,
-  DollarSign, Inbox, Settings, X, LogOut
+  Home, Users, Briefcase, List, User as UserIcon, Building, Inbox, Settings, X, LogOut, PieChart
 } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { useClients } from '../../hooks/useClients';
@@ -114,8 +113,8 @@ export default function MobileNavigation({ isOpen, onClose }: MobileNavigationPr
         { key: 'dashboard', icon: Home, label: 'Home', path: '/dashboard' },
         { key: 'leads', icon: Users, label: 'Leads', path: '/leads' },
         { key: 'deals', icon: Briefcase, label: 'Deals', path: '/deals' },
-        { key: 'tasks', icon: List, label: 'Tasks', path: '/tasks' },
-        { key: 'account', icon: UserIcon, label: 'Account', path: '/account' }
+        { key: 'clients', icon: Inbox, label: 'Clients', path: '/clients' },
+        { key: 'tasks', icon: List, label: 'Tasks', path: '/tasks' }
     ];
 
     return (

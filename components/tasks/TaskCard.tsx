@@ -1,16 +1,17 @@
 import React from 'react';
-import { CheckCircle, Circle, Clock, Calendar, Trash2 } from 'lucide-react';
+import { CheckCircle, Circle, Clock, Calendar, Trash2, MoreVertical, Edit3 } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { Task } from '../../types';
 import { useUI } from '../../contexts/UIContext';
+import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
+
 
 interface TaskCardProps {
   task: Task;
+  onEdit: (task: Task) => void;
 }
 
-// FIX: Changed to React.FC to correctly type component props, resolving the issue
-// where the 'key' prop was being incorrectly flagged as an error by TypeScript.
-const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
   const { toggleComplete, deleteTask } = useTasks();
   const { showConfirmation, addNotification } = useUI();
 
@@ -68,15 +69,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
-            <h3 className={`font-semibold text-gray-800 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+            <h3 className={`font-semibold text-gray-800 break-words pr-2 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
               {typeIcons[task.type || 'call']} {task.title}
             </h3>
-            <button
-              onClick={handleDelete}
-              className="text-gray-400 hover:text-red-600 ml-2 flex-shrink-0"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+            <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />}>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(task); }} icon={<Edit3 className="w-4 h-4 mr-2" />}>Edit</DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(); }} icon={<Trash2 className="w-4 h-4 mr-2" />} className="text-red-600">Delete</DropdownMenuItem>
+            </DropdownMenu>
           </div>
 
           {task.description && (

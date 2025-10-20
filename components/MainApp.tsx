@@ -7,56 +7,46 @@ import { UIProvider } from '../contexts/UIContext';
 import ConfirmationModal from './common/ConfirmationModal';
 import NotificationPanel from './common/NotificationPanel';
 
-// Changed component from `React.FC` to a standard function component to resolve a potential type inference issue.
-const MainApp = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    // Close sidebar on navigation change
-    setSidebarOpen(false);
-  }, [location.pathname]);
-  
-  const getPageTitle = () => {
-    const path = location.pathname.split('/')[1];
-    const titles: { [key: string]: string } = {
-      dashboard: 'Dashboard',
-      leads: 'Leads',
-      clients: 'Clients',
-      products: 'Products',
-      deals: 'Deals',
-      tasks: 'Tasks',
-      settings: 'Settings',
-      account: 'My Account'
+const MainAppContent: React.FC = () => {
+    const location = useLocation();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    
+    const getTitle = (pathname: string) => {
+        const path = pathname.split('/')[1] || 'dashboard';
+        if (path === 'dashboard') return 'Home';
+        return path.charAt(0).toUpperCase() + path.slice(1);
     };
-    return titles[path] || 'Dashboard';
-  };
 
-  return (
-    <UIProvider>
-        <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
-          <MobileHeader
-            title={getPageTitle()}
-            onMenuClick={() => setSidebarOpen(true)}
-          />
-          
-          <main className="px-4 py-6 max-w-md mx-auto pt-20">
-            <Outlet />
-          </main>
+    const [title, setTitle] = useState(getTitle(location.pathname));
 
-          <MobileNavigation
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-          />
+    useEffect(() => {
+        setTitle(getTitle(location.pathname));
+    }, [location.pathname]);
 
-          <PWAInstallPrompt />
-          
-          {/* Global Modals from Context */}
-          <ConfirmationModal />
-          <NotificationPanel />
+    return (
+        <div className="min-h-screen bg-gray-50">
+            <MobileHeader title={title} onMenuClick={() => setIsSidebarOpen(true)} />
+            
+            <main className="pb-24 pt-20 px-4">
+                <Outlet />
+            </main>
+
+            <MobileNavigation isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+            <PWAInstallPrompt />
+            <ConfirmationModal />
+            <NotificationPanel />
         </div>
-    </UIProvider>
-  );
+    );
+};
+
+// This component now wraps the main layout with the UIProvider.
+// FIX: Correctly typed MainApp as a React.FC, as it does not accept children. This resolves the TypeScript error about a missing 'children' property.
+const MainApp: React.FC = () => {
+    return (
+        <UIProvider>
+            <MainAppContent />
+        </UIProvider>
+    );
 };
 
 export default MainApp;

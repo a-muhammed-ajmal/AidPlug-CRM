@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { AuthError, AuthResponse, Session, User, SignUpWithPasswordCredentials } from '@supabase/supabase-js';
+import { authStorage } from '../lib/authStorage';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<AuthResponse>;
-  signIn: (email: string, password: string) => Promise<AuthResponse>;
+  signIn: (email: string, password: string, remember: boolean) => Promise<AuthResponse>;
   signOut: () => Promise<{ error: AuthError | null }>;
   sendPasswordResetEmail: (email: string) => Promise<{ error: AuthError | null }>;
   updateUserPassword: (password: string) => Promise<AuthResponse>;
@@ -59,7 +60,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // FIX: Added explicit return type and refactored to return the whole response object to fix type incompatibility.
-  const signIn = async (email: string, password: string): Promise<AuthResponse> => {
+  const signIn = async (email: string, password: string, remember: boolean): Promise<AuthResponse> => {
+    authStorage.setPersistence(remember);
     const response = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -70,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
+    localStorage.removeItem('rememberedEmail');
     if (error) throw error;
     return { error };
   };
