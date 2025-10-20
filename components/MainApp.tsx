@@ -1,33 +1,62 @@
-
-import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import MobileHeader from './navigation/MobileHeader';
 import MobileNavigation from './navigation/MobileNavigation';
-import Dashboard from './dashboard/Dashboard';
-import LeadsPage from './leads/LeadsPage';
-import ClientsPage from './clients/ClientsPage';
-import DealsPage from './deals/DealsPage';
-import TasksPage from './tasks/TasksPage';
 import PWAInstallPrompt from './common/PWAInstallPrompt';
+import { UIProvider } from '../contexts/UIContext';
+import ConfirmationModal from './common/ConfirmationModal';
+import NotificationPanel from './common/NotificationPanel';
 
-export default function MainApp() {
+// FIX: Changed component definition to not use React.FC to fix children prop type error.
+const MainApp = ({ children }: { children: React.ReactNode }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    // Close sidebar on navigation change
+    setSidebarOpen(false);
+  }, [location.pathname]);
+  
+  const getPageTitle = () => {
+    const path = location.pathname.split('/')[1];
+    const titles: { [key: string]: string } = {
+      dashboard: 'Dashboard',
+      leads: 'Leads',
+      clients: 'Clients',
+      products: 'Products',
+      deals: 'Deals',
+      tasks: 'Tasks',
+      settings: 'Settings',
+      account: 'My Account'
+    };
+    return titles[path] || 'Dashboard';
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <MobileHeader />
-      
-      <main className="pb-20 pt-16">
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/leads" element={<LeadsPage />} />
-          <Route path="/clients" element={<ClientsPage />} />
-          <Route path="/deals" element={<DealsPage />} />
-          <Route path="/tasks" element={<TasksPage />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </main>
+    <UIProvider>
+        <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
+          <MobileHeader
+            title={getPageTitle()}
+            onMenuClick={() => setSidebarOpen(true)}
+          />
+          
+          <main className="px-4 py-6 max-w-md mx-auto pt-20">
+            {children}
+          </main>
 
-      <MobileNavigation />
-      <PWAInstallPrompt />
-    </div>
+          <MobileNavigation
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          />
+
+          <PWAInstallPrompt />
+          
+          {/* Global Modals from Context */}
+          <ConfirmationModal />
+          <NotificationPanel />
+        </div>
+    </UIProvider>
   );
-}
+};
+
+export default MainApp;

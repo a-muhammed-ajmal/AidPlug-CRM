@@ -1,25 +1,82 @@
-
-import React, { useState } from 'react';
-import { Plus, Search, Users } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Plus, Search, Users, Filter, Upload, Folder } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import LeadCard from './LeadCard';
 import AddLeadModal from './AddLeadModal';
+import LeadFilterModal from './LeadFilterModal';
+import EmptyState from '../common/EmptyState';
 import { Lead } from '../../types';
 
-type FilterStatus = 'all' | Lead['qualification_status'];
+type LeadStatusFilter = 'all' | NonNullable<Lead['qualification_status']>;
+type LeadUrgencyFilter = 'all' | NonNullable<Lead['urgency_level']>;
+
+interface LeadFilters {
+    urgency: LeadUrgencyFilter;
+    salaryRange: [number, number];
+    products: string[];
+}
 
 export default function LeadsPage() {
+  const location = useLocation();
   const { leads, isLoading } = useLeads();
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
+  const [showAddModal, setShowAddModal] = useState(location.state?.showAddModal || false);
+  const [editingLead, setEditingLead] = useState<Lead | null>(null);
 
-  const filteredLeads = leads.filter(lead => {
-    const matchesSearch = lead.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         lead.phone.includes(searchTerm);
-    const matchesFilter = filterStatus === 'all' || lead.qualification_status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [leadStatusFilter, setLeadStatusFilter] = useState<LeadStatusFilter>('all');
+  
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const initialLeadFilters: LeadFilters = {
+    urgency: 'all',
+    salaryRange: [0, 100000],
+    products: [],
+  };
+  const [leadFilters, setLeadFilters] = useState(initialLeadFilters);
+  const [appliedLeadFilters, setAppliedLeadFilters] = useState(initialLeadFilters);
+  
+  const isFilterApplied = useMemo(() => {
+    return JSON.stringify(appliedLeadFilters) !== JSON.stringify(initialLeadFilters);
+  }, [appliedLeadFilters]);
+
+  useEffect(() => {
+    if (location.state?.showAddModal) {
+      setShowAddModal(true);
+    }
+  }, [location.state]);
+
+  const handleOpenFilterModal = () => {
+    setLeadFilters(appliedLeadFilters);
+    setIsFilterModalOpen(true);
+  };
+  
+  const handleApplyFilters = () => {
+    setAppliedLeadFilters(leadFilters);
+    setIsFilterModalOpen(false);
+  };
+
+  const handleClearFiltersInModal = () => {
+    setLeadFilters(initialLeadFilters);
+  };
+
+  const filteredLeads = useMemo(() => {
+    if (!leads) return [];
+    return leads.filter(lead => {
+        const searchMatch = searchQuery === '' || 
+            lead.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            lead.company_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            lead.phone.includes(searchQuery);
+
+        const statusMatch = leadStatusFilter === 'all' || lead.qualification_status === leadStatusFilter;
+
+        const urgencyMatch = appliedLeadFilters.urgency === 'all' || lead.urgency_level === appliedLeadFilters.urgency;
+        const salaryMatch = (lead.monthly_salary || 0) >= appliedLeadFilters.salaryRange[0];
+        const productMatch = appliedLeadFilters.products.length === 0 || appliedLeadFilters.products.some(p => lead.product_interest?.includes(p));
+        
+        return searchMatch && statusMatch && urgencyMatch && salaryMatch && productMatch;
+    });
+  }, [searchQuery, leadStatusFilter, appliedLeadFilters, leads]);
+
 
   if (isLoading) {
     return (
@@ -29,70 +86,108 @@ export default function LeadsPage() {
     );
   }
 
-  const filterOptions: FilterStatus[] = ['all', 'warm', 'qualified', 'appointment_booked'];
+  const handleEdit = (lead: Lead) => {
+    setEditingLead(lead);
+    setShowAddModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowAddModal(false);
+    setEditingLead(null);
+  };
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">Leads</h2>
-          <p className="text-gray-600 text-sm mt-1">{leads.length} total leads</p>
+    <div className="relative pb-20">
+      <div className="space-y-4">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-xl shadow-lg flex flex-col items-center text-center">
+          <h3 className="font-bold text-lg mb-2">Streamline Lead Collection</h3>
+          <p className="text-sm opacity-90 mb-4">Share a simple form with potential clients and see their submissions here.</p>
+          <div className="flex space-x-3 w-full">
+            <button className="flex-1 flex items-center justify-center py-2 px-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all active:scale-95">
+              <Upload className="w-4 h-4 mr-2" />
+              <span className="text-sm font-medium">Share Form</span>
+            </button>
+            <button className="flex-1 flex items-center justify-center py-2 px-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all active:scale-95">
+              <Folder className="w-4 h-4 mr-2" />
+              <span className="text-sm font-medium">Submissions</span>
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="w-6 h-6" />
-        </button>
-      </div>
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-        <input
-          type="text"
-          placeholder="Search leads..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-      </div>
-
-      <div className="flex space-x-2 overflow-x-auto pb-2">
-        {filterOptions.map((status) => (
-          <button
-            key={status}
-            onClick={() => setFilterStatus(status)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              filterStatus === status
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            {status === 'all' ? 'All' : status?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-          </button>
-        ))}
-      </div>
-
-      {filteredLeads.length === 0 ? (
-        <div className="text-center py-12">
-          <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">No leads found</p>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="mt-4 text-blue-600 font-medium hover:underline"
-          >
-            Add your first lead
-          </button>
+        <div className="bg-white p-4 rounded-xl border shadow-sm">
+          <div className="flex space-x-2 mb-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search leads..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              />
+            </div>
+            <button 
+              onClick={handleOpenFilterModal}
+              className="relative p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <Filter className={`w-4 h-4 transition-colors ${isFilterApplied ? 'text-blue-600' : 'text-gray-600'}`} />
+              {isFilterApplied && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full border-2 border-white"></span>
+              )}
+            </button>
+          </div>
+          
+          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+            {(['all', 'warm', 'qualified', 'appointment_booked'] as LeadStatusFilter[]).map((status) => (
+              <button
+                key={status}
+                onClick={() => setLeadStatusFilter(status)}
+                className={`flex-1 py-2 px-3 text-xs font-medium rounded-md transition-all ${
+                  leadStatusFilter === status ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {status === 'appointment_booked' ? 'Appointment' : status.charAt(0).toUpperCase() + status.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
-      ) : (
-        <div className="space-y-3">
-          {filteredLeads.map((lead) => (
-            <LeadCard key={lead.id} lead={lead} />
-          ))}
-        </div>
-      )}
 
-      {showAddModal && <AddLeadModal onClose={() => setShowAddModal(false)} />}
+        <div className="space-y-4">
+          {filteredLeads.length > 0 ? (
+            filteredLeads.map((lead) => (
+              <LeadCard 
+                key={lead.id} 
+                lead={lead} 
+                onEdit={handleEdit}
+              />
+            ))
+          ) : (
+            <EmptyState
+              icon={<Users className="w-12 h-12 text-gray-300" />}
+              title="No Leads Found"
+              message="Try adjusting your search or filters, or add a new lead."
+            />
+          )}
+        </div>
+      </div>
+      <button
+        onClick={() => { setEditingLead(null); setShowAddModal(true); }}
+        className="fixed bottom-20 right-5 z-30 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-90"
+        aria-label="Add new lead"
+      >
+        <Plus className="w-7 h-7" />
+      </button>
+
+      {(showAddModal || editingLead) && <AddLeadModal onClose={handleCloseModal} initialData={editingLead} />}
+      
+      <LeadFilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        filters={leadFilters}
+        setFilters={setLeadFilters}
+        onApply={handleApplyFilters}
+        onClear={handleClearFiltersInModal}
+      />
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CheckCircle, Circle, Clock, Calendar, Trash2 } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
@@ -8,7 +7,9 @@ interface TaskCardProps {
   task: Task;
 }
 
-export default function TaskCard({ task }: TaskCardProps) {
+// FIX: Changed to React.FC to correctly type component props, resolving the issue
+// where the 'key' prop was being incorrectly flagged as an error by TypeScript.
+const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const { toggleComplete, deleteTask } = useTasks();
 
   const priorityColors: { [key: string]: string } = {
@@ -96,4 +97,6 @@ export default function TaskCard({ task }: TaskCardProps) {
       </div>
     </div>
   );
-}
+};
+
+export default TaskCard;

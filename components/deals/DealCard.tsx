@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { DollarSign, Calendar, TrendingUp } from 'lucide-react';
 import { Deal } from '../../types';
@@ -9,7 +8,9 @@ interface DealCardProps {
   onUpdateStage: ReturnType<typeof useDeals>['updateStage'];
 }
 
-export default function DealCard({ deal, onUpdateStage }: DealCardProps) {
+// FIX: Changed to React.FC to correctly type component props, resolving the issue
+// where the 'key' prop was being incorrectly flagged as an error by TypeScript.
+const DealCard: React.FC<DealCardProps> = ({ deal, onUpdateStage }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200 hover:shadow-md transition-shadow">
       <h4 className="font-semibold text-gray-800 mb-2">{deal.title}</h4>
@@ -45,4 +46,6 @@ export default function DealCard({ deal, onUpdateStage }: DealCardProps) {
       )}
     </div>
   );
-}
+};
+
+export default DealCard;

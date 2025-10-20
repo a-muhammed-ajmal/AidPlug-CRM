@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Phone, Mail, Building, DollarSign } from 'lucide-react';
 import { Client } from '../../types';
@@ -7,7 +6,9 @@ interface ClientCardProps {
   client: Client;
 }
 
-export default function ClientCard({ client }: ClientCardProps) {
+// FIX: Changed to React.FC to correctly type component props, resolving the issue
+// where the 'key' prop was being incorrectly flagged as an error by TypeScript.
+const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
       <div className="flex items-start space-x-4">
@@ -65,4 +66,6 @@ export default function ClientCard({ client }: ClientCardProps) {
       </div>
     </div>
   );
-}
+};
+
+export default ClientCard;

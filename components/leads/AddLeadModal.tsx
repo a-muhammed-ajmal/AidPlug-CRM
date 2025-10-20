@@ -1,141 +1,169 @@
-
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { X, ChevronDown } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { useAuth } from '../../contexts/AuthContext';
+import { useClients } from '../../hooks/useClients';
 import { Lead } from '../../types';
+import { useUI } from '../../contexts/UIContext';
+import { UAE_BANK_NAMES, EIB_CREDIT_CARDS, PRODUCT_TYPES, UAE_EMIRATES, mockReferrals } from '../../lib/constants';
 
 interface AddLeadModalProps {
   onClose: () => void;
+  initialData?: Lead | null;
 }
 
-type FormData = {
-  full_name: string;
-  phone: string;
-  email: string;
-  company_name: string;
-  monthly_salary: string;
-  loan_amount_requested: string;
-  qualification_status: Lead['qualification_status'];
-  urgency_level: Lead['urgency_level'];
-  bank_name: string;
-  product_type: string;
-}
-
-export default function AddLeadModal({ onClose }: AddLeadModalProps) {
-  const { createLead } = useLeads();
+export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps) {
+  const { createLead, updateLead } = useLeads();
   const { user } = useAuth();
+  const { addNotification } = useUI();
+  const { clients } = useClients();
+  
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    full_name: '',
-    phone: '',
-    email: '',
-    company_name: '',
-    monthly_salary: '',
-    loan_amount_requested: '',
-    qualification_status: 'warm',
-    urgency_level: 'medium',
-    bank_name: '',
-    product_type: '',
+  const mode = initialData ? 'edit' : 'add';
+
+  const [formData, setFormData] = useState({
+    fullName: initialData?.full_name || '',
+    email: initialData?.email || '',
+    company: initialData?.company_name || '',
+    location: initialData?.location || 'Dubai',
+    mobile: initialData?.phone.replace('+971', '').trim() || '',
+    salary: initialData?.monthly_salary?.toString() || '',
+    bank: initialData?.bank_name || 'Emirates Islamic Bank',
+    productType: initialData?.product_type || 'Credit Card',
+    product: initialData?.product || EIB_CREDIT_CARDS[0],
+    referral: initialData?.referral_source || '',
   });
+
+  const [availableProducts, setAvailableProducts] = useState(EIB_CREDIT_CARDS);
+  const [isProductDropdownVisible, setIsProductDropdownVisible] = useState(true);
+  
+  const referralOptions = useMemo(() => {
+    const clientsAsReferrals = clients.map(c => ({ id: `client-${c.id}`, name: c.full_name, type: 'Client' }));
+    return [...clientsAsReferrals, ...mockReferrals];
+  }, [clients]);
+
+  useEffect(() => {
+    let newProducts: string[] = [];
+    let dropdownVisible = false;
+
+    if (formData.bank === 'Emirates Islamic Bank' && formData.productType === 'Credit Card') {
+      newProducts = EIB_CREDIT_CARDS;
+      dropdownVisible = true;
+    } else if (formData.productType === 'Account Opening') {
+      newProducts = ['Personal Account', 'Business Account'];
+      dropdownVisible = true;
+    }
+
+    setAvailableProducts(newProducts);
+    setIsProductDropdownVisible(dropdownVisible);
+
+    setFormData(prev => ({
+      ...prev,
+      product: dropdownVisible ? (newProducts[0] || '') : prev.productType
+    }));
+  }, [formData.bank, formData.productType]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-        alert('You must be logged in to create a lead.');
-        return;
+      addNotification('Authentication Error', 'You must be logged in.');
+      return;
+    }
+    if (!formData.fullName || !formData.mobile) {
+      alert('Please fill in Full Name and Mobile Number.');
+      return;
     }
     setLoading(true);
 
-    try {
-      const leadData = {
-        ...formData,
-        user_id: user.id,
-        monthly_salary: formData.monthly_salary ? parseFloat(formData.monthly_salary) : null,
-        loan_amount_requested: formData.loan_amount_requested ? parseFloat(formData.loan_amount_requested) : null,
+    const leadData = {
+        full_name: formData.fullName,
+        email: formData.email,
+        phone: `+971 ${formData.mobile}`,
+        company_name: formData.company,
+        monthly_salary: parseInt(formData.salary, 10) || null,
+        loan_amount_requested: 0,
+        product_interest: [formData.product.toLowerCase().replace(/ /g, '_')],
+        qualification_status: initialData?.qualification_status || "warm",
         last_contact_date: new Date().toISOString().split('T')[0],
-      };
-      
-      // We need to type cast because the service expects non-string numeric fields
-      createLead(leadData as any);
-      onClose();
-    } catch (error) {
-      console.error('Error creating lead:', error);
-      alert('Failed to create lead');
-    } finally {
-      setLoading(false);
-    }
+        urgency_level: initialData?.urgency_level || "medium",
+        location: formData.location,
+        referral_source: formData.referral || "Manual Entry",
+        bank_name: formData.bank,
+        product_type: formData.productType,
+        product: formData.product,
+        user_id: user.id,
+    };
+    
+    const mutation = mode === 'add' ? createLead : (data: any) => updateLead({ id: initialData!.id, updates: data });
+
+    mutation(leadData as any, {
+        onSuccess: () => {
+            addNotification(
+                mode === 'add' ? 'Lead Created' : 'Lead Updated',
+                `${formData.fullName} has been saved.`
+            );
+            onClose();
+        },
+        onError: (err) => {
+            addNotification('Error', (err as Error).message);
+            setLoading(false);
+        },
+    });
   };
 
+  // FIX: Changed to React.FC to address type inference issues with children props.
+  const FormInput: React.FC<{ label: string, children: React.ReactNode }> = ({ label, children }) => (
+    <div>
+      <label className="flex items-center text-sm font-medium text-gray-700 mb-2">{label}</label>
+      {children}
+    </div>
+  );
+  
+  const SelectInput = ({ id, name, value, onChange, options }: { id: string, name: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, options: string[] }) => (
+    <div className="relative">
+      <select id={id} name={name} value={value} onChange={onChange} className="w-full appearance-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10">
+        {options.map(option => <option key={option} value={option}>{option}</option>)}
+      </select>
+      <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+    </div>
+  );
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] flex flex-col">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-800">Add New Lead</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X className="w-5 h-5" />
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end animate-fade-in sm:items-center">
+      <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl shadow-xl transform transition-transform animate-slide-up">
+        <header className="flex items-center justify-between p-4 border-b border-gray-200">
+          <h1 className="text-lg font-bold text-gray-900">{mode === 'add' ? 'Add New Lead' : 'Edit Lead'}</h1>
+          <button onClick={onClose} className="p-2 -mr-2 rounded-full hover:bg-gray-100">
+            <X className="w-5 h-5 text-gray-600" />
           </button>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
-            <input type="text" name="full_name" value={formData.full_name} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
-            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="+971 50 123 4567" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
-            <input type="text" name="company_name" value={formData.company_name} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Monthly Salary (AED)</label>
-            <input type="number" name="monthly_salary" value={formData.monthly_salary} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="15000" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Loan Amount Requested (AED)</label>
-            <input type="number" name="loan_amount_requested" value={formData.loan_amount_requested} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="100000" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Qualification Status</label>
-            <select name="qualification_status" value={formData.qualification_status || 'warm'} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option value="warm">Warm</option>
-              <option value="qualified">Qualified</option>
-              <option value="appointment_booked">Appointment Booked</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Urgency Level</label>
-            <select name="urgency_level" value={formData.urgency_level || 'medium'} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Bank Name</label>
-            <input type="text" name="bank_name" value={formData.bank_name} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Emirates NBD" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Product Type</label>
-            <input type="text" name="product_type" value={formData.product_type} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Personal Loan" />
-          </div>
-          <div className="flex space-x-3 pt-4">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">Cancel</button>
-            <button type="submit" disabled={loading} className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50">{loading ? 'Adding...' : 'Add Lead'}</button>
-          </div>
+        </header>
+        <form onSubmit={handleSubmit}>
+            <main className="p-6 overflow-y-auto max-h-[70vh]">
+                <div className="space-y-6">
+                    <FormInput label="Full Name*"><input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
+                    <FormInput label="Email"><input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" placeholder="example@email.com" /></FormInput>
+                    <FormInput label="Company Name"><input type="text" name="company" value={formData.company} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
+                    <FormInput label="Location"><SelectInput id="location" name="location" value={formData.location} onChange={handleChange} options={UAE_EMIRATES} /></FormInput>
+                    <FormInput label="Mobile Number*"><div className="flex"><span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg">+971</span><input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-r-lg focus:ring-blue-500 focus:border-blue-500 p-3" placeholder="50 123 4567" /></div></FormInput>
+                    <FormInput label="Monthly Salary (AED)"><input type="number" name="salary" value={formData.salary} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
+                    <FormInput label="Bank Applying"><SelectInput id="bank" name="bank" value={formData.bank} onChange={handleChange} options={UAE_BANK_NAMES} /></FormInput>
+                    <FormInput label="Product Type"><SelectInput id="productType" name="productType" value={formData.productType} onChange={handleChange} options={PRODUCT_TYPES} /></FormInput>
+                    {isProductDropdownVisible && (<FormInput label="Product"><SelectInput id="product" name="product" value={formData.product} onChange={handleChange} options={availableProducts} /></FormInput>)}
+                    <FormInput label="Referral"><input type="text" name="referral" value={formData.referral} onChange={handleChange} placeholder="Type name or select from list..." className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" /></FormInput>
+                </div>
+            </main>
+            <footer className="p-4 border-t border-gray-200">
+                <button type="submit" disabled={loading} className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all active:scale-95 shadow disabled:opacity-50">
+                    {loading ? 'Saving...' : (mode === 'add' ? 'Save Lead' : 'Update Lead')}
+                </button>
+            </footer>
         </form>
       </div>
     </div>
   );
-}
+};

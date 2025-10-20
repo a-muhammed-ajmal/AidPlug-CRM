@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DealCard from './DealCard';
 import { Deal } from '../../types';
@@ -11,7 +10,9 @@ interface DealColumnProps {
   onUpdateStage: ReturnType<typeof useDeals>['updateStage'];
 }
 
-export default function DealColumn({ stage, deals, onUpdateStage }: DealColumnProps) {
+// FIX: Changed to React.FC to correctly type component props, resolving the issue
+// where the 'key' prop was being incorrectly flagged as an error by TypeScript.
+const DealColumn: React.FC<DealColumnProps> = ({ stage, deals, onUpdateStage }) => {
   const colorClasses: { [key: string]: string } = {
     blue: 'bg-blue-100 text-blue-700',
     yellow: 'bg-yellow-100 text-yellow-700',
@@ -34,4 +35,6 @@ export default function DealColumn({ stage, deals, onUpdateStage }: DealColumnPr
       </div>
     </div>
   );
-}
+};
+
+export default DealColumn;
