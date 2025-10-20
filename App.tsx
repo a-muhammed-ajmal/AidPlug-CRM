@@ -1,4 +1,5 @@
 
+
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
@@ -25,7 +26,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
-      <AuthProvider children={
+      <AuthProvider>
         <HashRouter>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
@@ -35,10 +36,8 @@ function App() {
             <Route
               path="/"
               element={
-                // FIX: Explicitly pass children prop to avoid TypeScript error.
-                <ProtectedRoute children={
-                  <MainApp />
-                } />
+                /* FIX: Explicitly pass children prop to avoid TypeScript error. */
+                <ProtectedRoute children={<MainApp />} />
               }
             >
               <Route index element={<Navigate to="/dashboard" replace />} />
@@ -61,7 +60,7 @@ function App() {
             </Route>
           </Routes>
         </HashRouter>
-      } />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

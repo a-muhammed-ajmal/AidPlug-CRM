@@ -124,3 +124,20 @@ export const KANBAN_STAGES = [
     { id: 'completed', title: 'Completed', color: 'border-t-green-500' },
     { id: 'unsuccessful', title: 'Unsuccessful', color: 'border-t-red-500' }
  ];
+ 
+export const mockStatusUpdates = [
+  {
+    id: 1,
+    status: 'resolved',
+    title: 'Identified',
+    message: 'We have identified the root cause of the Dashboard degradation, and a fix is being worked on.',
+    timestamp: 'Oct 20, 2025 - 21:12 UTC',
+  },
+  {
+    id: 2,
+    status: 'investigating',
+    title: 'Investigating',
+    message: 'Increased Vercel dashboard failures, API failures, and deployment failures. CDN requests are functioning as expected.',
+    timestamp: 'Oct 20, 2025 - 20:00 UTC',
+  },
+];

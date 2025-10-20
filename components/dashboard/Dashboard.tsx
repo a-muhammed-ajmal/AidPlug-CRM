@@ -7,6 +7,7 @@ import { Briefcase, Clock, CheckCircle, Zap, Plus, List, User, Upload, Activity,
 import QuickActionButton from '../common/QuickActionButton';
 import { useUI } from '../../contexts/UIContext';
 import { mockActivity } from '../../lib/constants';
+import StatusUpdates from './StatusUpdates';
 
 // Reusable component from the monolithic file, now placed here for dashboard use
 const DashboardKPICard = ({ title, value, color, icon }: { title: string, value: string | number, color: string, icon: React.ReactNode }) => (
@@ -247,6 +248,8 @@ export default function Dashboard() {
                 ))}
                 </div>
             </div>
+
+            <StatusUpdates />
         </div>
     );
 }
