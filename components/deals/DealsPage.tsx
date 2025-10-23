@@ -1,8 +1,6 @@
-
-
-import React, { useState, useEffect, ComponentType, useCallback } from 'react';
+import React, { useState, useEffect, ComponentType, useCallback, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Plus, X, Edit3, DollarSign, Calendar, TrendingUp, Briefcase, ChevronDown, Hash, Building, Phone, Mail } from 'lucide-react';
+import { Plus, X, Edit3, DollarSign, Calendar, TrendingUp, Briefcase, ChevronDown, Hash, Building, Phone, Mail, Search } from 'lucide-react';
 import { useDeals } from '../../hooks/useDeals';
 import DealColumn from './DealColumn';
 import { Deal } from '../../types';
@@ -34,6 +32,7 @@ const defaultFormData = {
   amount: '',
   stage: 'application_processing' as Deal['stage'],
   expected_close_date: new Date().toISOString().split('T')[0],
+  completed_date: '',
   application_number: '',
   bdi_number: '',
   aecb_score: '',
@@ -109,6 +108,7 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
         amount: String(initialData.amount || ''),
         stage: initialData.stage || 'application_processing',
         expected_close_date: initialData.expected_close_date ? initialData.expected_close_date.split('T')[0] : new Date().toISOString().split('T')[0],
+        completed_date: initialData.completed_date ? initialData.completed_date.split('T')[0] : '',
         application_number: initialData.application_number || '',
         bdi_number: initialData.bdi_number || '',
         company_name: initialData.company_name || '',
@@ -153,8 +153,9 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
         user_id: user.id,
         amount: parseInt(formData.amount, 10) || 0,
         monthly_salary: parseInt(formData.monthly_salary, 10) || null,
-        aecb_score: parseInt(formData.aecb_score, 10) || null,
         mobile_number: formData.mobile_number ? `+971 ${formData.mobile_number}` : null,
+        completed_date: formData.stage === 'completed' ? (formData.completed_date || null) : null,
+        aecb_score: formData.aecb_score ? parseInt(formData.aecb_score, 10) : null,
     };
     
     const mutation = initialData 
@@ -192,8 +193,12 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
                     <DetailItem icon={Briefcase} label="Designation" value={initialData.designation} />
                     <DetailItem icon={DollarSign} label="Salary" value={initialData.monthly_salary ? `AED ${initialData.monthly_salary.toLocaleString()}` : null} />
                     <DetailItem icon={TrendingUp} label="AECB Score" value={initialData.aecb_score} />
-                    <DetailItem icon={Calendar} label="Submission Date" value={new Date(initialData.created_at).toLocaleDateString()} />
-                    <DetailItem icon={Calendar} label="Expected Close" value={initialData.expected_close_date ? new Date(initialData.expected_close_date).toLocaleDateString() : null} />
+                    <DetailItem icon={Calendar} label="Submission Date" value={new Date(initialData.created_at || '').toLocaleDateString()} />
+                    {initialData.stage === 'completed' ? (
+                        <DetailItem icon={Calendar} label="Completed Date" value={initialData.completed_date ? new Date(initialData.completed_date).toLocaleDateString() : 'N/A'} />
+                    ) : (
+                        <DetailItem icon={Calendar} label="Expected Close" value={initialData.expected_close_date ? new Date(initialData.expected_close_date).toLocaleDateString() : null} />
+                    )}
                     <DetailItem icon={Hash} label="Application No." value={initialData.application_number} />
                     <DetailItem icon={Hash} label="BDI No." value={initialData.bdi_number} />
                     <DetailItem icon={ChevronDown} label="Stage" value={stageOptions.find(s => s.value === initialData.stage)?.label || 'N/A'} />
@@ -211,7 +216,11 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
                         <FormInput label="Application Number" children={<input type="text" name="application_number" value={formData.application_number} onChange={handleChange} className="w-full bg-white border border-gray-300 p-3 rounded-lg" />} />
                         <FormInput label="BPM ID" children={<input type="text" name="bdi_number" value={formData.bdi_number} onChange={handleChange} className="w-full bg-white border border-gray-300 p-3 rounded-lg" />} />
                         <FormInput label="Status / Stage" children={<SelectInput id="stage" name="stage" value={formData.stage||'application_processing'} onChange={handleChange} options={stageOptions} />} />
-                        <FormInput label="Completed Date" children={<input type="date" name="completed_date" value={formData.expected_close_date} onChange={handleChange} className="w-full bg-white border border-gray-300 p-3 rounded-lg" />} />
+                        {formData.stage === 'completed' ? (
+                           <FormInput label="Completed Date" required children={<input type="date" name="completed_date" value={formData.completed_date} onChange={handleChange} max={new Date().toISOString().split('T')[0]} required className="w-full bg-white border border-gray-300 p-3 rounded-lg" />} />
+                        ) : (
+                           <FormInput label="Expected Close Date" children={<input type="date" name="expected_close_date" value={formData.expected_close_date} onChange={handleChange} className="w-full bg-white border border-gray-300 p-3 rounded-lg" />} />
+                        )}
                     </>} />
                      <Section title="Client Information" children={<>
                         <FormInput label="Full Name" required children={<input type="text" name="client_name" value={formData.client_name} onChange={handleChange} required className="w-full bg-white border border-gray-300 p-3 rounded-lg" />} />
@@ -261,6 +270,7 @@ export default function DealsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
   const [modalMode, setModalMode] = useState<'view' | 'edit'>('view');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const stages: Stage[] = [
     { id: 'application_processing', label: 'Application Processing', color: 'blue' },
@@ -269,6 +279,17 @@ export default function DealsPage() {
     { id: 'completed', label: 'Completed', color: 'green' },
     { id: 'unsuccessful', label: 'Unsuccessful', color: 'red' },
   ];
+
+  const filteredDeals = useMemo(() => {
+    if (!deals) return [];
+    return deals.filter(deal =>
+      !searchQuery ||
+      deal.client_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      deal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (deal.company_name && deal.company_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (deal.application_number && deal.application_number.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  }, [searchQuery, deals]);
 
   const handleViewDeal = (deal: Deal) => {
     setSelectedDeal(deal);
@@ -323,37 +344,42 @@ export default function DealsPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-10rem)] flex flex-col">
-      <div className="flex items-center justify-between flex-shrink-0 px-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">Deals Pipeline</h2>
-          <p className="text-gray-600 text-sm mt-1">{deals.length} active deals</p>
-        </div>
-        <button 
-          onClick={handleAddNewDeal}
-          className="bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 active:scale-95 transition-transform"
-        >
-          <Plus className="w-6 h-6" />
-        </button>
-      </div>
-
-      <div className="flex-grow overflow-x-auto snap-x snap-mandatory scroll-p-4 -mx-4 mt-4">
-        <div className="flex space-x-4 h-full px-4">
-          {stages.map((stage) => {
-            const stageDeals = deals.filter(deal => deal.stage === stage.id);
-            return (
-              <DealColumn
-                key={stage.id}
-                stage={stage}
-                deals={stageDeals}
-                onViewDeal={handleViewDeal}
-                onEditDeal={handleEditDeal}
-                onDeleteDeal={handleDeleteDeal}
+    <div className="relative flex flex-col h-[calc(100vh-148px)] lg:h-[calc(100vh-110px)]">
+        <div className="p-4 bg-gray-50 border-b flex-shrink-0">
+             <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search deals by client, title, company..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border bg-white border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               />
-            );
-          })}
+            </div>
         </div>
-      </div>
+        
+        <div className="flex-grow overflow-x-auto kanban-board bg-gray-50">
+            <div className="flex space-x-4 p-4 h-full">
+              {stages.map((stage) => (
+                <DealColumn
+                  key={stage.id}
+                  stage={stage}
+                  deals={filteredDeals.filter((d) => d.stage === stage.id)}
+                  onViewDeal={handleViewDeal}
+                  onEditDeal={handleEditDeal}
+                  onDeleteDeal={handleDeleteDeal}
+                />
+              ))}
+            </div>
+        </div>
+      
+      <button
+        onClick={handleAddNewDeal}
+        className="fixed bottom-20 right-5 z-30 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-90"
+        aria-label="Add new deal"
+      >
+        <Plus className="w-7 h-7" />
+      </button>
 
       {isModalOpen && (
         <DealModal 

@@ -54,9 +54,6 @@ export const dealsService = {
   
   updateStage: async (id: string, newStage: Deal['stage']): Promise<Deal> => {
     const updates: DealUpdate = { stage: newStage };
-    if (newStage === 'completed') {
-      updates.completed_date = new Date().toISOString().split('T')[0];
-    }
     return dealsService.update(id, updates);
   },
 
