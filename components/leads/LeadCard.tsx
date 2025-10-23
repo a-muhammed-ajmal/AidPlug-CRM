@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Briefcase, MoreVertical, Edit3, Trash2, Building, Folder, DollarSign, MapPin, CheckCircle, Phone, Mail, AlertCircle, Clock } from 'lucide-react';
+import { Briefcase, MoreVertical, Edit3, Trash2, Building, Folder, DollarSign, MapPin, Phone, Mail, AlertCircle, Clock, ChevronDown } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { useDeals } from '../../hooks/useDeals';
 import { Lead } from '../../types';
@@ -15,7 +15,7 @@ interface LeadCardProps {
 
 export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
   const { user } = useAuth();
-  const { deleteLead } = useLeads();
+  const { deleteLead, updateLead } = useLeads();
   const { createDeal } = useDeals();
   const { showConfirmation, addNotification, logActivity } = useUI();
 
@@ -58,7 +58,6 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
       probability: 25,
       product_type: lead.product?.toLowerCase().replace(/ /g, '_'),
       user_id: user.id,
-      // Defaulting other required/nullable fields
       application_number: `APP-${Math.floor(10000 + Math.random() * 90000)}`,
       bdi_number: `BDI-${Math.floor(10000 + Math.random() * 90000)}`,
     };
@@ -67,32 +66,53 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
       onSuccess: () => {
         addNotification("Lead Converted", `${lead.full_name} is now a deal.`);
         logActivity('lead_convert', `Converted lead "${lead.full_name}" to a deal.`);
-        // Also delete the lead
         deleteLead(lead);
       },
       onError: (e) => addNotification('Conversion Failed', (e as Error).message),
     });
   };
 
+  const handleStatusChange = (newStatus: 'warm' | 'qualified' | 'appointment_booked') => {
+    updateLead({ id: lead.id, updates: { qualification_status: newStatus } }, {
+        onSuccess: (updatedLead) => addNotification('Status Updated', `${updatedLead.full_name} is now ${newStatus.replace(/_/g, ' ')}.`),
+        onError: (e) => addNotification('Update Failed', (e as Error).message),
+    });
+  };
+
+  const handleActionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (!value) return;
+
+    if (value === 'convert') {
+      showConfirmation(
+        'Convert to Deal?',
+        `This will create a new deal for "${lead.full_name}" and remove this lead. Are you sure?`,
+        handleConvert
+      );
+    } else {
+      handleStatusChange(value as 'warm' | 'qualified' | 'appointment_booked');
+    }
+    e.target.value = '';
+  };
+
   return (
     <div className="bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all duration-200 active:scale-98">
       <div className="p-4">
         <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">
-              <h3 className="font-semibold text-gray-900 text-base">{lead.full_name}</h3>
+              <h3 className="font-semibold text-gray-900 text-base truncate" title={lead.full_name}>{lead.full_name}</h3>
               {getUrgencyIcon(lead.urgency_level)}
             </div>
-            <p className="text-sm text-gray-600 flex items-center">
-              <Briefcase className="w-3 h-3 mr-1.5 text-gray-400" />
-              {lead.company_name || 'N/A'}
+            <p className="text-sm text-gray-600 flex items-center truncate">
+              <Briefcase className="w-3 h-3 mr-1.5 text-gray-400 flex-shrink-0" />
+              <span title={lead.company_name || 'N/A'}>{lead.company_name || 'N/A'}</span>
             </p>
           </div>
           <div className="flex flex-col items-end space-y-2">
             <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(lead.qualification_status)}`}>
-              {lead.qualification_status?.replace('_', ' ') || 'N/A'}
+              {lead.qualification_status?.replace(/_/g, ' ') || 'N/A'}
             </span>
-            {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
             <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />} children={
               <>
                 <DropdownMenuItem onClick={() => onEdit(lead)} icon={<Edit3 className="w-4 h-4 mr-2" />} children="Edit" />
@@ -122,13 +142,21 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
         </div>
       </div>
       <div className="border-t border-gray-100 p-2 space-y-2">
-        <button 
-          onClick={(e) => { e.stopPropagation(); handleConvert(); }}
-          className="w-full flex items-center justify-center py-2 px-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-semibold"
-        >
-          <CheckCircle className="w-4 h-4 mr-1.5" />
-          Convert to Deal
-        </button>
+        <div className="relative">
+          <select
+            defaultValue=""
+            onChange={handleActionChange}
+            className="w-full appearance-none py-2 pl-3 pr-8 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            aria-label="Lead Actions"
+          >
+            <option value="" disabled>Change Status...</option>
+            <option value="warm">Warm</option>
+            <option value="qualified">Qualified</option>
+            <option value="appointment_booked">Appointment</option>
+            <option value="convert" className="font-medium text-green-700 bg-green-50">Convert to Deal</option>
+          </select>
+          <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500" />
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <button 
             onClick={(e) => { e.stopPropagation(); if (lead.phone) window.location.href = `tel:${lead.phone.replace(/\s/g, '')}`; }}

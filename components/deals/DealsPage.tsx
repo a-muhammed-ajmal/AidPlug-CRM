@@ -131,7 +131,13 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => {
+        const newState = { ...prev, [name]: value };
+        if (name === 'product_type' && value === 'Credit Card') {
+            newState.amount = '';
+        }
+        return newState;
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -181,7 +187,7 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
             <>
                 <main className="flex-1 p-6 overflow-y-auto space-y-4">
                     <DetailItem icon={Briefcase} label="Client" value={initialData.client_name} />
-                    <DetailItem icon={DollarSign} label="Amount" value={`AED ${initialData.amount.toLocaleString()}`} />
+                    {initialData.product_type !== 'Credit Card' && <DetailItem icon={DollarSign} label="Amount" value={`AED ${initialData.amount.toLocaleString()}`} />}
                     <DetailItem icon={Building} label="Company" value={initialData.company_name} />
                     <DetailItem icon={Briefcase} label="Designation" value={initialData.designation} />
                     <DetailItem icon={DollarSign} label="Salary" value={initialData.monthly_salary ? `AED ${initialData.monthly_salary.toLocaleString()}` : null} />
@@ -218,7 +224,7 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
                         <FormInput label="Bank Applying" children={<SelectInput id="bank_applying" name="bank_applying" value={formData.bank_applying} onChange={handleChange} options={UAE_BANK_NAMES.map(b => ({value: b, label: b}))} />} />
                         <FormInput label="Product Type" children={<SelectInput id="product_type" name="product_type" value={formData.product_type} onChange={handleChange} options={PRODUCT_TYPES.map(p => ({value: p, label: p}))} />} />
                         {availableProducts.length > 0 && <FormInput label="Product" children={<SelectInput id="product" name="product" value={formData.product} onChange={handleChange} options={availableProducts.map(p => ({value: p, label: p}))} />} />}
-                        <FormInput label="Amount (AED)" required children={<input type="number" name="amount" value={formData.amount} onChange={handleChange} required className="w-full bg-white border border-gray-300 p-3 rounded-lg" />} />
+                        {formData.product_type !== 'Credit Card' && <FormInput label="Amount (AED)" required children={<input type="number" name="amount" value={formData.amount} onChange={handleChange} required className="w-full bg-white border border-gray-300 p-3 rounded-lg" />} />}
                     </>} />
                      <Section title="Contact Information" children={<>
                         <FormInput label="Mobile Number" children={<div className="flex"><span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg">+971</span><input type="tel" name="mobile_number" value={formData.mobile_number} onChange={handleChange} className="w-full bg-white border border-gray-300 p-3 rounded-r-lg" placeholder="50 123 4567" /></div>} />
