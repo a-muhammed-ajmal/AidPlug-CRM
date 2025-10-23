@@ -4,10 +4,6 @@ import MobileHeader from './navigation/MobileHeader';
 import DesktopHeader from './navigation/DesktopHeader';
 import MobileNavigation from './navigation/MobileNavigation';
 import DesktopSidebar from './navigation/DesktopSidebar';
-import PWAInstallPrompt from './common/PWAInstallPrompt';
-import { UIProvider } from '../contexts/UIContext';
-import ConfirmationModal from './common/ConfirmationModal';
-import NotificationPanel from './common/NotificationPanel';
 
 const MainAppLayout = () => {
     const location = useLocation();
@@ -53,18 +49,13 @@ const MainAppLayout = () => {
             </div>
 
             <MobileNavigation isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-            <PWAInstallPrompt />
-            <ConfirmationModal />
-            <NotificationPanel />
         </div>
     );
 };
 
 const MainApp = () => {
     return (
-        <UIProvider>
-            <MainAppLayout />
-        </UIProvider>
+        <MainAppLayout />
     );
 };
 
