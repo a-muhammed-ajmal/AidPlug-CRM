@@ -1,5 +1,5 @@
-import React from 'react';
-import { Bell, Mail, Smartphone, Globe, FileText, ChevronRight, HelpCircle, Shield, Info } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Smartphone, Info } from 'lucide-react';
 import { useUserPreferences } from '../../hooks/useUserPreferences';
 import { useSalesCycle } from '../../hooks/useSalesCycle';
 import SkeletonLoader from '../common/SkeletonLoader';
@@ -24,22 +24,64 @@ export default function SettingsPage() {
     const { preferences, updatePreferences, isLoading: prefsLoading } = useUserPreferences();
     const { salesCycle, updateSalesCycle, isLoading: cycleLoading } = useSalesCycle();
 
-    const handlePrefChange = (key: 'push_notifications' | 'email_notifications' | 'mobile_sync') => {
+    const [cycleDates, setCycleDates] = useState({ start_date: '', end_date: '' });
+    const [dateError, setDateError] = useState<string | null>(null);
+    const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced'>('idle');
+
+    useEffect(() => {
+        if (salesCycle) {
+            setCycleDates({
+                start_date: salesCycle.start_date || '',
+                end_date: salesCycle.end_date || '',
+            });
+        }
+    }, [salesCycle]);
+
+    const handlePrefChange = (key: 'mobile_sync') => {
         if (preferences) {
-            updatePreferences({ [key]: !preferences[key] });
+            const newValue = !preferences[key];
+            updatePreferences({ [key]: newValue });
+            
+            if (key === 'mobile_sync') {
+              if (newValue) {
+                setSyncStatus('syncing');
+                setTimeout(() => setSyncStatus('synced'), 2000);
+              } else {
+                setSyncStatus('idle');
+              }
+            }
         }
     };
     
-    const handleCycleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if(salesCycle) {
-            updateSalesCycle({ ...salesCycle, [e.target.name]: e.target.value });
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        const newDates = { ...cycleDates, [name]: value };
+        setCycleDates(newDates);
+
+        if (newDates.start_date && newDates.end_date) {
+            const startDate = new Date(newDates.start_date);
+            const endDate = new Date(newDates.end_date);
+            if (endDate < startDate) {
+                setDateError('End date cannot be earlier than the start date.');
+            } else {
+                setDateError(null);
+            }
+        }
+    };
+
+    const handleDateBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        if (!dateError) {
+            const { name, value } = e.target;
+            if (salesCycle && salesCycle[name as keyof typeof salesCycle] !== value) {
+                updateSalesCycle({ [name]: value });
+            }
         }
     };
     
     if (prefsLoading || cycleLoading) {
         return (
             <div className="space-y-4">
-                <SkeletonLoader className="h-40 rounded-xl" />
+                <SkeletonLoader className="h-24 rounded-xl" />
                 <SkeletonLoader className="h-40 rounded-xl" />
                 <SkeletonLoader className="h-40 rounded-xl" />
             </div>
@@ -52,14 +94,16 @@ export default function SettingsPage() {
             <div className="bg-white rounded-xl border shadow-sm">
                 <div className="p-4 border-b"><h3 className="font-semibold text-gray-900">Preferences</h3></div>
                 <div className="p-4 space-y-4">
-                    <SettingsItem icon={Bell} label="Push Notifications">
-                        <Toggle enabled={preferences?.push_notifications ?? true} onChange={() => handlePrefChange('push_notifications')} />
-                    </SettingsItem>
-                    <SettingsItem icon={Mail} label="Email Notifications">
-                        <Toggle enabled={preferences?.email_notifications ?? false} onChange={() => handlePrefChange('email_notifications')} />
-                    </SettingsItem>
                     <SettingsItem icon={Smartphone} label="Mobile Sync">
-                        <Toggle enabled={preferences?.mobile_sync ?? true} onChange={() => handlePrefChange('mobile_sync')} />
+                        <div className="flex items-center space-x-3">
+                            <span className="text-sm text-gray-500 w-20 text-right">
+                                {preferences?.mobile_sync 
+                                    ? (syncStatus === 'syncing' ? 'Syncing...' : syncStatus === 'synced' ? 'Synced' : 'Enabled') 
+                                    : 'Disabled'
+                                }
+                            </span>
+                            <Toggle enabled={preferences?.mobile_sync ?? true} onChange={() => handlePrefChange('mobile_sync')} />
+                        </div>
                     </SettingsItem>
                 </div>
             </div>
@@ -68,8 +112,15 @@ export default function SettingsPage() {
             <div className="bg-white rounded-xl border shadow-sm">
                 <div className="p-4 border-b"><h3 className="font-semibold text-gray-900">Sales Cycle</h3></div>
                 <div className="p-4 space-y-4">
-                    <div><label htmlFor="start_date" className="block text-sm font-medium text-gray-700 mb-2">Start Date</label><input type="date" id="start_date" name="start_date" value={salesCycle?.start_date || ''} onChange={handleCycleChange} className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" /></div>
-                    <div><label htmlFor="end_date" className="block text-sm font-medium text-gray-700 mb-2">End Date</label><input type="date" id="end_date" name="end_date" value={salesCycle?.end_date || ''} onChange={handleCycleChange} className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" /></div>
+                    <div>
+                        <label htmlFor="start_date" className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                        <input type="date" id="start_date" name="start_date" value={cycleDates.start_date} onChange={handleDateChange} onBlur={handleDateBlur} className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" />
+                    </div>
+                    <div>
+                        <label htmlFor="end_date" className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                        <input type="date" id="end_date" name="end_date" value={cycleDates.end_date} onChange={handleDateChange} onBlur={handleDateBlur} className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" />
+                    </div>
+                    {dateError && <p className="text-sm text-red-600 mt-2">{dateError}</p>}
                 </div>
             </div>
 
@@ -85,33 +136,6 @@ export default function SettingsPage() {
                     <SettingsItem icon={Info} label="Data Sync">
                         <span className="font-medium text-green-600 flex items-center text-sm"><div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>Connected</span>
                     </SettingsItem>
-                </div>
-            </div>
-
-            {/* Support & Help */}
-            <div className="bg-white rounded-xl border shadow-sm">
-                <div className="p-4 border-b"><h3 className="font-semibold text-gray-900">Support & Help</h3></div>
-                <div className="p-2">
-                    <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                      <SettingsItem icon={HelpCircle} label="Help Center">
-                          <ChevronRight className="w-4 h-4 text-gray-400" />
-                      </SettingsItem>
-                    </button>
-                    <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                      <SettingsItem icon={Mail} label="Contact Support">
-                          <ChevronRight className="w-4 h-4 text-gray-400" />
-                      </SettingsItem>
-                    </button>
-                    <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                      <SettingsItem icon={Shield} label="Privacy Policy">
-                          <ChevronRight className="w-4 h-4 text-gray-400" />
-                      </SettingsItem>
-                    </button>
-                    <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                      <SettingsItem icon={Info} label="Terms of Service">
-                          <ChevronRight className="w-4 h-4 text-gray-400" />
-                      </SettingsItem>
-                    </button>
                 </div>
             </div>
         </div>

@@ -13,6 +13,7 @@ export const userService = {
         .from('user_profiles')
         .select('*')
         .eq('id', userId)
+        .limit(1)
         .single();
       if (error) throw error;
       return data;
@@ -42,6 +43,7 @@ export const userService = {
         .from('user_preferences')
         .select('*')
         .eq('user_id', userId)
+        .limit(1)
         .single();
       
       if (error && error.code !== 'PGRST116') throw error;

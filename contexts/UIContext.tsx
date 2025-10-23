@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, PropsWithChildren } from 'react';
 
 interface ConfirmationState {
   isOpen: boolean;
@@ -50,8 +50,8 @@ export const useUI = () => {
 const ACTIVITY_STORAGE_KEY = 'aidplug-crm-activities';
 const MAX_ACTIVITIES = 30;
 
-// FIX: Updated component definition to explicitly type the `children` prop, resolving an issue with React 18 types where `React.FC` no longer includes `children` implicitly.
-export const UIProvider = ({ children }: { children: React.ReactNode }) => {
+// FIX: Updated component definition to use React.FC<PropsWithChildren<{}>> to resolve children prop typing error.
+export const UIProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const [confirmation, setConfirmation] = useState<ConfirmationState>({
     isOpen: false,
     title: '',

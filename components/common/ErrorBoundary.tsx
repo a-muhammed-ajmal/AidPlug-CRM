@@ -1,7 +1,7 @@
-import React, { ErrorInfo, ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode, PropsWithChildren } from 'react';
 
 interface ErrorBoundaryProps {
-  children: ReactNode;
+  // children are now handled by PropsWithChildren
 }
 
 interface State {
@@ -9,7 +9,7 @@ interface State {
   error?: Error;
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
+class ErrorBoundary extends React.Component<PropsWithChildren<ErrorBoundaryProps>, State> {
   public state: State = {
     hasError: false
   };

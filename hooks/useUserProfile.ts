@@ -22,10 +22,22 @@ export function useUserProfile() {
     },
   });
 
+  const updateProfile = (updates: UserProfileUpdate, options?: {
+    onSuccess?: (data: any) => void;
+    onError?: (error: any) => void;
+    onSettled?: () => void;
+  }) => {
+    updateProfileMutation.mutate(updates, {
+      onSuccess: options?.onSuccess,
+      onError: options?.onError,
+      onSettled: options?.onSettled,
+    });
+  };
+
   return {
     profile,
     isLoading,
     error,
-    updateProfile: updateProfileMutation.mutate,
+    updateProfile,
   };
 }
