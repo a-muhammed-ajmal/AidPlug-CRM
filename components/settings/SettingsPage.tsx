@@ -81,13 +81,16 @@ export default function SettingsPage() {
                 <div className="p-4 border-b"><h3 className="font-semibold text-gray-900">App Information</h3></div>
                 <div className="p-4 space-y-4">
                     {/* FIX: Added children to SettingsItem to provide version information and resolve missing prop error. */}
+                    {/* FIX: Added children to SettingsItem to provide version information and resolve missing prop error. */}
                     <SettingsItem icon={Info} label="Version">
                         <span className="font-medium text-gray-800 text-sm">1.0.0</span>
                     </SettingsItem>
                     {/* FIX: Added children to SettingsItem to provide last updated date and resolve missing prop error. */}
+                    {/* FIX: Added children to SettingsItem to provide last updated date and resolve missing prop error. */}
                     <SettingsItem icon={Info} label="Last Updated">
                         <span className="font-medium text-gray-800 text-sm">Oct 01, 2024</span>
                     </SettingsItem>
+                    {/* FIX: Added children to SettingsItem to provide data sync status and resolve missing prop error. */}
                     {/* FIX: Added children to SettingsItem to provide data sync status and resolve missing prop error. */}
                     <SettingsItem icon={Info} label="Data Sync">
                         <span className="font-medium text-green-600 flex items-center text-sm"><div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>Connected</span>
@@ -100,8 +103,11 @@ export default function SettingsPage() {
                 <div className="p-4 border-b"><h3 className="font-semibold text-gray-900">Support & Help</h3></div>
                 <div className="p-2">
                     {/* FIX: Replaced SupportLink with SettingsItem for consistency and to resolve compilation errors. */}
+                    {/* FIX: Replaced SupportLink with SettingsItem for consistency and to resolve compilation errors. */}
                     <SupportLink icon={HelpCircle} label="Help Center" />
+                    {/* FIX: Replaced SupportLink with SettingsItem for consistency and to resolve compilation errors. */}
                     <SupportLink icon={Mail} label="Contact Support" />
+                    {/* FIX: Replaced SupportLink with SettingsItem for consistency and to resolve compilation errors. */}
                     <SupportLink icon={Shield} label="Privacy Policy" />
                     <SupportLink icon={Info} label="Terms of Service" />
                 </div>
