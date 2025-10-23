@@ -89,13 +89,14 @@ export default function EditProfilePage() {
                     addNotification('Profile Saved', 'Your information has been updated successfully.');
                     navigate('/account');
                 },
-                onError: (err) => {
-                    throw err; // Throw to be caught by outer catch block
+                onError: (err: any) => {
+                    addNotification('Save Failed', err.message || 'An error occurred while saving your profile.');
+                    setIsSaving(false);
                 }
             });
 
         } catch (err: any) {
-            addNotification('Save Failed', err.message || 'An error occurred while saving your profile.');
+            addNotification('Save Failed', err.message || 'An error occurred while uploading the avatar.');
             setIsSaving(false);
         }
     };

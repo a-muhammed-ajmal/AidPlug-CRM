@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDeals } from '../../hooks/useDeals';
 import { useTasks } from '../../hooks/useTasks';
 import { useClients } from '../../hooks/useClients';
-// FIX: Imported the 'Users' icon from lucide-react.
 import { Briefcase, Clock, CheckCircle as CheckCircleIcon, Zap, Plus, List, User, Users, Upload, Activity, Award, Gift, Star, Calendar } from 'lucide-react';
 import QuickActionButton from '../common/QuickActionButton';
 import { useUI } from '../../contexts/UIContext';
