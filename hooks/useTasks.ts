@@ -3,10 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tasksService } from '../services/tasksService';
 import { useAuth } from '../contexts/AuthContext';
 import { Task } from '../types';
+import { useUI } from '../contexts/UIContext';
 
 export function useTasks() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { logActivity } = useUI();
 
   const { data: tasks = [], isLoading, error } = useQuery<Task[], Error>({
     queryKey: ['tasks', user?.id],
@@ -16,8 +18,9 @@ export function useTasks() {
 
   const createMutation = useMutation({
     mutationFn: tasksService.create,
-    onSuccess: () => {
+    onSuccess: (newTask) => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      logActivity('task_add', `Created task: "${newTask.title}"`);
     },
   });
 
@@ -30,8 +33,11 @@ export function useTasks() {
 
   const toggleCompleteMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: Task['status'] }) => tasksService.toggleComplete(id, status),
-    onSuccess: () => {
+    onSuccess: (updatedTask) => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      if (updatedTask.status === 'completed') {
+        logActivity('task_complete', `Completed task: "${updatedTask.title}"`);
+      }
     },
   });
 

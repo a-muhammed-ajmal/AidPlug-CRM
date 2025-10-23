@@ -1,30 +1,87 @@
 import React, { useState, useMemo } from 'react';
-import { Edit3, User, Shield, Smartphone, Clock, CheckCircle, TrendingUp, List, Users, FileText, Briefcase, LogOut } from 'lucide-react';
+import { Edit3, User, Shield, Smartphone, Clock, CheckCircle, TrendingUp, List, Users, FileText, Briefcase, LogOut, Activity } from 'lucide-react';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import { useSalesCycle } from '../../hooks/useSalesCycle';
 import { useDeals } from '../../hooks/useDeals';
 import { useTasks } from '../../hooks/useTasks';
 import { useLeads } from '../../hooks/useLeads';
-import { mockActivity } from '../../lib/constants';
 import UserFormModal from '../settings/UserFormModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
 
 const AccountActivityFeed = () => {
-    const getActivityIcon = (type: string) => {
-        const icons: { [key: string]: React.ReactNode } = {
-            lead_add: <Users className="w-4 h-4 text-white" />, deal_update: <Briefcase className="w-4 h-4 text-white" />, task_complete: <CheckCircle className="w-4 h-4 text-white" />, client_add: <User className="w-4 h-4 text-white" />, note_add: <FileText className="w-4 h-4 text-white" />,
-        };
-        const colors: { [key: string]: string } = {
-            lead_add: 'bg-green-500', deal_update: 'bg-blue-500', task_complete: 'bg-orange-500', client_add: 'bg-purple-500', note_add: 'bg-gray-500',
-        };
-        return <div className={`w-8 h-8 ${colors[type] || 'bg-gray-500'} rounded-full flex items-center justify-center flex-shrink-0`}>{icons[type]}</div>;
+    const { activities } = useUI();
+
+    const timeSince = (dateString: string) => {
+        const date = new Date(dateString);
+        const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+      
+        let interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + "y ago";
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + "mo ago";
+        interval = seconds / 86400;
+        if (interval > 1) return Math.floor(interval) + "d ago";
+        interval = seconds / 3600;
+        if (interval > 1) return Math.floor(interval) + "h ago";
+        interval = seconds / 60;
+        if (interval > 1) return Math.floor(interval) + "m ago";
+        if (seconds < 10) return "just now";
+        return Math.floor(seconds) + "s ago";
     };
+
+    const getActivityIcon = (type: string) => {
+        const iconMap: { [key: string]: React.ReactNode } = {
+            lead_add: <Users className="w-4 h-4 text-white" />,
+            lead_update: <Users className="w-4 h-4 text-white" />,
+            lead_delete: <Users className="w-4 h-4 text-white" />,
+            lead_convert: <Users className="w-4 h-4 text-white" />,
+            client_add: <User className="w-4 h-4 text-white" />,
+            deal_add: <Briefcase className="w-4 h-4 text-white" />,
+            deal_stage_update: <Briefcase className="w-4 h-4 text-white" />,
+            deal_delete: <Briefcase className="w-4 h-4 text-white" />,
+            task_add: <List className="w-4 h-4 text-white" />,
+            task_complete: <CheckCircle className="w-4 h-4 text-white" />,
+        };
+        const colorMap: { [key: string]: string } = {
+            lead_add: 'bg-green-500',
+            lead_update: 'bg-blue-500',
+            lead_delete: 'bg-red-500',
+            lead_convert: 'bg-purple-500',
+            client_add: 'bg-indigo-500',
+            deal_add: 'bg-green-500',
+            deal_stage_update: 'bg-blue-500',
+            deal_delete: 'bg-red-500',
+            task_add: 'bg-yellow-500',
+            task_complete: 'bg-green-500',
+        };
+        return (
+            <div className={`w-8 h-8 ${colorMap[type] || 'bg-gray-500'} rounded-full flex items-center justify-center flex-shrink-0`}>
+                {iconMap[type]}
+            </div>
+        );
+      };
+
     return (
         <div className="bg-white rounded-xl p-4 border shadow-sm">
-             <div className="space-y-4">
-                {mockActivity.map(item => (<div key={item.id} className="flex items-center space-x-3">{getActivityIcon(item.type)}<div className="flex-1"><p className="text-sm font-medium text-gray-900">{item.text}</p><p className="text-xs text-gray-500">{item.time}</p></div></div>))}
-             </div>
+             {activities.length > 0 ? (
+                <div className="space-y-4">
+                    {activities.map(item => (
+                        <div key={item.id} className="flex items-center space-x-3">
+                            {getActivityIcon(item.type)}
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-900">{item.message}</p>
+                                <p className="text-xs text-gray-500">{timeSince(item.timestamp)}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+             ) : (
+                <div className="text-center py-8">
+                    <Activity className="w-10 h-10 mx-auto text-gray-300 mb-2" />
+                    <p className="text-sm text-gray-500">No activity to show yet.</p>
+                </div>
+             )}
         </div>
     );
 };

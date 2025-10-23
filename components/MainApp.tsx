@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
 import MobileHeader from './navigation/MobileHeader';
@@ -11,8 +9,7 @@ import { UIProvider } from '../contexts/UIContext';
 import ConfirmationModal from './common/ConfirmationModal';
 import NotificationPanel from './common/NotificationPanel';
 
-// FIX: Changed to a standard function component as React.FC is not needed and can cause type issues.
-const MainAppContent = () => {
+const MainAppLayout = () => {
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
@@ -63,11 +60,11 @@ const MainAppContent = () => {
     );
 };
 
-// FIX: Removed React.FC to resolve a TypeScript error where UIProvider was reported as missing children.
 const MainApp = () => {
     return (
-        // FIX: Explicitly pass children prop to avoid TypeScript error.
-        <UIProvider children={<MainAppContent />} />
+        <UIProvider>
+            <MainAppLayout />
+        </UIProvider>
     );
 };
 

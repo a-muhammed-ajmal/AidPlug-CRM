@@ -17,7 +17,7 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
   const { user } = useAuth();
   const { deleteLead } = useLeads();
   const { createDeal } = useDeals();
-  const { showConfirmation, addNotification } = useUI();
+  const { showConfirmation, addNotification, logActivity } = useUI();
 
   const getStatusColor = (status: Lead['qualification_status']) => {
     const colors = {
@@ -39,7 +39,7 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
       'Delete Lead?',
       'This action cannot be undone. Are you sure you want to permanently delete this lead?',
       () => {
-        deleteLead(lead.id, {
+        deleteLead(lead, {
             onSuccess: () => addNotification('Lead Deleted', `Lead "${lead.full_name}" has been removed.`),
             onError: (e) => addNotification('Error', (e as Error).message),
         });
@@ -66,8 +66,9 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
     createDeal(newDeal as any, {
       onSuccess: () => {
         addNotification("Lead Converted", `${lead.full_name} is now a deal.`);
+        logActivity('lead_convert', `Converted lead "${lead.full_name}" to a deal.`);
         // Also delete the lead
-        deleteLead(lead.id);
+        deleteLead(lead);
       },
       onError: (e) => addNotification('Conversion Failed', (e as Error).message),
     });

@@ -2,11 +2,8 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+// FIX: Changed to React.FC to resolve issue with children prop type inference.
+const ProtectedRoute: React.FC = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {

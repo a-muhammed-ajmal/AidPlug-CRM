@@ -217,7 +217,7 @@ export default function DealsPage() {
       'Delete Deal?',
       `Are you sure you want to permanently delete the deal "${deal.title}"? This action cannot be undone.`,
       () => {
-        deleteDeal(deal.id, {
+        deleteDeal(deal, {
           onSuccess: () => addNotification('Deal Deleted', `The deal has been successfully removed.`),
           onError: (error) => addNotification('Error', (error as Error).message || 'Failed to delete deal.'),
         });

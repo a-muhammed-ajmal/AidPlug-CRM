@@ -1,13 +1,12 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDeals } from '../../hooks/useDeals';
 import { useTasks } from '../../hooks/useTasks';
 import { useClients } from '../../hooks/useClients';
-import { Briefcase, Clock, CheckCircle, Zap, Plus, List, User, Upload, Activity, Award, Gift, Star, Calendar } from 'lucide-react';
+// FIX: Imported the 'Users' icon from lucide-react.
+import { Briefcase, Clock, CheckCircle as CheckCircleIcon, Zap, Plus, List, User, Users, Upload, Activity, Award, Gift, Star, Calendar } from 'lucide-react';
 import QuickActionButton from '../common/QuickActionButton';
 import { useUI } from '../../contexts/UIContext';
-import { mockActivity } from '../../lib/constants';
-import StatusUpdates from './StatusUpdates';
 
 // Reusable component from the monolithic file, now placed here for dashboard use
 const DashboardKPICard = ({ title, value, color, icon }: { title: string, value: string | number, color: string, icon: React.ReactNode }) => (
@@ -61,7 +60,7 @@ const ThingsToDo = () => {
             </div>
         ) : (
             <div className="text-center py-4">
-            <CheckCircle className="w-8 h-8 mx-auto text-gray-300 mb-2" />
+            <CheckCircleIcon className="w-8 h-8 mx-auto text-gray-300 mb-2" />
             <p className="text-sm text-gray-500">All tasks completed!</p>
             </div>
         )}
@@ -149,13 +148,63 @@ const UpcomingEvents = () => {
 
 export default function Dashboard() {
     const navigate = useNavigate();
-    const { addNotification } = useUI();
+    const { addNotification, activities } = useUI();
     const { deals, isLoading: dealsLoading } = useDeals();
 
     const activeDeals = deals.filter(d => !['completed', 'unsuccessful'].includes(d.stage || '')).length;
     // Note: sales cycle logic will be implemented in settings/account pages
     const daysRemaining = 15; // Placeholder
     const doneSuccessfully = deals.filter(d => d.stage === 'completed').length;
+
+    const timeSince = (dateString: string) => {
+        const date = new Date(dateString);
+        const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+      
+        let interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + "y ago";
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + "mo ago";
+        interval = seconds / 86400;
+        if (interval > 1) return Math.floor(interval) + "d ago";
+        interval = seconds / 3600;
+        if (interval > 1) return Math.floor(interval) + "h ago";
+        interval = seconds / 60;
+        if (interval > 1) return Math.floor(interval) + "m ago";
+        if (seconds < 10) return "just now";
+        return Math.floor(seconds) + "s ago";
+    };
+
+    const getActivityIcon = (type: string) => {
+        const iconMap: { [key: string]: React.ReactNode } = {
+            lead_add: <Users className="w-4 h-4 text-white" />,
+            lead_update: <Users className="w-4 h-4 text-white" />,
+            lead_delete: <Users className="w-4 h-4 text-white" />,
+            lead_convert: <Users className="w-4 h-4 text-white" />,
+            client_add: <User className="w-4 h-4 text-white" />,
+            deal_add: <Briefcase className="w-4 h-4 text-white" />,
+            deal_stage_update: <Briefcase className="w-4 h-4 text-white" />,
+            deal_delete: <Briefcase className="w-4 h-4 text-white" />,
+            task_add: <List className="w-4 h-4 text-white" />,
+            task_complete: <CheckCircleIcon className="w-4 h-4 text-white" />,
+        };
+        const colorMap: { [key: string]: string } = {
+            lead_add: 'bg-green-500',
+            lead_update: 'bg-blue-500',
+            lead_delete: 'bg-red-500',
+            lead_convert: 'bg-purple-500',
+            client_add: 'bg-indigo-500',
+            deal_add: 'bg-green-500',
+            deal_stage_update: 'bg-blue-500',
+            deal_delete: 'bg-red-500',
+            task_add: 'bg-yellow-500',
+            task_complete: 'bg-green-500',
+        };
+        return (
+            <div className={`w-8 h-8 ${colorMap[type] || 'bg-gray-500'} rounded-full flex items-center justify-center flex-shrink-0`}>
+                {iconMap[type]}
+            </div>
+        );
+      };
 
     if (dealsLoading) {
         return (
@@ -184,7 +233,7 @@ export default function Dashboard() {
                     title="Done Successfully" 
                     value={doneSuccessfully}
                     color="bg-green-500" 
-                    icon={<CheckCircle size={56} />} 
+                    icon={<CheckCircleIcon size={56} />} 
                 />
             </div>
 
@@ -231,25 +280,28 @@ export default function Dashboard() {
 
             <div className="bg-white rounded-xl p-4 border shadow-sm">
                 <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
-                <Activity className="w-5 h-5 mr-2 text-green-600" />
-                Recent Activity
+                    <Activity className="w-5 h-5 mr-2 text-green-600" />
+                    Recent Activity
                 </h3>
-                <div className="space-y-4">
-                {mockActivity.slice(0, 3).map(item => (
-                    <div key={item.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                           <Activity className="w-4 h-4" />
-                        </div>
-                        <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{item.text}</p>
-                        </div>
-                        <span className="text-xs text-gray-500">{item.time}</span>
+                {activities.length > 0 ? (
+                    <div className="space-y-4">
+                        {activities.slice(0, 5).map(item => (
+                            <div key={item.id} className="flex items-center space-x-3">
+                                {getActivityIcon(item.type)}
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium text-gray-900">{item.message}</p>
+                                </div>
+                                <span className="text-xs text-gray-500 flex-shrink-0">{timeSince(item.timestamp)}</span>
+                            </div>
+                        ))}
                     </div>
-                ))}
-                </div>
+                ) : (
+                    <div className="text-center py-4">
+                        <Activity className="w-8 h-8 mx-auto text-gray-300 mb-2" />
+                        <p className="text-sm text-gray-500">Your recent activities will show up here.</p>
+                    </div>
+                )}
             </div>
-
-            <StatusUpdates />
         </div>
     );
 }

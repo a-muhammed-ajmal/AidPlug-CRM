@@ -77,8 +77,6 @@ export const mockReferrals = [
     { id: 'ref-3', name: 'Hassan Iqbal', type: 'Relative' }
 ];
 
-export const mockActivity: { id: number; type: string; text: string; time: string; }[] = [];
-
 // Data for Add Lead Form
 export const UAE_BANK_NAMES = [
   'Emirates Islamic Bank',

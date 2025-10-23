@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 
 interface ConfirmationState {
   isOpen: boolean;
@@ -16,6 +16,13 @@ interface Notification {
   unread: boolean;
 }
 
+export interface Activity {
+  id: string;
+  type: 'lead_add' | 'lead_update' | 'lead_delete' | 'lead_convert' | 'client_add' | 'deal_add' | 'deal_stage_update' | 'deal_delete' | 'task_add' | 'task_complete';
+  message: string;
+  timestamp: string;
+}
+
 interface UIContextType {
   confirmation: ConfirmationState;
   showConfirmation: (title: string, message: string, onConfirm: () => void) => void;
@@ -26,6 +33,8 @@ interface UIContextType {
   clearAllNotifications: () => void;
   showNotifications: boolean;
   setShowNotifications: (show: boolean) => void;
+  activities: Activity[];
+  logActivity: (type: Activity['type'], message: string) => void;
 }
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
@@ -38,7 +47,11 @@ export const useUI = () => {
   return context;
 };
 
-export const UIProvider = ({ children }: { children: ReactNode }) => {
+const ACTIVITY_STORAGE_KEY = 'aidplug-crm-activities';
+const MAX_ACTIVITIES = 30;
+
+// FIX: Changed to React.FC to resolve issue with children prop type inference.
+export const UIProvider: React.FC = ({ children }) => {
   const [confirmation, setConfirmation] = useState<ConfirmationState>({
     isOpen: false,
     title: '',
@@ -49,6 +62,18 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [activities, setActivities] = useState<Activity[]>([]);
+
+  useEffect(() => {
+    try {
+      const storedActivities = localStorage.getItem(ACTIVITY_STORAGE_KEY);
+      if (storedActivities) {
+        setActivities(JSON.parse(storedActivities));
+      }
+    } catch (error) {
+      console.error("Failed to load activities from localStorage", error);
+    }
+  }, []);
 
   const hideConfirmation = useCallback(() => {
     setConfirmation(prev => ({ ...prev, isOpen: false }));
@@ -86,6 +111,26 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
     setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
   }, []);
 
+  const logActivity = useCallback((type: Activity['type'], message: string) => {
+    const newActivity: Activity = {
+      id: `${Date.now()}-${Math.random()}`,
+      type,
+      message,
+      timestamp: new Date().toISOString(),
+    };
+    
+    setActivities(prevActivities => {
+      const updatedActivities = [newActivity, ...prevActivities].slice(0, MAX_ACTIVITIES);
+      try {
+        localStorage.setItem(ACTIVITY_STORAGE_KEY, JSON.stringify(updatedActivities));
+      } catch (error) {
+        console.error("Failed to save activities to localStorage", error);
+      }
+      return updatedActivities;
+    });
+  }, []);
+
+
   const value = {
     confirmation,
     showConfirmation,
@@ -96,6 +141,8 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
     clearAllNotifications,
     showNotifications,
     setShowNotifications,
+    activities,
+    logActivity,
   };
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;

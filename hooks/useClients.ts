@@ -3,10 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { clientsService } from '../services/clientsService';
 import { useAuth } from '../contexts/AuthContext';
 import { Client } from '../types';
+import { useUI } from '../contexts/UIContext';
 
 export function useClients() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { logActivity } = useUI();
 
   const { data: clients = [], isLoading, error } = useQuery<Client[], Error>({
     queryKey: ['clients', user?.id],
@@ -16,8 +18,9 @@ export function useClients() {
 
   const createMutation = useMutation({
     mutationFn: clientsService.create,
-    onSuccess: () => {
+    onSuccess: (newClient) => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
+      logActivity('client_add', `Added new client: "${newClient.full_name}"`);
     },
   });
 

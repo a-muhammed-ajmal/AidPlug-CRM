@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
-  Home, Users, Briefcase, List, Inbox, Building, X
+  Building, X
 } from 'lucide-react';
 import NavList from './NavList';
+import { mainNavItems, bottomNavKeys } from '../../lib/navigation';
 
 
 interface MobileNavigationProps {
@@ -13,13 +13,7 @@ interface MobileNavigationProps {
 }
 
 export default function MobileNavigation({ isOpen, onClose }: MobileNavigationProps) {
-    const bottomNavTabs = [
-        { key: 'dashboard', icon: Home, label: 'Home', path: '/dashboard' },
-        { key: 'leads', icon: Users, label: 'Leads', path: '/leads' },
-        { key: 'deals', icon: Briefcase, label: 'Deals', path: '/deals' },
-        { key: 'clients', icon: Inbox, label: 'Clients', path: '/clients' },
-        { key: 'tasks', icon: List, label: 'Tasks', path: '/tasks' }
-    ];
+    const bottomNavTabs = mainNavItems.filter(item => bottomNavKeys.includes(item.key));
 
     return (
         <>

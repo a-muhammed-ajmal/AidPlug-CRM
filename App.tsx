@@ -25,7 +25,6 @@ import ProductDetailPage from './components/products/ProductDetailPage';
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
       <AuthProvider>
         <HashRouter>
           <Routes>
@@ -36,8 +35,10 @@ function App() {
             <Route
               path="/"
               element={
-                /* FIX: Explicitly pass children prop to avoid TypeScript error. */
-                <ProtectedRoute children={<MainApp />} />
+                // FIX: Pass children in the standard way to avoid TypeScript error.
+                <ProtectedRoute>
+                  <MainApp />
+                </ProtectedRoute>
               }
             >
               <Route index element={<Navigate to="/dashboard" replace />} />
