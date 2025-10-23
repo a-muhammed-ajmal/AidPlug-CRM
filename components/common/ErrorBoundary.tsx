@@ -1,7 +1,7 @@
-import React, { ErrorInfo, ReactNode, PropsWithChildren } from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
-  // children are now handled by PropsWithChildren
+  children?: ReactNode;
 }
 
 interface State {
@@ -9,7 +9,7 @@ interface State {
   error?: Error;
 }
 
-class ErrorBoundary extends React.Component<PropsWithChildren<ErrorBoundaryProps>, State> {
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
   public state: State = {
     hasError: false
   };
@@ -53,6 +53,8 @@ class ErrorBoundary extends React.Component<PropsWithChildren<ErrorBoundaryProps
       );
     }
 
+    // FIX: Accessing props on a class component instance is standard. The error indicates a typing issue.
+    // By correctly extending React.Component, `this.props` is available in the render method.
     return this.props.children;
   }
 }
