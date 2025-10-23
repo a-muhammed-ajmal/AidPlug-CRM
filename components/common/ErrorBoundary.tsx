@@ -1,14 +1,18 @@
 import React, { ErrorInfo, ReactNode } from 'react';
 
+// FIX: Explicitly define props for the class component to resolve typing issue.
+interface ErrorBoundaryProps {
+  children?: ReactNode;
+}
+
 interface State {
   hasError: boolean;
   error?: Error;
 }
 
-class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, State> {
-  public state: State = {
-    hasError: false
-  };
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
+  // FIX: The constructor was causing typing issues, switching to class property for state initialization.
+  public state: State = { hasError: false, error: undefined };
 
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
@@ -49,8 +53,6 @@ class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, State> 
       );
     }
 
-    // FIX: Accessing props on a class component instance is standard. The error indicates a typing issue.
-    // By correctly extending React.Component, `this.props` is available in the render method.
     return this.props.children;
   }
 }
