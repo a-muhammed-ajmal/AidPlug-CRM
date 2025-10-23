@@ -56,12 +56,12 @@ export default function EditProfilePage() {
         e.preventDefault();
         if (!user || !profile) return;
         setIsSaving(true);
-        
+
         let newAvatarUrl = profile.photo_url;
 
-        try {
-            // 1. Upload new avatar if one is selected
-            if (avatarFile) {
+        // Step 1: Handle avatar upload if a new file is present.
+        if (avatarFile) {
+            try {
                 const filePath = `${user.id}/${Date.now()}_${avatarFile.name}`;
                 const { error: uploadError } = await supabase.storage
                     .from('avatars')
@@ -72,33 +72,35 @@ export default function EditProfilePage() {
                 const { data: urlData } = supabase.storage
                     .from('avatars')
                     .getPublicUrl(filePath);
-
+                
                 newAvatarUrl = urlData.publicUrl;
+            } catch (err: any) {
+                addNotification('Upload Failed', err.message || 'An error occurred while uploading the avatar.');
+                setIsSaving(false);
+                return; // Stop execution if upload fails
             }
-
-            // 2. Update user profile data
-            const profileUpdates = {
-                ...formData,
-                phone: formData.phone ? `+971 ${formData.phone}` : null,
-                whatsapp_number: formData.whatsapp_number ? `+971 ${formData.whatsapp_number}` : null,
-                photo_url: newAvatarUrl,
-            };
-
-            updateProfile(profileUpdates, {
-                onSuccess: () => {
-                    addNotification('Profile Saved', 'Your information has been updated successfully.');
-                    navigate('/account');
-                },
-                onError: (err: any) => {
-                    addNotification('Save Failed', err.message || 'An error occurred while saving your profile.');
-                    setIsSaving(false);
-                }
-            });
-
-        } catch (err: any) {
-            addNotification('Save Failed', err.message || 'An error occurred while uploading the avatar.');
-            setIsSaving(false);
         }
+
+        // Step 2: Prepare and execute the profile update mutation.
+        const profileUpdates = {
+            ...formData,
+            phone: formData.phone ? `+971 ${formData.phone}` : null,
+            whatsapp_number: formData.whatsapp_number ? `+971 ${formData.whatsapp_number}` : null,
+            photo_url: newAvatarUrl,
+        };
+
+        updateProfile(profileUpdates, {
+            onSuccess: () => {
+                addNotification('Profile Saved', 'Your information has been updated successfully.');
+                navigate('/account');
+            },
+            onError: (err: any) => {
+                addNotification('Save Failed', err.message || 'An error occurred while saving your profile.');
+            },
+            onSettled: () => {
+                setIsSaving(false);
+            }
+        });
     };
     
     if (isLoading) {

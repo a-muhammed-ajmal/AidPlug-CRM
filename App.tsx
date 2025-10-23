@@ -40,32 +40,28 @@ function App() {
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
-                <Route
-                  path="/"
-                  element={
-                    <ProtectedRoute>
-                      <MainApp />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route index element={<Navigate to="/dashboard" replace />} />
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="leads" element={<LeadsPage />} />
-                  <Route path="clients" element={<ClientsPage />} />
-                  <Route path="deals" element={<DealsPage />} />
-                  <Route path="tasks" element={<TasksPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-                  <Route path="account" element={<AccountPage />} />
-                  <Route path="account/edit" element={<EditProfilePage />} />
-                  
-                  <Route path="products">
-                    <Route index element={<ProductsPage />} />
-                    <Route path=":bankSlug" element={<ProductTypesPage />} />
-                    <Route path=":bankSlug/:typeSlug" element={<ProductListPage />} />
-                    <Route path=":bankSlug/:typeSlug/:productSlug" element={<ProductDetailPage />} />
-                  </Route>
+                {/* FIX: Refactored to use an outlet-based ProtectedRoute for better structure and to resolve typing errors. */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/" element={<MainApp />}>
+                    <Route index element={<Navigate to="/dashboard" replace />} />
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="leads" element={<LeadsPage />} />
+                    <Route path="clients" element={<ClientsPage />} />
+                    <Route path="deals" element={<DealsPage />} />
+                    <Route path="tasks" element={<TasksPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                    <Route path="account" element={<AccountPage />} />
+                    <Route path="account/edit" element={<EditProfilePage />} />
+                    
+                    <Route path="products">
+                      <Route index element={<ProductsPage />} />
+                      <Route path=":bankSlug" element={<ProductTypesPage />} />
+                      <Route path=":bankSlug/:typeSlug" element={<ProductListPage />} />
+                      <Route path=":bankSlug/:typeSlug/:productSlug" element={<ProductDetailPage />} />
+                    </Route>
 
-                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                  </Route>
                 </Route>
               </Routes>
             </HashRouter>
