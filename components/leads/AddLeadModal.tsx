@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
@@ -13,7 +12,7 @@ interface AddLeadModalProps {
   initialData?: Lead | null;
 }
 
-// FIX: Moved component definitions outside the main component function to prevent re-creation on every render.
+// Moved component definitions outside the main component function to prevent re-creation on every render.
 // This resolves an issue where input fields would lose focus on mobile devices after typing a single character.
 const FormInput = ({ label, children }: { label: string, children: React.ReactNode }) => (
     <div>
@@ -50,12 +49,10 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
     salary: initialData?.monthly_salary?.toString() || '',
     bank: initialData?.bank_name || 'Emirates Islamic Bank',
     productType: initialData?.product_type || 'Credit Card',
-    // FIX: EIB_CREDIT_CARDS contains objects, so we need to use the `name` property.
     product: initialData?.product || EIB_CREDIT_CARDS[0].name,
     referral: initialData?.referral_source || '',
   });
 
-  // FIX: EIB_CREDIT_CARDS contains objects, map to strings for the select input.
   const [availableProducts, setAvailableProducts] = useState(EIB_CREDIT_CARDS.map(card => card.name));
   const [isProductDropdownVisible, setIsProductDropdownVisible] = useState(true);
   
@@ -69,7 +66,6 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
     let dropdownVisible = false;
 
     if (formData.bank === 'Emirates Islamic Bank' && formData.productType === 'Credit Card') {
-      // FIX: Map the array of objects to an array of strings.
       newProducts = EIB_CREDIT_CARDS.map(card => card.name);
       dropdownVisible = true;
     } else if (formData.productType === 'Account Opening') {
@@ -151,7 +147,6 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
             <main className="flex-1 p-6 overflow-y-auto">
                 <div className="space-y-6">
-                    {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
                     <FormInput label="Full Name*" children={<input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />} />
                     <FormInput label="Email" children={<input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" placeholder="example@email.com" />} />
                     <FormInput label="Company Name" children={<input type="text" name="company" value={formData.company} onChange={handleChange} className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />} />

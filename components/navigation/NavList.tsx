@@ -15,7 +15,6 @@ interface NavListProps {
 }
 
 // A helper component to keep the NavLink logic clean
-// FIX: Explicitly type NavListItem as React.FC to resolve incorrect TypeScript errors about the 'key' prop.
 const NavListItem: React.FC<{ item: NavItem, count?: number | null, onClick: () => void }> = ({ item, count, onClick }) => (
     <NavLink
         to={item.path}

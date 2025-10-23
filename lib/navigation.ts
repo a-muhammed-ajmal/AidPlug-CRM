@@ -1,4 +1,3 @@
-// FIX: Import React to make the React namespace available.
 import React from 'react';
 import {
   Home, Users, Briefcase, List, Inbox, Settings, User as UserIcon, PieChart

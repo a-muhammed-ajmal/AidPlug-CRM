@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Plus, Search, Users, X, Phone, Mail, Edit3, Trash2, User, Building, DollarSign, Briefcase, MapPin, Calendar, CheckCircle, Hash, Globe, Users as GenderIcon, Landmark, TrendingUp as EmploymentIcon } from 'lucide-react';
@@ -11,6 +8,7 @@ import EmptyState from '../common/EmptyState';
 import { Client } from '../../types';
 import { useUI } from '../../contexts/UIContext';
 import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
+import SkeletonLoader from '../common/SkeletonLoader';
 
 
 // --- ClientDetailsModal Component Definition ---
@@ -29,10 +27,10 @@ const Section = ({ title, children }: { title: string, children: React.ReactNode
     </div>
 );
 
-const DetailItem = ({ label, value, icon }: { label: string, value: string | number | null, icon?: React.ReactNode }) => (
+const DetailItem = ({ label, value, icon: Icon }: { label: string, value: string | number | null, icon?: React.ElementType }) => (
     <div>
       <label className="text-xs font-medium text-gray-500 flex items-center">
-        {icon && React.cloneElement(icon as React.ReactElement, { className: "w-3.5 h-3.5 mr-1.5 text-gray-400" })}
+        {Icon && <Icon className="w-3.5 h-3.5 mr-1.5 text-gray-400" />}
         {label}
       </label>
       <p className="mt-1 text-sm text-gray-900 break-words">{value || 'N/A'}</p>
@@ -82,35 +80,35 @@ const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }: ClientDetails
         <main className="p-4 overflow-y-auto space-y-4">
             <Section title="Personal & Contact Details" children={
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <DetailItem label="Mobile Number" value={client.phone} icon={<Phone />} />
-                <DetailItem label="WhatsApp Number" value={client.whatsapp_number} icon={<Phone />} />
-                <DetailItem label="Email Address" value={client.email} icon={<Mail />} />
-                <DetailItem label="Date of Birth" value={client.dob ? new Date(client.dob).toLocaleDateString() : null} icon={<Calendar />} />
-                <DetailItem label="Gender" value={client.gender} icon={<GenderIcon />} />
-                <DetailItem label="Nationality" value={client.nationality} icon={<Globe />} />
+                <DetailItem label="Mobile Number" value={client.phone} icon={Phone} />
+                <DetailItem label="WhatsApp Number" value={client.whatsapp_number} icon={Phone} />
+                <DetailItem label="Email Address" value={client.email} icon={Mail} />
+                <DetailItem label="Date of Birth" value={client.dob ? new Date(client.dob).toLocaleDateString() : null} icon={Calendar} />
+                <DetailItem label="Gender" value={client.gender} icon={GenderIcon} />
+                <DetailItem label="Nationality" value={client.nationality} icon={Globe} />
               </div>
             } />
             <Section title="Identification & Residency" children={
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <DetailItem label="Emirates ID" value={client.emirates_id} icon={<Hash />} />
-                <DetailItem label="Passport" value={client.passport} icon={<Hash />} />
-                <DetailItem label="Emirate" value={client.emirate} icon={<MapPin />} />
-                <DetailItem label="Visa Status" value={client.visa_status} icon={<CheckCircle />} />
+                <DetailItem label="Emirates ID" value={client.emirates_id} icon={Hash} />
+                <DetailItem label="Passport" value={client.passport} icon={Hash} />
+                <DetailItem label="Emirate" value={client.emirate} icon={MapPin} />
+                <DetailItem label="Visa Status" value={client.visa_status} icon={CheckCircle} />
               </div>
             } />
             <Section title="Employment Details" children={
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <DetailItem label="Employment Status" value={client.employment_status} icon={<EmploymentIcon />} />
-                <DetailItem label="Company" value={client.company_name} icon={<Building />} />
-                <DetailItem label="Designation" value={client.designation} icon={<Briefcase />} />
-                <DetailItem label="Monthly Salary (AED)" value={client.monthly_salary?.toLocaleString() || null} icon={<DollarSign />} />
-                <DetailItem label="Salary Transferred to" value={client.salary_transferred_to} icon={<Landmark />} />
-                <DetailItem label="Client Since" value={client.client_since ? new Date(client.client_since).toLocaleDateString() : null} icon={<Calendar />} />
+                <DetailItem label="Employment Status" value={client.employment_status} icon={EmploymentIcon} />
+                <DetailItem label="Company" value={client.company_name} icon={Building} />
+                <DetailItem label="Designation" value={client.designation} icon={Briefcase} />
+                <DetailItem label="Monthly Salary (AED)" value={client.monthly_salary?.toLocaleString() || null} icon={DollarSign} />
+                <DetailItem label="Salary Transferred to" value={client.salary_transferred_to} icon={Landmark} />
+                <DetailItem label="Client Since" value={client.client_since ? new Date(client.client_since).toLocaleDateString() : null} icon={Calendar} />
               </div>
             } />
              <Section title="Financial & Risk Details" children={
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <DetailItem label="AECB Score" value={client.aecb_score} icon={<EmploymentIcon />} />
+                <DetailItem label="AECB Score" value={client.aecb_score} icon={EmploymentIcon} />
               </div>
             } />
         </main>
@@ -186,8 +184,17 @@ export default function ClientsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="space-y-4">
+        {/* Search Skeleton */}
+        <div className="bg-white p-4 rounded-xl border shadow-sm">
+            <SkeletonLoader className="h-10 w-full" />
+        </div>
+        {/* Card Skeletons */}
+        <div className="space-y-4">
+            <SkeletonLoader className="h-32 rounded-xl" />
+            <SkeletonLoader className="h-32 rounded-xl" />
+            <SkeletonLoader className="h-32 rounded-xl" />
+        </div>
       </div>
     );
   }

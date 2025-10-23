@@ -5,6 +5,7 @@ import { useUserProfile } from '../../hooks/useUserProfile';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
 import { supabase } from '../../lib/supabase';
+import SkeletonLoader from '../common/SkeletonLoader';
 
 export default function EditProfilePage() {
     const { user } = useAuth();
@@ -100,7 +101,28 @@ export default function EditProfilePage() {
     };
     
     if (isLoading) {
-         return <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
+         return (
+            <div className="space-y-4">
+                <SkeletonLoader className="h-8 w-40" />
+                <div className="bg-white p-6 rounded-xl border shadow-sm">
+                    <div className="animate-pulse space-y-6">
+                        <div className="flex items-center space-x-6">
+                            <SkeletonLoader className="w-24 h-24 rounded-full" />
+                            <div className="flex-1 space-y-2">
+                                <SkeletonLoader className="h-6 w-3/4" />
+                                <SkeletonLoader className="h-4 w-1/2" />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <SkeletonLoader className="h-16" />
+                            <SkeletonLoader className="h-16" />
+                            <SkeletonLoader className="h-16" />
+                            <SkeletonLoader className="h-16" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+         );
     }
 
     return (

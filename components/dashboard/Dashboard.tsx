@@ -8,6 +8,7 @@ import { useClients } from '../../hooks/useClients';
 import { Briefcase, Clock, CheckCircle as CheckCircleIcon, Zap, Plus, List, User, Users, Upload, Activity, Award, Gift, Star, Calendar } from 'lucide-react';
 import QuickActionButton from '../common/QuickActionButton';
 import { useUI } from '../../contexts/UIContext';
+import SkeletonLoader from '../common/SkeletonLoader';
 
 // Reusable component from the monolithic file, now placed here for dashboard use
 const DashboardKPICard = ({ title, value, color, icon }: { title: string, value: string | number, color: string, icon: React.ReactNode }) => (
@@ -209,9 +210,16 @@ export default function Dashboard() {
 
     if (dealsLoading) {
         return (
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
+            <div className="space-y-6">
+                <div className="grid grid-cols-3 gap-3">
+                    <SkeletonLoader className="h-28 rounded-lg" />
+                    <SkeletonLoader className="h-28 rounded-lg" />
+                    <SkeletonLoader className="h-28 rounded-lg" />
+                </div>
+                <SkeletonLoader className="h-48 rounded-xl" />
+                <SkeletonLoader className="h-40 rounded-xl" />
+                <SkeletonLoader className="h-40 rounded-xl" />
+            </div>
         );
     }
 

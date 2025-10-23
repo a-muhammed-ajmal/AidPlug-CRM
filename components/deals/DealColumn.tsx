@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DealCard from './DealCard';
 import { Deal } from '../../types';
@@ -12,7 +11,6 @@ interface DealColumnProps {
   onDeleteDeal: (deal: Deal) => void;
 }
 
-// FIX: Change to React.FC to correctly handle framework-specific props like 'key'.
 const DealColumn: React.FC<DealColumnProps> = ({ stage, deals, onViewDeal, onEditDeal, onDeleteDeal }) => {
   const colorClasses: { [key: string]: string } = {
     blue: 'bg-blue-100 text-blue-800 border-blue-200',

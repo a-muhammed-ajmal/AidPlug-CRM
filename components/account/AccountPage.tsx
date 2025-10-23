@@ -6,6 +6,7 @@ import { useUserProfile } from '../../hooks/useUserProfile';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
 import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator';
+import SkeletonLoader from '../common/SkeletonLoader';
 
 // New component for changing password
 const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
@@ -79,7 +80,20 @@ export default function AccountPage() {
     };
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
+        return (
+            <div className="space-y-4">
+                <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center space-x-4">
+                    <SkeletonLoader className="w-20 h-20 rounded-full flex-shrink-0" />
+                    <div className="flex-1 space-y-2">
+                        <SkeletonLoader className="h-6 w-3/4" />
+                        <SkeletonLoader className="h-4 w-1/2" />
+                        <SkeletonLoader className="h-4 w-1/4" />
+                    </div>
+                </div>
+                <SkeletonLoader className="h-24 rounded-xl" />
+                <SkeletonLoader className="h-14 rounded-lg" />
+            </div>
+        );
     }
 
     return (

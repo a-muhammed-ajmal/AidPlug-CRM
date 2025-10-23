@@ -7,6 +7,7 @@ import AddLeadModal from './AddLeadModal';
 import LeadFilterModal from './LeadFilterModal';
 import EmptyState from '../common/EmptyState';
 import { Lead } from '../../types';
+import SkeletonLoader from '../common/SkeletonLoader';
 
 type LeadStatusFilter = 'all' | NonNullable<Lead['qualification_status']>;
 type LeadUrgencyFilter = 'all' | NonNullable<Lead['urgency_level']>;
@@ -80,8 +81,23 @@ export default function LeadsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="space-y-4">
+        {/* Search/Filter Skeleton */}
+        <div className="bg-white p-4 rounded-xl border shadow-sm">
+            <SkeletonLoader className="h-10 w-full" />
+            <div className="flex space-x-1 mt-4">
+                <SkeletonLoader className="h-10 flex-1" />
+                <SkeletonLoader className="h-10 flex-1" />
+                <SkeletonLoader className="h-10 flex-1" />
+                <SkeletonLoader className="h-10 flex-1" />
+            </div>
+        </div>
+        {/* Card Skeletons */}
+        <div className="space-y-4">
+            <SkeletonLoader className="h-40 rounded-xl" />
+            <SkeletonLoader className="h-40 rounded-xl" />
+            <SkeletonLoader className="h-40 rounded-xl" />
+        </div>
       </div>
     );
   }

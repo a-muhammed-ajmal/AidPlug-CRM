@@ -8,41 +8,61 @@ type UserPreferencesUpdate = Database['public']['Tables']['user_preferences']['U
 
 export const userService = {
   getProfile: async (userId: string): Promise<UserProfile> => {
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error('Error fetching user profile:', error.message || error);
+      throw new Error('Failed to load user profile.');
+    }
   },
   updateProfile: async (userId: string, updates: UserProfileUpdate): Promise<UserProfile> => {
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .update(updates)
-      .eq('id', userId)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .update(updates)
+        .eq('id', userId)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error('Error updating user profile:', error.message || error);
+      throw new Error('Failed to update user profile.');
+    }
   },
   getPreferences: async (userId: string): Promise<UserPreferences> => {
-    const { data, error } = await supabase
-      .from('user_preferences')
-      .select('*')
-      .eq('user_id', userId)
-      .single();
-    
-    if (error && error.code !== 'PGRST116') throw error;
-    return data || ({ user_id: userId, push_notifications: true, email_notifications: false, mobile_sync: true } as UserPreferences);
+    try {
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') throw error;
+      return data || ({ user_id: userId, push_notifications: true, email_notifications: false, mobile_sync: true } as UserPreferences);
+    } catch (error: any) {
+      console.error('Error fetching user preferences:', error.message || error);
+      throw new Error('Failed to load user preferences.');
+    }
   },
   updatePreferences: async (userId: string, updates: UserPreferencesUpdate): Promise<UserPreferences> => {
-    const { data, error } = await supabase
-      .from('user_preferences')
-      .upsert({ ...updates, user_id: userId })
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .upsert({ ...updates, user_id: userId })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error('Error updating user preferences:', error.message || error);
+      throw new Error('Failed to update user preferences.');
+    }
   }
 };

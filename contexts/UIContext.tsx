@@ -50,8 +50,8 @@ export const useUI = () => {
 const ACTIVITY_STORAGE_KEY = 'aidplug-crm-activities';
 const MAX_ACTIVITIES = 30;
 
-// FIX: Changed to React.FC to resolve issue with children prop type inference.
-export const UIProvider: React.FC = ({ children }) => {
+// FIX: Updated component definition to explicitly type the `children` prop, resolving an issue with React 18 types where `React.FC` no longer includes `children` implicitly.
+export const UIProvider = ({ children }: { children: React.ReactNode }) => {
   const [confirmation, setConfirmation] = useState<ConfirmationState>({
     isOpen: false,
     title: '',

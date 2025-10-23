@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
@@ -123,7 +122,6 @@ export default function AddTaskModal({ onClose, initialData }: AddTaskModalProps
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
             <main className="flex-1 p-6 overflow-y-auto">
                 <div className="space-y-6">
-                    {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
                     <FormInput label="Task Title*" children={
                         <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />
                     } />

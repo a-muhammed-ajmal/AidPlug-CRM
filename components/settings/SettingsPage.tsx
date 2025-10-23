@@ -2,6 +2,7 @@ import React from 'react';
 import { Bell, Mail, Smartphone, Globe, FileText, ChevronRight, HelpCircle, Shield, Info } from 'lucide-react';
 import { useUserPreferences } from '../../hooks/useUserPreferences';
 import { useSalesCycle } from '../../hooks/useSalesCycle';
+import SkeletonLoader from '../common/SkeletonLoader';
 
 const Toggle = ({ enabled, onChange }: { enabled: boolean; onChange: () => void }) => (
     <button onClick={onChange} className={`w-12 h-6 rounded-full relative transition-colors ${enabled ? 'bg-blue-600' : 'bg-gray-300'}`}>
@@ -9,7 +10,6 @@ const Toggle = ({ enabled, onChange }: { enabled: boolean; onChange: () => void 
     </button>
 );
 
-// FIX: Made the `children` prop optional to resolve errors where it might be missing.
 const SettingsItem = ({ icon: Icon, label, children }: { icon: React.ElementType, label: string, children?: React.ReactNode }) => (
     <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
@@ -37,7 +37,13 @@ export default function SettingsPage() {
     };
     
     if (prefsLoading || cycleLoading) {
-        return <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
+        return (
+            <div className="space-y-4">
+                <SkeletonLoader className="h-40 rounded-xl" />
+                <SkeletonLoader className="h-40 rounded-xl" />
+                <SkeletonLoader className="h-40 rounded-xl" />
+            </div>
+        );
     }
 
     return (

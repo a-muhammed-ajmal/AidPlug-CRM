@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 import { AuthError, AuthResponse, Session, User, SignUpWithPasswordCredentials } from '@supabase/supabase-js';
 import { authStorage } from '../lib/authStorage';
 
-// FIX: Corrected the return type for updateUserPassword to match the UserResponse from Supabase.
 type UserResponse = { data: { user: User | null }, error: AuthError | null };
 
 interface AuthContextType {
@@ -26,8 +25,7 @@ export const useAuth = () => {
   return context;
 };
 
-// FIX: Changed to React.FC to resolve issue with children prop type inference.
-export const AuthProvider: React.FC = ({ children }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -46,54 +44,103 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string): Promise<AuthResponse> => {
-    // The user profile is now created automatically by a database trigger.
-    // The 'full_name' is passed in the 'data' option and used by the trigger.
-    const response = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
+    try {
+      // Step 1: Sign up the user in Supabase Auth.
+      const authResponse = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: `${window.location.origin}/#/auth/confirm`,
         },
-        emailRedirectTo: `${window.location.origin}/#/auth/confirm`,
-      },
-    });
-    
-    if (response.error) throw response.error;
-    
-    return response;
+      });
+
+      if (authResponse.error) {
+        if (authResponse.error.message.includes('User already registered')) {
+          throw new Error('An account with this email already exists.');
+        }
+        throw authResponse.error;
+      }
+
+      if (!authResponse.data.user) {
+        throw new Error("Sign up successful, but no user data returned. Cannot create profile.");
+      }
+
+      // Step 2: Create a corresponding public profile for the new user.
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .insert({
+          id: authResponse.data.user.id,
+          email: email,
+          full_name: fullName,
+        });
+
+      if (profileError) {
+        console.error('Critical Error: Failed to create user profile after sign up:', profileError);
+        throw new Error('Your account was created, but we failed to set up your user profile. Please contact support.');
+      }
+      
+      return authResponse;
+    } catch (error) {
+      console.error('Error during sign up process:', error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Failed to create account. Please try again.');
+    }
   };
 
-  // FIX: Added explicit return type and refactored to return the whole response object to fix type incompatibility.
   const signIn = async (email: string, password: string, remember: boolean): Promise<AuthResponse> => {
-    authStorage.setPersistence(remember);
-    const response = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (response.error) throw response.error;
-    return response;
+    try {
+      authStorage.setPersistence(remember);
+      const response = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (response.error) throw response.error;
+      return response;
+    } catch (error) {
+      console.error('Error signing in:', error);
+      throw new Error('Failed to sign in. Please check your credentials.');
+    }
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    localStorage.removeItem('rememberedEmail');
-    if (error) throw error;
-    return { error };
+    try {
+      const { error } = await supabase.auth.signOut();
+      localStorage.removeItem('rememberedEmail');
+      if (error) throw error;
+      return { error };
+    } catch (error) {
+        console.error('Error signing out:', error);
+        throw new Error('Failed to sign out. Please try again.');
+    }
   };
 
   const sendPasswordResetEmail = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/#/reset-password`,
-    });
-    if (error) throw error;
-    return { error };
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/#/reset-password`,
+      });
+      if (error) throw error;
+      return { error };
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      throw new Error('Failed to send password reset email. Please try again.');
+    }
   };
 
   const updateUserPassword = async (password: string): Promise<UserResponse> => {
-    const response = await supabase.auth.updateUser({ password });
-    if (response.error) throw response.error;
-    return response;
+    try {
+      const response = await supabase.auth.updateUser({ password });
+      if (response.error) throw response.error;
+      return response;
+    } catch (error) {
+      console.error('Error updating user password:', error);
+      throw new Error('Failed to update password. Please try again.');
+    }
   };
 
   const value: AuthContextType = {

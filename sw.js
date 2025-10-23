@@ -3,8 +3,6 @@ const API_CACHE_NAME = 'aidplug-crm-api-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  // FIX: Removed '/index.tsx' from the cache list. Service workers cache the compiled output
-  // (e.g., /assets/index-*.js), not the source TypeScript files.
   '/index.css',
   '/manifest.json',
   '/favicon.ico',

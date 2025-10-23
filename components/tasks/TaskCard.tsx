@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CheckCircle, Circle, Clock, Calendar, Trash2, MoreVertical, Edit3 } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
@@ -43,7 +42,6 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
   };
 
 
-  // FIX: Refactored the overdue check to be timezone-safe by comparing YYYY-MM-DD strings.
   const today = new Date().toISOString().split('T')[0];
   const isOverdue = task.due_date < today && task.status === 'pending';
 
@@ -84,7 +82,6 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
             <h3 className={`font-semibold text-gray-800 break-words pr-2 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
               {typeIcons[task.type || 'call']} {task.title}
             </h3>
-            {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
             <DropdownMenu trigger={<MoreVertical className="w-4 h-4 text-gray-500" />} children={
               <>
                 <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(task); }} icon={<Edit3 className="w-4 h-4 mr-2" />} children="Edit" />

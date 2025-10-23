@@ -5,6 +5,7 @@ import TaskCard from './TaskCard';
 import AddTaskModal from './AddTaskModal';
 import EmptyState from '../common/EmptyState';
 import { Task } from '../../types';
+import SkeletonLoader from '../common/SkeletonLoader';
 
 type FilterOption = 'all' | 'today' | 'pending' | 'completed';
 
@@ -32,8 +33,22 @@ export default function TasksPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="space-y-4">
+        {/* Filter Skeleton */}
+        <div className="bg-white p-4 rounded-xl border shadow-sm">
+            <div className="flex space-x-1">
+                <SkeletonLoader className="h-10 flex-1" />
+                <SkeletonLoader className="h-10 flex-1" />
+                <SkeletonLoader className="h-10 flex-1" />
+                <SkeletonLoader className="h-10 flex-1" />
+            </div>
+        </div>
+        {/* Card Skeletons */}
+        <div className="space-y-3">
+            <SkeletonLoader className="h-28 rounded-xl" />
+            <SkeletonLoader className="h-28 rounded-xl" />
+            <SkeletonLoader className="h-28 rounded-xl" />
+        </div>
       </div>
     );
   }

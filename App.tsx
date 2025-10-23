@@ -25,57 +25,59 @@ import PWAInstallPrompt from './components/common/PWAInstallPrompt';
 import ConfirmationModal from './components/common/ConfirmationModal';
 import NotificationPanel from './components/common/NotificationPanel';
 import EmailConfirmationPage from './components/auth/EmailConfirmationPage';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <UIProvider>
-          <HashRouter>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
-              <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
-              <Route
-                path="/"
-                element={
-                  // FIX: Pass children in the standard way to avoid TypeScript error.
-                  <ProtectedRoute>
-                    <MainApp />
-                  </ProtectedRoute>
-                }
-              >
-                <Route index element={<Navigate to="/dashboard" replace />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="leads" element={<LeadsPage />} />
-                <Route path="clients" element={<ClientsPage />} />
-                <Route path="deals" element={<DealsPage />} />
-                <Route path="tasks" element={<TasksPage />} />
-                <Route path="settings" element={<SettingsPage />} />
-                <Route path="account" element={<AccountPage />} />
-                <Route path="account/edit" element={<EditProfilePage />} />
-                
-                <Route path="products">
-                  <Route index element={<ProductsPage />} />
-                  <Route path=":bankSlug" element={<ProductTypesPage />} />
-                  <Route path=":bankSlug/:typeSlug" element={<ProductListPage />} />
-                  <Route path=":bankSlug/:typeSlug/:productSlug" element={<ProductDetailPage />} />
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <UIProvider>
+            <HashRouter>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <MainApp />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<Navigate to="/dashboard" replace />} />
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="leads" element={<LeadsPage />} />
+                  <Route path="clients" element={<ClientsPage />} />
+                  <Route path="deals" element={<DealsPage />} />
+                  <Route path="tasks" element={<TasksPage />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                  <Route path="account" element={<AccountPage />} />
+                  <Route path="account/edit" element={<EditProfilePage />} />
+                  
+                  <Route path="products">
+                    <Route index element={<ProductsPage />} />
+                    <Route path=":bankSlug" element={<ProductTypesPage />} />
+                    <Route path=":bankSlug/:typeSlug" element={<ProductListPage />} />
+                    <Route path=":bankSlug/:typeSlug/:productSlug" element={<ProductDetailPage />} />
+                  </Route>
+
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Route>
+              </Routes>
+            </HashRouter>
 
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Route>
-            </Routes>
-          </HashRouter>
-
-          {/* Global UI Components */}
-          <PWAInstallPrompt />
-          <ConfirmationModal />
-          <NotificationPanel />
-        </UIProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+            {/* Global UI Components */}
+            <PWAInstallPrompt />
+            <ConfirmationModal />
+            <NotificationPanel />
+          </UIProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { productDetailsData } from '../../lib/productData';
@@ -29,7 +28,6 @@ const InfoSection = React.memo(({ title, icon, children }: { title: string, icon
     );
 });
 
-// FIX: Change to React.FC to correctly handle framework-specific props like 'key'.
 const DetailsTable: React.FC<{ table: any }> = ({ table }) => (
     <div className="overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-700">
@@ -53,7 +51,6 @@ const DetailsTable: React.FC<{ table: any }> = ({ table }) => (
     </div>
 );
 
-// FIX: Change to React.FC to correctly handle framework-specific props like 'key'.
 const DetailsList: React.FC<{ items: string[] }> = ({ items }) => (
     <ul className="space-y-2">
         {items.map((item, i) => (
@@ -116,7 +113,6 @@ export default function ProductDetailPage() {
             </InfoSection>
 
             {product.sections.map((section, i) => (
-                 // FIX: Replaced recursive call to InfoSection with a valid fallback icon to prevent rendering errors.
                  <InfoSection key={i} title={section.title} icon={iconMap[section.icon] || <FileText className="w-5 h-5"/>}>
                      <div className="space-y-4">
                         {section.content.map((contentItem: any, j: number) => {

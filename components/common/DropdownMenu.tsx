@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// FIX: Extracted DropdownMenuItem props to an interface for better type inference with React.cloneElement.
 interface DropdownMenuItemProps {
     children: React.ReactNode;
     onClick: (e: React.MouseEvent) => void;
@@ -40,12 +39,10 @@ const DropdownMenu = ({ trigger, children }: DropdownMenuProps) => {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20 border">
                     <div className="py-1">
                         {React.Children.map(children, child => 
-                            // FIX: Use a generic type guard to inform TypeScript about the child's props, resolving the 'onClick' overload error.
                             React.isValidElement<DropdownMenuItemProps>(child) 
                             ? React.cloneElement(child, { 
                                   onClick: (e: React.MouseEvent) => { 
                                       e.stopPropagation(); 
-                                      // The child's props are now strongly typed, so we can safely call onClick.
                                       if(child.props.onClick) child.props.onClick(e); 
                                       setIsOpen(false); 
                                   } 

@@ -7,6 +7,7 @@ import { Deal } from '../../types';
 import { useUI } from '../../contexts/UIContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { KANBAN_STAGES, UAE_BANK_NAMES, PRODUCT_TYPES, EIB_CREDIT_CARDS } from '../../lib/constants';
+import SkeletonLoader from '../common/SkeletonLoader';
 
 // --- DealModal Component Definition ---
 
@@ -337,8 +338,23 @@ export default function DealsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="relative flex flex-col h-[calc(100vh-148px)] lg:h-[calc(100vh-110px)]">
+          <div className="p-4 bg-gray-50 border-b flex-shrink-0">
+              <SkeletonLoader className="h-10 w-full rounded-lg" />
+          </div>
+          <div className="flex-grow overflow-x-auto kanban-board">
+              <div className="flex space-x-4 p-4 h-full">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex-shrink-0 w-[calc(100vw-3rem)] sm:w-80 h-full flex flex-col">
+                    <SkeletonLoader className="h-16 w-full rounded-t-xl" />
+                    <div className="space-y-3 p-3 bg-gray-50 flex-grow rounded-b-xl border">
+                      <SkeletonLoader className="h-32 w-full rounded-lg" />
+                      <SkeletonLoader className="h-32 w-full rounded-lg" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+          </div>
       </div>
     );
   }
