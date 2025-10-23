@@ -141,15 +141,15 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end animate-fade-in sm:items-center">
-      <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl shadow-xl transform transition-transform animate-slide-up">
-        <header className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl shadow-xl transform transition-transform animate-slide-up flex flex-col max-h-[90vh]">
+        <header className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
           <h1 className="text-lg font-bold text-gray-900">{mode === 'add' ? 'Add New Lead' : 'Edit Lead'}</h1>
           <button onClick={onClose} className="p-2 -mr-2 rounded-full hover:bg-gray-100">
             <X className="w-5 h-5 text-gray-600" />
           </button>
         </header>
-        <form onSubmit={handleSubmit}>
-            <main className="p-6 overflow-y-auto max-h-[70vh]">
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
+            <main className="flex-1 p-6 overflow-y-auto">
                 <div className="space-y-6">
                     {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
                     <FormInput label="Full Name*" children={<input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />} />
@@ -164,7 +164,7 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
                     <FormInput label="Referral" children={<input type="text" name="referral" value={formData.referral} onChange={handleChange} placeholder="Type name or select from list..." className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" />} />
                 </div>
             </main>
-            <footer className="p-4 border-t border-gray-200">
+            <footer className="p-4 border-t border-gray-200 flex-shrink-0">
                 <button type="submit" disabled={loading} className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all active:scale-95 shadow disabled:opacity-50">
                     {loading ? 'Saving...' : (mode === 'add' ? 'Save Lead' : 'Update Lead')}
                 </button>

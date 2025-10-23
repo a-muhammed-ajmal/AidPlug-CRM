@@ -1,6 +1,3 @@
-
-
-
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
@@ -14,6 +11,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import MainApp from './components/MainApp';
 import SettingsPage from './components/settings/SettingsPage';
 import AccountPage from './components/account/AccountPage';
+import EditProfilePage from './components/account/EditProfilePage';
 import Dashboard from './components/dashboard/Dashboard';
 import LeadsPage from './components/leads/LeadsPage';
 import ClientsPage from './components/clients/ClientsPage';
@@ -55,6 +53,7 @@ function App() {
                 <Route path="tasks" element={<TasksPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="account" element={<AccountPage />} />
+                <Route path="account/edit" element={<EditProfilePage />} />
                 
                 <Route path="products">
                   <Route index element={<ProductsPage />} />

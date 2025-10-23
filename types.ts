@@ -23,7 +23,9 @@ export interface Database {
           email: string | null
           emirate: string | null
           emirates_id: string | null
+          employment_status: string | null
           full_name: string
+          gender: string | null
           id: string
           last_interaction: string | null
           ltv_ratio: number | null
@@ -35,12 +37,13 @@ export interface Database {
           phone: string | null
           photo_url: string | null
           products: string[] | null
-          relationship_status: "active" | "inactive" | null
           risk_category: string | null
+          salary_transferred_to: string | null
           total_loan_amount: number | null
           updated_at: string | null
           user_id: string
           visa_status: string | null
+          whatsapp_number: string | null
         }
         Insert: {
           aecb_score?: number | null
@@ -54,7 +57,9 @@ export interface Database {
           email?: string | null
           emirate?: string | null
           emirates_id?: string | null
+          employment_status?: string | null
           full_name: string
+          gender?: string | null
           id?: string
           last_interaction?: string | null
           ltv_ratio?: number | null
@@ -66,12 +71,13 @@ export interface Database {
           phone?: string | null
           photo_url?: string | null
           products?: string[] | null
-          relationship_status?: "active" | "inactive" | null
           risk_category?: string | null
+          salary_transferred_to?: string | null
           total_loan_amount?: number | null
           updated_at?: string | null
           user_id: string
           visa_status?: string | null
+          whatsapp_number?: string | null
         }
         Update: {
           aecb_score?: number | null
@@ -85,7 +91,9 @@ export interface Database {
           email?: string | null
           emirate?: string | null
           emirates_id?: string | null
+          employment_status?: string | null
           full_name?: string
+          gender?: string | null
           id?: string
           last_interaction?: string | null
           ltv_ratio?: number | null
@@ -97,12 +105,13 @@ export interface Database {
           phone?: string | null
           photo_url?: string | null
           products?: string[] | null
-          relationship_status?: "active" | "inactive" | null
           risk_category?: string | null
+          salary_transferred_to?: string | null
           total_loan_amount?: number | null
           updated_at?: string | null
           user_id?: string
           visa_status?: string | null
+          whatsapp_number?: string | null
         }
         Relationships: [
           {
@@ -115,17 +124,25 @@ export interface Database {
       }
       deals: {
         Row: {
+          aecb_score: number | null
           amount: number
           application_number: string | null
+          bank_applying: string | null
           bdi_number: string | null
           client_id: string | null
           client_name: string
+          company_name: string | null
           completed_date: string | null
           created_at: string | null
+          designation: string | null
+          email_address: string | null
           expected_close_date: string | null
           id: string
           interest_rate: number | null
+          mobile_number: string | null
+          monthly_salary: number | null
           probability: number | null
+          product: string | null
           product_type: string | null
           stage:
             | "application_processing"
@@ -138,19 +155,28 @@ export interface Database {
           title: string
           updated_at: string | null
           user_id: string
+          whatsapp_number: string | null
         }
         Insert: {
+          aecb_score?: number | null
           amount: number
           application_number?: string | null
+          bank_applying?: string | null
           bdi_number?: string | null
           client_id?: string | null
           client_name: string
+          company_name?: string | null
           completed_date?: string | null
           created_at?: string | null
+          designation?: string | null
+          email_address?: string | null
           expected_close_date?: string | null
           id?: string
           interest_rate?: number | null
+          mobile_number?: string | null
+          monthly_salary?: number | null
           probability?: number | null
+          product?: string | null
           product_type?: string | null
           stage?:
             | "application_processing"
@@ -163,19 +189,28 @@ export interface Database {
           title: string
           updated_at?: string | null
           user_id: string
+          whatsapp_number?: string | null
         }
         Update: {
+          aecb_score?: number | null
           amount?: number
           application_number?: string | null
+          bank_applying?: string | null
           bdi_number?: string | null
           client_id?: string | null
           client_name?: string
+          company_name?: string | null
           completed_date?: string | null
           created_at?: string | null
+          designation?: string | null
+          email_address?: string | null
           expected_close_date?: string | null
           id?: string
           interest_rate?: number | null
+          mobile_number?: string | null
+          monthly_salary?: number | null
           probability?: number | null
+          product?: string | null
           product_type?: string | null
           stage?:
             | "application_processing"
@@ -188,6 +223,7 @@ export interface Database {
           title?: string
           updated_at?: string | null
           user_id?: string
+          whatsapp_number?: string | null
         }
         Relationships: [
           {
@@ -481,6 +517,8 @@ export interface Database {
       }
       user_profiles: {
         Row: {
+          bio: string | null
+          company_name: string | null
           created_at: string | null
           designation: string | null
           email: string | null
@@ -489,8 +527,11 @@ export interface Database {
           phone: string | null
           photo_url: string | null
           updated_at: string | null
+          whatsapp_number: string | null
         }
         Insert: {
+          bio?: string | null
+          company_name?: string | null
           created_at?: string | null
           designation?: string | null
           email?: string | null
@@ -499,8 +540,11 @@ export interface Database {
           phone?: string | null
           photo_url?: string | null
           updated_at?: string | null
+          whatsapp_number?: string | null
         }
         Update: {
+          bio?: string | null
+          company_name?: string | null
           created_at?: string | null
           designation?: string | null
           email?: string | null
@@ -509,6 +553,7 @@ export interface Database {
           phone?: string | null
           photo_url?: string | null
           updated_at?: string | null
+          whatsapp_number?: string | null
         }
         Relationships: [
           {

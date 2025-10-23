@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Calendar, List, CheckCircle } from 'lucide-react';
+import { Plus, Calendar, List, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import TaskCard from './TaskCard';
 import AddTaskModal from './AddTaskModal';
@@ -7,6 +7,16 @@ import EmptyState from '../common/EmptyState';
 import { Task } from '../../types';
 
 type FilterOption = 'all' | 'today' | 'pending' | 'completed';
+
+const TaskKPICard = ({ title, value, color, icon }: { title: string, value: string | number, color: string, icon: React.ReactNode }) => (
+  <div className={`rounded-lg border-l-4 p-4 flex items-center space-x-3 bg-white shadow-sm ${color}`}>
+    <div className="flex-shrink-0">{icon}</div>
+    <div>
+      <p className="text-2xl font-bold text-gray-800">{value}</p>
+      <p className="text-sm font-medium text-gray-600">{title}</p>
+    </div>
+  </div>
+);
 
 export default function TasksPage() {
   const { tasks, isLoading } = useTasks();
@@ -31,9 +41,10 @@ export default function TasksPage() {
   }), [filteredTasks]);
 
   const stats = useMemo(() => ({
-      pending: tasks.filter(t => t.status === 'pending').length,
+      pendingToday: tasks.filter(t => t.due_date === today && t.status === 'pending').length,
+      overdue: tasks.filter(t => t.due_date < today && t.status === 'pending').length,
       completed: tasks.filter(t => t.status === 'completed').length,
-  }), [tasks]);
+  }), [tasks, today]);
 
   if (isLoading) {
     return (
@@ -63,23 +74,25 @@ export default function TasksPage() {
   return (
     <div className="relative pb-20">
       <div className="space-y-4">
-        <div className="bg-white p-4 rounded-xl border shadow-sm">
-            <div className="flex items-start justify-between mb-4">
-                <div>
-                    <h3 className="font-bold text-lg">My Tasks</h3>
-                    <p className="text-sm text-gray-500">{tasks.length} total tasks</p>
-                </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3 text-center">
-                <div className="bg-orange-50 text-orange-700 p-2 rounded-lg">
-                    <p className="font-bold text-xl">{stats.pending}</p>
-                    <p className="text-xs">Pending</p>
-                </div>
-                <div className="bg-green-50 text-green-700 p-2 rounded-lg">
-                    <p className="font-bold text-xl">{stats.completed}</p>
-                    <p className="text-xs">Completed</p>
-                </div>
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <TaskKPICard
+                title="Pending Today"
+                value={stats.pendingToday}
+                color="border-blue-500"
+                icon={<Calendar className="w-8 h-8 text-blue-500" />}
+            />
+            <TaskKPICard
+                title="Overdue"
+                value={stats.overdue}
+                color="border-red-500"
+                icon={<AlertTriangle className="w-8 h-8 text-red-500" />}
+            />
+            <TaskKPICard
+                title="Completed"
+                value={stats.completed}
+                color="border-green-500"
+                icon={<CheckCircle className="w-8 h-8 text-green-500" />}
+            />
         </div>
         
         <div className="bg-white p-4 rounded-xl border shadow-sm">

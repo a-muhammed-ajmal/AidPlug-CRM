@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDeals } from '../../hooks/useDeals';
@@ -247,28 +248,28 @@ export default function Dashboard() {
                         onClick={() => navigate('/leads', { state: { showAddModal: true } })}
                         icon={<Plus className="w-5 h-5 text-white" />}
                         title="New Lead"
-                        subtitle="Onboard new prospect"
+                        subtitle="ADD PROSPECT"
                         colorClass="bg-blue-500"
                     />
                     <QuickActionButton
-                        onClick={() => navigate('/tasks', { state: { showAddModal: true } })}
+                        onClick={() => navigate('/tasks')}
                         icon={<List className="w-5 h-5 text-white" />}
-                        title="New Task"
-                        subtitle="Add to your to-do"
+                        title="View Tasks"
+                        subtitle="CHECK TASKS"
                         colorClass="bg-green-500"
                     />
                     <QuickActionButton
                         onClick={() => navigate('/clients', { state: { showAddModal: true } })}
                         icon={<User className="w-5 h-5 text-white" />}
                         title="Add Client"
-                        subtitle="Register new account"
+                        subtitle="NEW ACCOUNT"
                         colorClass="bg-purple-500"
                     />
                     <QuickActionButton
-                        onClick={() => addNotification('Feature Coming Soon', 'Lead form sharing will be available in a future update.')}
-                        icon={<Upload className="w-5 h-5 text-white" />}
-                        title="Share Form"
-                        subtitle="Collect lead information"
+                        onClick={() => navigate('/deals', { state: { showAddModal: true } })}
+                        icon={<Briefcase className="w-5 h-5 text-white" />}
+                        title="New Deal"
+                        subtitle="ADD JOURNEY"
                         colorClass="bg-orange-500"
                     />
                 </div>

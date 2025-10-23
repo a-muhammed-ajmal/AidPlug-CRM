@@ -1,11 +1,13 @@
 
-import React, { useState, useMemo } from 'react';
-import { Plus, Search, Users, X, Phone, Mail, Edit3, Trash2, User, Building, DollarSign, Briefcase, MapPin, Calendar, CheckCircle, Hash } from 'lucide-react';
+
+
+import React, { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Plus, Search, Users, X, Phone, Mail, Edit3, Trash2, User, Building, DollarSign, Briefcase, MapPin, Calendar, CheckCircle, Hash, Globe, Users as GenderIcon, Landmark, TrendingUp as EmploymentIcon } from 'lucide-react';
 import { useClients } from '../../hooks/useClients';
 import ClientCard from './ClientCard';
 import AddClientModal from './AddClientModal';
 import EmptyState from '../common/EmptyState';
-import QuickActionButton from '../common/QuickActionButton';
 import { Client } from '../../types';
 import { useUI } from '../../contexts/UIContext';
 import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
@@ -55,11 +57,6 @@ const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }: ClientDetails
                 <div>
                     <h2 className="text-xl font-bold text-gray-900">{client.full_name}</h2>
                     <p className="text-sm text-gray-600">{client.designation || 'N/A'}</p>
-                    <span className={`mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                        client.relationship_status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
-                        {client.relationship_status}
-                    </span>
                 </div>
             </div>
             <button onClick={onClose} className="p-2 -mr-2 rounded-full hover:bg-gray-100">
@@ -83,16 +80,16 @@ const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }: ClientDetails
         </div>
 
         <main className="p-4 overflow-y-auto space-y-4">
-            {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
-            <Section title="Personal Details" children={
+            <Section title="Personal & Contact Details" children={
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <DetailItem label="Mobile Number" value={client.phone} icon={<Phone />} />
+                <DetailItem label="WhatsApp Number" value={client.whatsapp_number} icon={<Phone />} />
                 <DetailItem label="Email Address" value={client.email} icon={<Mail />} />
                 <DetailItem label="Date of Birth" value={client.dob ? new Date(client.dob).toLocaleDateString() : null} icon={<Calendar />} />
-                <DetailItem label="Nationality" value={client.nationality} icon={<User />} />
+                <DetailItem label="Gender" value={client.gender} icon={<GenderIcon />} />
+                <DetailItem label="Nationality" value={client.nationality} icon={<Globe />} />
               </div>
             } />
-            {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
             <Section title="Identification & Residency" children={
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <DetailItem label="Emirates ID" value={client.emirates_id} icon={<Hash />} />
@@ -101,13 +98,19 @@ const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }: ClientDetails
                 <DetailItem label="Visa Status" value={client.visa_status} icon={<CheckCircle />} />
               </div>
             } />
-            {/* FIX: Explicitly pass children prop to avoid TypeScript error. */}
             <Section title="Employment Details" children={
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <DetailItem label="Employment Status" value={client.employment_status} icon={<EmploymentIcon />} />
                 <DetailItem label="Company" value={client.company_name} icon={<Building />} />
                 <DetailItem label="Designation" value={client.designation} icon={<Briefcase />} />
                 <DetailItem label="Monthly Salary (AED)" value={client.monthly_salary?.toLocaleString() || null} icon={<DollarSign />} />
+                <DetailItem label="Salary Transferred to" value={client.salary_transferred_to} icon={<Landmark />} />
                 <DetailItem label="Client Since" value={client.client_since ? new Date(client.client_since).toLocaleDateString() : null} icon={<Calendar />} />
+              </div>
+            } />
+             <Section title="Financial & Risk Details" children={
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <DetailItem label="AECB Score" value={client.aecb_score} icon={<EmploymentIcon />} />
               </div>
             } />
         </main>
@@ -122,11 +125,20 @@ const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }: ClientDetails
 export default function ClientsPage() {
   const { clients, isLoading, deleteClient } = useClients();
   const { showConfirmation, addNotification } = useUI();
+  const location = useLocation();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [isAddingClient, setIsAddingClient] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.showAddModal) {
+      setIsAddingClient(true);
+      // Clean up state to prevent modal from re-opening on navigation
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const filteredClients = useMemo(() => {
     return clients.filter(client =>
@@ -150,7 +162,7 @@ export default function ClientsPage() {
   const handleEditClient = (client: Client) => {
     setSelectedClient(null);
     setEditingClient(client);
-    setIsAddingClient(false);
+    setIsAddingClient(true); // Open the same modal component for editing
   };
 
   const handleDeleteClient = (id: string) => {
@@ -184,7 +196,7 @@ export default function ClientsPage() {
     <div className="relative pb-20">
       <div className="space-y-4">
         <div className="bg-white p-4 rounded-xl border shadow-sm">
-            <div className="relative mb-4">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
@@ -194,13 +206,6 @@ export default function ClientsPage() {
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               />
             </div>
-            <QuickActionButton
-              onClick={() => setIsAddingClient(true)}
-              icon={<Plus className="w-5 h-5 text-white" />}
-              title="Add New Client"
-              subtitle="Register a new client account"
-              colorClass="bg-purple-500"
-            />
         </div>
 
         <div className="space-y-4">
@@ -210,6 +215,8 @@ export default function ClientsPage() {
                 key={client.id} 
                 client={client} 
                 onClick={handleSelectClient}
+                onEdit={handleEditClient}
+                onDelete={handleDeleteClient}
               />
             ))
           ) : (
@@ -222,6 +229,14 @@ export default function ClientsPage() {
         </div>
       </div>
       
+      <button
+        onClick={() => { setEditingClient(null); setIsAddingClient(true); }}
+        className="fixed bottom-20 right-5 z-30 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-90"
+        aria-label="Add new client"
+      >
+        <Plus className="w-7 h-7" />
+      </button>
+
       {selectedClient && (
         <ClientDetailsModal 
           client={selectedClient}

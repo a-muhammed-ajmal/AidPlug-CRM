@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Plus, Search, Users, Filter, Upload, Folder } from 'lucide-react';
+import { Plus, Search, Users, Filter } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import LeadCard from './LeadCard';
 import AddLeadModal from './AddLeadModal';
@@ -99,21 +99,6 @@ export default function LeadsPage() {
   return (
     <div className="relative pb-20">
       <div className="space-y-4">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-xl shadow-lg flex flex-col items-center text-center">
-          <h3 className="font-bold text-lg mb-2">Streamline Lead Collection</h3>
-          <p className="text-sm opacity-90 mb-4">Share a simple form with potential clients and see their submissions here.</p>
-          <div className="flex space-x-3 w-full">
-            <button className="flex-1 flex items-center justify-center py-2 px-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all active:scale-95">
-              <Upload className="w-4 h-4 mr-2" />
-              <span className="text-sm font-medium">Share Form</span>
-            </button>
-            <button className="flex-1 flex items-center justify-center py-2 px-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all active:scale-95">
-              <Folder className="w-4 h-4 mr-2" />
-              <span className="text-sm font-medium">Submissions</span>
-            </button>
-          </div>
-        </div>
-
         <div className="bg-white p-4 rounded-xl border shadow-sm">
           <div className="flex space-x-2 mb-4">
             <div className="flex-1 relative">
