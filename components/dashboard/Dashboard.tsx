@@ -242,7 +242,7 @@ export default function Dashboard() {
                 <Zap className="w-5 h-5 mr-2 text-blue-600" />
                 Quick Actions
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                     <QuickActionButton
                         onClick={() => navigate('/leads', { state: { showAddModal: true } })}
                         icon={<Plus className="w-5 h-5 text-white" />}

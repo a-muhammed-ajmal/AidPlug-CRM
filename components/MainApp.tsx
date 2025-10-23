@@ -43,7 +43,7 @@ const MainAppLayout = () => {
                 <MobileHeader title={title} onMenuClick={() => setIsSidebarOpen(true)} />
                 <DesktopHeader title={title} />
                 
-                <main className="pb-24 pt-20 lg:pt-[85px] lg:pb-6 px-4 lg:px-6">
+                <main className="pb-24 pt-20 lg:pt-[85px] lg:pb-6 px-3 lg:px-4">
                     <Outlet />
                 </main>
             </div>
