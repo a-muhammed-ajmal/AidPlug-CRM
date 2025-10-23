@@ -9,7 +9,8 @@ const Toggle = ({ enabled, onChange }: { enabled: boolean; onChange: () => void 
     </button>
 );
 
-const SettingsItem = ({ icon: Icon, label, children }: { icon: React.ElementType, label: string, children: React.ReactNode }) => (
+// FIX: Made the `children` prop optional to resolve errors where it might be missing.
+const SettingsItem = ({ icon: Icon, label, children }: { icon: React.ElementType, label: string, children?: React.ReactNode }) => (
     <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
             <Icon className="w-5 h-5 text-gray-600" />
@@ -17,16 +18,6 @@ const SettingsItem = ({ icon: Icon, label, children }: { icon: React.ElementType
         </div>
         {children}
     </div>
-);
-
-const SupportLink = ({ icon: Icon, label }: { icon: React.ElementType, label: string }) => (
-    <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors text-left">
-        <div className="flex items-center space-x-3">
-            <Icon className="w-5 h-5 text-gray-600" />
-            <span className="font-medium text-gray-700">{label}</span>
-        </div>
-        <ChevronRight className="w-4 h-4 text-gray-400" />
-    </button>
 );
 
 export default function SettingsPage() {
@@ -76,22 +67,15 @@ export default function SettingsPage() {
                 </div>
             </div>
 
-             {/* FIX: Refactored to use SettingsItem for consistency and to fix potential 'missing children' prop errors. */}
              <div className="bg-white rounded-xl border shadow-sm">
                 <div className="p-4 border-b"><h3 className="font-semibold text-gray-900">App Information</h3></div>
                 <div className="p-4 space-y-4">
-                    {/* FIX: Added children to SettingsItem to provide version information and resolve missing prop error. */}
-                    {/* FIX: Added children to SettingsItem to provide version information and resolve missing prop error. */}
                     <SettingsItem icon={Info} label="Version">
                         <span className="font-medium text-gray-800 text-sm">1.0.0</span>
                     </SettingsItem>
-                    {/* FIX: Added children to SettingsItem to provide last updated date and resolve missing prop error. */}
-                    {/* FIX: Added children to SettingsItem to provide last updated date and resolve missing prop error. */}
                     <SettingsItem icon={Info} label="Last Updated">
                         <span className="font-medium text-gray-800 text-sm">Oct 01, 2024</span>
                     </SettingsItem>
-                    {/* FIX: Added children to SettingsItem to provide data sync status and resolve missing prop error. */}
-                    {/* FIX: Added children to SettingsItem to provide data sync status and resolve missing prop error. */}
                     <SettingsItem icon={Info} label="Data Sync">
                         <span className="font-medium text-green-600 flex items-center text-sm"><div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>Connected</span>
                     </SettingsItem>
@@ -102,14 +86,26 @@ export default function SettingsPage() {
             <div className="bg-white rounded-xl border shadow-sm">
                 <div className="p-4 border-b"><h3 className="font-semibold text-gray-900">Support & Help</h3></div>
                 <div className="p-2">
-                    {/* FIX: Replaced SupportLink with SettingsItem for consistency and to resolve compilation errors. */}
-                    {/* FIX: Replaced SupportLink with SettingsItem for consistency and to resolve compilation errors. */}
-                    <SupportLink icon={HelpCircle} label="Help Center" />
-                    {/* FIX: Replaced SupportLink with SettingsItem for consistency and to resolve compilation errors. */}
-                    <SupportLink icon={Mail} label="Contact Support" />
-                    {/* FIX: Replaced SupportLink with SettingsItem for consistency and to resolve compilation errors. */}
-                    <SupportLink icon={Shield} label="Privacy Policy" />
-                    <SupportLink icon={Info} label="Terms of Service" />
+                    <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                      <SettingsItem icon={HelpCircle} label="Help Center">
+                          <ChevronRight className="w-4 h-4 text-gray-400" />
+                      </SettingsItem>
+                    </button>
+                    <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                      <SettingsItem icon={Mail} label="Contact Support">
+                          <ChevronRight className="w-4 h-4 text-gray-400" />
+                      </SettingsItem>
+                    </button>
+                    <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                      <SettingsItem icon={Shield} label="Privacy Policy">
+                          <ChevronRight className="w-4 h-4 text-gray-400" />
+                      </SettingsItem>
+                    </button>
+                    <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                      <SettingsItem icon={Info} label="Terms of Service">
+                          <ChevronRight className="w-4 h-4 text-gray-400" />
+                      </SettingsItem>
+                    </button>
                 </div>
             </div>
         </div>

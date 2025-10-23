@@ -41,13 +41,25 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          // Use dynamic origin and hash router path for correct redirection.
-          redirectTo: `${window.location.origin}/#/dashboard`
+          redirectTo: `${window.location.origin}/#/dashboard`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent'
+          }
         }
       });
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('popup')) {
+          setError('Popup blocked. Please allow popups for this site and try again.');
+        } else if (error.message.includes('network')) {
+          setError('Network error. Please check your connection and try again.');
+        } else {
+          setError('Failed to sign in with Google. Please try again.');
+        }
+        setGoogleLoading(false);
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google');
+      setError('An unexpected error occurred. Please try again.');
       setGoogleLoading(false);
     }
   };

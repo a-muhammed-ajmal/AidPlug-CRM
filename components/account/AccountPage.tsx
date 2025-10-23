@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Edit3, User, Shield, LogOut, KeyRound, Eye, EyeOff, X } from 'lucide-react';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
+import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator';
 
 // New component for changing password
 const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
@@ -14,18 +16,11 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [isPasswordValid, setIsPasswordValid] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        if (password.length < 6) {
-            setError('Password must be at least 6 characters long.');
-            return;
-        }
-        if (password !== confirmPassword) {
-            setError('Passwords do not match.');
-            return;
-        }
         setLoading(true);
         try {
             await updateUserPassword(password);
@@ -54,6 +49,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
                                 <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-2 pr-10 border rounded-md" required />
                                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
                             </div>
+                            <PasswordStrengthIndicator password={password} onValidationChange={setIsPasswordValid} />
                         </div>
                         <div>
                             <label className="text-sm font-medium">Confirm New Password</label>
@@ -61,7 +57,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
                         </div>
                     </main>
                     <footer className="p-4 bg-gray-50 border-t">
-                        <button type="submit" disabled={loading} className="w-full py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50">
+                        <button type="submit" disabled={loading || !isPasswordValid || password !== confirmPassword} className="w-full py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50">
                             {loading ? 'Updating...' : 'Update Password'}
                         </button>
                     </footer>

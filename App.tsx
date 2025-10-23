@@ -24,6 +24,7 @@ import ProductDetailPage from './components/products/ProductDetailPage';
 import PWAInstallPrompt from './components/common/PWAInstallPrompt';
 import ConfirmationModal from './components/common/ConfirmationModal';
 import NotificationPanel from './components/common/NotificationPanel';
+import EmailConfirmationPage from './components/auth/EmailConfirmationPage';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
               <Route
                 path="/"
                 element={

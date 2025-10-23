@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, KeyRound } from 'lucide-react';
+import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator';
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState('');
@@ -10,6 +12,7 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
   const { updateUserPassword, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -25,15 +28,6 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
-
-    if (password !== confirmPassword) {
-      return setError('Passwords do not match');
-    }
-
-    if (password.length < 6) {
-      return setError('Password must be at least 6 characters');
-    }
-
     setLoading(true);
 
     try {
@@ -86,6 +80,7 @@ export default function ResetPasswordPage() {
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
+            <PasswordStrengthIndicator password={password} onValidationChange={setIsPasswordValid} />
           </div>
 
           <div>
@@ -114,7 +109,7 @@ export default function ResetPasswordPage() {
 
           <button
             type="submit"
-            disabled={loading || authLoading}
+            disabled={loading || authLoading || !isPasswordValid || password !== confirmPassword}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? 'Updating...' : 'Update Password'}
