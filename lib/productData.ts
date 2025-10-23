@@ -31,7 +31,7 @@ export interface ProductDetail {
 
 const RTA_CARD_DATA: ProductDetail = {
     slug: 'rta-credit-card',
-    name: 'RTA Credit Card',
+    name: 'Emirates Islamic RTA Credit Card',
     bank: 'Emirates Islamic Bank',
     type: 'Credit Card',
     tagline: 'The ultimate card for transport and fuel cashback.',
@@ -55,7 +55,13 @@ const RTA_CARD_DATA: ProductDetail = {
                         ['International Spends', '2.25%', 'Unlimited'],
                         ['Domestic Spends', '1.25%', 'Unlimited'],
                         ['Grocery & Supermarkets', '1%', 'Unlimited'],
+                        ['EEA & UK Spends', '0.56%', 'Unlimited'],
+                        ['Quick Service Restaurants', '0.31%', 'Unlimited'],
                     ],
+                },
+                {
+                    title: 'Cashback Eligibility Criteria',
+                    description: '',
                 },
                 {
                     type: 'list',
@@ -63,8 +69,12 @@ const RTA_CARD_DATA: ProductDetail = {
                         'Minimum Monthly Spend: AED 1,000 retail spend per statement cycle (effective March 1, 2025).',
                         'Cashback earned only on transactions up to assigned credit limit per month.',
                         'Minimum Redemption: 300 Cashback Points (1 Point = 1 AED).',
-                        'Validity: 2 years from date of earning.'
+                        'Validity: 2 years from date of earning.',
                     ]
+                },
+                {
+                    title: 'Non-Eligible Transactions',
+                    description: 'Includes RTA app recharges, bill payments via EI channels, balance transfers, cash withdrawals, EPP installments, fees, and crypto purchases.',
                 }
             ],
         },
@@ -86,6 +96,7 @@ const RTA_CARD_DATA: ProductDetail = {
                 { title: 'Complimentary Valet Parking', description: '1 complimentary valet parking service monthly at select locations with a minimum spend of AED 3,000.' },
                 { title: 'Extended Warranty', description: 'Automatically doubles the original manufacturer\'s warranty up to 1 year.' },
                 { title: 'Purchase Protection', description: 'Coverage against loss, theft, or accidental damage within 90 days of purchase.' },
+                { title: 'Credit Shield Plus Takaful', description: 'Covers job loss, death, disability, and critical illness for a monthly premium.' },
             ]
         },
         {
@@ -99,10 +110,20 @@ const RTA_CARD_DATA: ProductDetail = {
                         ['Annual Membership Fee', 'FREE'],
                         ['Monthly Profit Rate', '3.69%'],
                         ['APR (Purchase & Cash Advance)', '44.28%'],
+                        ['Profit-Free Period', 'Up to 55 days'],
                         ['Late Payment Fee', 'AED 131.25 / AED 225'],
                         ['Replacement Card Fee', 'AED 78.75'],
                     ],
                 }
+            ]
+        },
+        {
+            title: 'Additional Features',
+            icon: 'briefcase',
+            content: [
+                 { title: 'Supplementary Cards', description: 'Up to 4 supplementary cards for family members at no additional annual fee.' },
+                 { title: 'Cash on Call', description: 'Access up to 80% of your available credit limit as cash, repayable in installments.' },
+                 { title: 'Easy Payment Plans (EPP)', description: 'Convert large purchases into 0% monthly installments at partner merchants.' },
             ]
         }
     ]
@@ -110,67 +131,225 @@ const RTA_CARD_DATA: ProductDetail = {
 
 const SWITCH_CARD_DATA: ProductDetail = {
     slug: 'switch-cashback-visa-signature',
-    name: 'Switch Cashback Visa Signature',
+    name: 'Emirates Islamic Switch Cashback Visa Signature',
     bank: 'Emirates Islamic Bank',
     type: 'Credit Card',
     tagline: 'Switchable rewards that adapt to your lifestyle.',
     highlights: [
-        { title: 'Up to 8% Cashback', description: 'Switchable rewards - Choose Lifestyle or Travel category monthly.', icon: 'percent' },
-        { title: 'AED 500 Welcome Bonus', description: 'Earn on AED 15,000 spend within 60 days of approval.', icon: 'award' },
-        { title: 'Unlimited Lounge Access', description: '1,200+ airport lounges worldwide for you and supplementary cardholders.', icon: 'briefcase' },
-        { title: 'No Annual Fee Year 1', description: 'AED 299 from Year 2, waived with AED 30,000 annual spend.', icon: 'shield' },
+        { title: 'Up to 8% Cashback', description: 'Switchable rewards - Choose Lifestyle or Travel category monthly', icon: 'percent' },
+        { title: 'AED 500 Welcome Bonus', description: 'Earn on AED 15,000 spend within 60 days of approval', icon: 'award' },
+        { title: 'Unlimited Lounge Access', description: '1,200+ airport lounges worldwide for you and supplementary cardholders', icon: 'briefcase' },
+        { title: 'No Annual Fee Year 1', description: 'AED 299 from Year 2, waived with AED 30,000 annual spend', icon: 'shield' },
     ],
     sections: [
         {
-            title: 'Switchable Cashback Details',
+            title: 'Switchable Cashback',
             icon: 'percent',
             content: [
-                { title: 'Choose Your Category Monthly', description: 'Switch between Lifestyle or Travel via EI+ App. Eligibility requires a minimum spend of AED 2,500 per month.' },
+                { title: 'Choose Your Category Monthly', description: 'Switch between Lifestyle or Travel via EI+ App. Category at month-end applies to all transactions.' },
+                {
+                    type: 'list',
+                    items: [
+                        'Minimum: AED 2,500 retail spend per month',
+                        'Calculation: Based on posting date',
+                        'Limit: Cashback on transactions within credit limit only',
+                        'Supplementary: Spends count toward primary account',
+                    ]
+                },
                 {
                     type: 'table',
-                    headers: ['Lifestyle Category', 'Rate', 'Cap'],
+                    headers: ['LIFESTYLE Category', 'Rate', 'Cap'],
                     rows: [
                         ['Fuel (Domestic)', '8%', 'AED 100'],
                         ['Supermarket', '4%', 'AED 200'],
                         ['Dining', '4%', 'AED 200'],
                         ['Education', '4%', 'AED 200'],
+                        ['Telecom, Utilities', '0.5%', 'No Cap'],
+                        ['Other Spends', '1%', 'No Cap'],
                     ],
                 },
-                 {
+                {
                     type: 'table',
-                    headers: ['Travel Category', 'Rate', 'Cap'],
+                    headers: ['TRAVEL Category', 'Rate', 'Cap'],
                     rows: [
                         ['Airlines', '4%', 'AED 200'],
                         ['Hotels', '4%', 'AED 200'],
                         ['Dining', '4%', 'AED 200'],
+                        ['Telecom, Utilities', '0.5%', 'No Cap'],
+                        ['Other Spends', '1%', 'No Cap'],
                     ],
+                },
+                { title: 'Cashback Redemption', description: '' },
+                {
+                    type: 'list',
+                    items: [
+                        'Credit: Within 3 working days of next month',
+                        'Minimum: AED 300 for statement credit',
+                        'Validity: 24 months from credit date',
+                        'Options: Statement credit, Miles exchange, Online marketplace',
+                    ]
+                },
+                { title: 'Non-Eligible Transactions', description: '' },
+                {
+                    type: 'list',
+                    items: [
+                        'Cash withdrawals, Balance transfers',
+                        'Bank fees, Insurance/Takaful charges',
+                        'Cryptocurrency, Foreign currency purchases',
+                        'Bill payments via EI channels',
+                        'Third-party payment aggregators',
+                    ]
                 }
             ],
         },
         {
-            title: 'Travel & Lifestyle Benefits',
+            title: 'Welcome Bonus',
             icon: 'award',
             content: [
-                 { title: 'Unlimited Airport Lounge Access', description: 'Primary and ALL supplementary cardholders get access to 1,200+ lounges. Requires one foreign currency transaction (USD 1+) that posts at least 15 days before the visit for unlimited access.' },
-                 { title: 'Meet & Greet Service', description: '2 services per year (Marhaba Bronze at DXB) with a minimum spend of AED 3,000.' },
-                 { title: 'Complimentary Golf', description: '2 rounds per month at select courses with a minimum spend of AED 5,000.' },
-                 { title: 'Cinema Offers', description: '2 "Buy 1 Get 1" tickets per month at Reel/Vox cinemas.' },
+                { title: 'AED 500 Cashback Points', description: 'Requirement: Spend AED 15,000 in retail within 60 days of approval. Bonus awarded in 3rd statement cycle. Valid until 31 December 2025.' },
+            ]
+        },
+        {
+            title: 'Travel Benefits',
+            icon: 'briefcase',
+            content: [
+                 { title: 'Unlimited Airport Lounge Access', description: 'Primary + ALL supplementary cardholders get access to 1,200+ Lounges Worldwide. First visit is free per year. For unlimited access, make one foreign currency transaction (USD 1+) that posts at least 15 days before visit. If criteria not met, US $32 per visit applies. Guests are always charged US $32. Access via Visa Airport Companion Mobile App (mandatory from 1 Oct 2024).' },
+                 { title: 'Meet & Greet Service', description: '2 services per year (Marhaba Bronze at Dubai Airport - DXB) with a minimum spend of AED 3,000 per month. Book 48 hours in advance.' },
+                 { title: 'Visa Luxury Hotel Collection', description: 'Access to 900+ properties worldwide with benefits like room upgrades, breakfast, and VIP status.' },
+                 { title: 'Travel Insurance', description: 'Automatic coverage on trips up to 90 days.' },
+            ]
+        },
+        {
+            title: 'Lifestyle Benefits',
+            icon: 'star',
+            content: [
+                 { title: 'Complimentary Golf', description: '2 rounds per month with a minimum spend of AED 5,000. Locations: Arabian Ranches Golf Club, Jebel Ali Golf Course, Abu Dhabi Golf Club.' },
+                 { title: 'Cinema Offers', description: 'Reel/Vox: 2 "Buy 1 Get 1" tickets/month. Roxy: 20% off tickets + F&B (until Apr 2026).' },
+                 { title: 'Valet Parking', description: '1 service per month with a minimum spend of AED 3,000. Locations: Yas Mall, Ibn Battuta, City Walk, etc.' },
+            ]
+        },
+        {
+            title: 'Protection',
+            icon: 'shield',
+            content: [
+                { title: 'Purchase Protection', description: 'Coverage against theft or damage.' },
+                { title: 'Extended Warranty', description: 'Doubles manufacturer warranty (up to 1 year).' },
+                { title: 'Credit Shield Plus', description: 'Premium: 0.99%/month (free first 2 statements). Covers job loss, death, disability, and critical illness.' },
             ]
         },
         {
             title: 'Fees & Charges',
-            icon: 'shield',
+            icon: 'percent',
             content: [
                 {
                     type: 'table',
                     headers: ['Fee Type', 'Amount'],
                     rows: [
                         ['Year 1 Fee', 'FREE'],
-                        ['Year 2+ Fee', 'AED 299 (Waived on AED 30K annual spend)'],
+                        ['Year 2+ Fee', 'AED 299'],
+                        ['Fee Waiver', 'AED 30K annual spend'],
                         ['APR', '44.28%'],
-                        ['Profit-Free Period', 'Up to 55 days'],
+                        ['Profit-Free', 'Up to 55 days'],
                         ['Late Payment', 'AED 131.25'],
+                        ['Over Limit', 'AED 261.45'],
+                        ['Foreign (Non-AED)', 'Up to 2.34%'],
+                        ['Foreign (AED)', '1.99%'],
                     ],
+                }
+            ]
+        },
+        {
+            title: 'Financial Tools',
+            icon: 'dollar-sign',
+            content: [
+                { title: 'Cash on Call', description: 'Access up to 80% of credit limit in cash, repay in EMIs.' },
+                { title: 'Easy Payment Plan (EPP)', description: 'Convert large purchases to 0% EMIs at partner merchants.' },
+                { title: 'Balance Transfer', description: 'Transfer balances from other cards, repay in EMIs.' },
+                { title: 'Supplementary Cards', description: 'Issue cards for family, consolidate spending and rewards.' },
+            ]
+        },
+        {
+            title: 'Shariah Compliance',
+            icon: 'shield',
+            content: [
+                { title: 'Murabaha Structure', description: 'Card based on Islamic Murabaha sale contract. Free from interest (Riba) and approved by Internal Shariah Committee.' },
+                {
+                    type: 'list',
+                    items: [
+                        'Bank purchases Shariah-compliant assets',
+                        'Sells to customer at cost + defined profit',
+                    ]
+                }
+            ]
+        },
+        {
+            title: 'Redemption Partners',
+            icon: 'award',
+            content: [
+                { title: 'Convert Cashback to Miles/Points:', description: '' },
+                {
+                    type: 'list',
+                    items: [
+                        'Emirates Skywards - Emirates flights',
+                        'Etihad Guest - Etihad flights & partners',
+                        'Marriott Bonvoy - Hotel stays worldwide',
+                        'Upoints by Emaar - Lifestyle rewards',
+                        'Qatar Airways Privilege Club - Avios points',
+                        'AirRewards by Air Arabia',
+                        'Smiles - Multi-brand loyalty',
+                    ]
+                }
+            ]
+        },
+        {
+            title: 'Important Reminders',
+            icon: 'alert-triangle',
+            content: [
+                { title: 'Critical Requirements', description: ''},
+                {
+                    type: 'list',
+                    items: [
+                        'Cashback: AED 2,500 monthly spend',
+                        'Golf: AED 5,000 monthly spend',
+                        'Valet/Meet & Greet: AED 3,000 monthly',
+                        'Cashback Validity: 24 months',
+                        'Min. Redemption: AED 300',
+                    ]
+                },
+                { title: 'Maximizing Value', description: ''},
+                {
+                    type: 'list',
+                    items: [
+                        'Switch category before month-end',
+                        'Use Lifestyle for fuel/supermarket heavy months',
+                        'Switch to Travel when booking flights/hotels',
+                        'Make foreign transaction for lounge access',
+                        'Redeem for miles for enhanced value',
+                        'Pay full balance to avoid profit charges',
+                    ]
+                }
+            ]
+        },
+        {
+            title: 'Features Checklist',
+            icon: 'check-circle',
+            content: [
+                {
+                    type: 'list',
+                    items: [
+                        'Switchable Cashback Rewards',
+                        'Up to 8% Cashback on Fuel',
+                        'AED 500 Welcome Bonus',
+                        'Unlimited Airport Lounges',
+                        'Meet & Greet Services',
+                        'Complimentary Golf Rounds',
+                        'Cinema Offers & Discounts',
+                        'Valet Parking Service',
+                        'Purchase Protection',
+                        'Extended Warranty',
+                        'Travel Insurance',
+                        'Shariah Compliant (Murabaha)',
+                    ]
                 }
             ]
         }
