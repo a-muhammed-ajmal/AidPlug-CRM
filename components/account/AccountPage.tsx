@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Edit3, User, Shield, LogOut, KeyRound, Eye, EyeOff, X, TrendingUp, Users, DollarSign, Calendar, Activity, Settings, Bell } from 'lucide-react';
+import { Edit3, User, Shield, LogOut, KeyRound, Eye, EyeOff, X } from 'lucide-react';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
@@ -68,32 +68,12 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
     );
 };
 
-// Mock data for account statistics - in a real app, this would come from APIs
-const getAccountStats = () => ({
-    totalClients: 45,
-    activeDeals: 12,
-    monthlyRevenue: 250000,
-    completedTasks: 28,
-    upcomingMeetings: 5,
-    conversionRate: 68
-});
-
-const getRecentActivity = () => [
-    { id: 1, type: 'deal', action: 'Closed deal with Ahmed Al-Rashid', time: '2 hours ago', amount: 'AED 150,000', icon: '💰' },
-    { id: 2, type: 'client', action: 'Added new client Fatima Al-Zahra', time: '1 day ago', icon: '👤' },
-    { id: 3, type: 'task', action: 'Completed follow-up call', time: '2 days ago', icon: '✅' },
-    { id: 4, type: 'meeting', action: 'Scheduled meeting with John Smith', time: '3 days ago', icon: '📅' },
-];
-
 export default function AccountPage() {
     const { profile, isLoading } = useUserProfile();
     const { signOut } = useAuth();
     const { showConfirmation } = useUI();
     const navigate = useNavigate();
     const [showChangePassword, setShowChangePassword] = useState(false);
-
-    const stats = getAccountStats();
-    const recentActivity = getRecentActivity();
 
     const handleSignOut = () => {
         showConfirmation('Sign Out', 'Are you sure you want to sign out?', signOut);
@@ -117,208 +97,41 @@ export default function AccountPage() {
     }
 
     return (
-        <div className="space-y-6">
-            {/* Profile Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                <div className="relative flex items-center space-x-4">
-                    <div className="w-24 h-24 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center overflow-hidden border-4 border-white border-opacity-30">
-                        {profile?.photo_url ? <img src={profile.photo_url} alt="User" className="w-full h-full object-cover" /> : <User className="w-12 h-12 text-white" />}
-                    </div>
-                    <div className="flex-1">
-                        <h1 className="text-2xl font-bold">{profile?.full_name}</h1>
-                        <p className="text-blue-100">{profile?.designation || 'Banking Sales Professional'}</p>
-                        <p className="text-sm text-blue-100 mt-1">{profile?.company_name || 'Company not specified'}</p>
-                        <button
-                            onClick={() => navigate('/account/edit')}
-                            className="mt-3 inline-flex items-center px-4 py-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg text-sm font-medium hover:bg-opacity-30 transition-all duration-200"
-                        >
-                            <Edit3 className="w-4 h-4 mr-2" />
-                            Edit Profile
-                        </button>
-                    </div>
+        <div className="space-y-4">
+            <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center space-x-4">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {profile?.photo_url ? <img src={profile.photo_url} alt="User" className="w-full h-full object-cover" /> : <User className="w-10 h-10 text-white" />}
+                </div>
+                <div className="flex-1">
+                    <h2 className="text-xl font-bold text-gray-900">{profile?.full_name}</h2>
+                    <p className="text-sm text-gray-600">{profile?.designation || 'N/A'}</p>
+                    <button onClick={() => navigate('/account/edit')} className="mt-2 text-sm font-medium text-blue-600 hover:underline flex items-center"><Edit3 className="w-3 h-3 mr-1" /> Edit Profile</button>
                 </div>
             </div>
 
-            {/* Account Statistics */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="bg-white p-4 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <Users className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-gray-900">{stats.totalClients}</p>
-                            <p className="text-sm text-gray-600">Total Clients</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="bg-white p-4 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                            <TrendingUp className="w-5 h-5 text-green-600" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-gray-900">{stats.activeDeals}</p>
-                            <p className="text-sm text-gray-600">Active Deals</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="bg-white p-4 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <DollarSign className="w-5 h-5 text-purple-600" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-gray-900">AED {stats.monthlyRevenue.toLocaleString()}</p>
-                            <p className="text-sm text-gray-600">Monthly Revenue</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="bg-white p-4 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                            <Calendar className="w-5 h-5 text-orange-600" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-gray-900">{stats.upcomingMeetings}</p>
-                            <p className="text-sm text-gray-600">Upcoming Meetings</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="bg-white p-4 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                            <Activity className="w-5 h-5 text-indigo-600" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-gray-900">{stats.completedTasks}</p>
-                            <p className="text-sm text-gray-600">Tasks Completed</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="bg-white p-4 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
-                            <TrendingUp className="w-5 h-5 text-teal-600" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-gray-900">{stats.conversionRate}%</p>
-                            <p className="text-sm text-gray-600">Conversion Rate</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Recent Activity */}
             <div className="bg-white rounded-xl border shadow-sm">
-                <div className="p-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                        <Activity className="w-5 h-5 mr-2 text-blue-600" />
-                        Recent Activity
-                    </h3>
-                </div>
-                <div className="divide-y divide-gray-100">
-                    {recentActivity.map((activity) => (
-                        <div key={activity.id} className="p-4 hover:bg-gray-50 transition-colors cursor-pointer group">
-                            <div className="flex items-start space-x-3">
-                                <div className="text-lg flex-shrink-0">
-                                    {activity.icon}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors">{activity.action}</p>
-                                    {activity.amount && <p className="text-sm text-green-600 font-medium">{activity.amount}</p>}
-                                    <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
-                                </div>
-                                <div className="text-gray-400 group-hover:text-blue-600 transition-colors">
-                                    →
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white rounded-xl border shadow-sm hover:shadow-md transition-shadow">
-                    <div className="p-4 border-b border-gray-200">
-                        <h3 className="font-semibold text-gray-900 flex items-center">
-                            <Settings className="w-5 h-5 mr-2 text-gray-600" />
-                            Account Settings
-                        </h3>
-                    </div>
-                    <div className="p-4 space-y-3">
-                        <button
-                            onClick={() => navigate('/account/edit')}
-                            className="w-full flex items-center justify-between p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            <div className="flex items-center space-x-3">
-                                <Edit3 className="w-4 h-4 text-blue-600" />
-                                <span className="text-sm font-medium">Edit Profile</span>
-                            </div>
-                            <span className="text-gray-400">→</span>
-                        </button>
-
-                        <button
-                            onClick={() => setShowChangePassword(true)}
-                            className="w-full flex items-center justify-between p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            <div className="flex items-center space-x-3">
-                                <KeyRound className="w-4 h-4 text-green-600" />
-                                <span className="text-sm font-medium">Change Password</span>
-                            </div>
-                            <span className="text-gray-400">→</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-xl border shadow-sm hover:shadow-md transition-shadow">
-                    <div className="p-4 border-b border-gray-200">
-                        <h3 className="font-semibold text-gray-900 flex items-center">
-                            <Bell className="w-5 h-5 mr-2 text-gray-600" />
-                            Preferences
-                        </h3>
-                    </div>
-                    <div className="p-4 space-y-3">
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">Email Notifications</span>
-                            <button className="w-10 h-6 bg-gray-200 rounded-full relative focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
-                                <div className="w-4 h-4 bg-white rounded-full absolute left-1 top-1 transition-transform duration-200"></div>
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">Push Notifications</span>
-                            <button className="w-10 h-6 bg-blue-600 rounded-full relative focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
-                                <div className="w-4 h-4 bg-white rounded-full absolute right-1 top-1 transition-transform duration-200"></div>
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">Mobile Sync</span>
-                            <button className="w-10 h-6 bg-blue-600 rounded-full relative focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
-                                <div className="w-4 h-4 bg-white rounded-full absolute right-1 top-1 transition-transform duration-200"></div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Sign Out */}
-            <div className="bg-white rounded-xl border shadow-sm">
+                <div className="p-4 border-b"><h3 className="font-semibold text-gray-900">Security</h3></div>
                 <div className="p-4">
-                    <button
-                        onClick={handleSignOut}
-                        className="w-full flex items-center justify-center py-3 px-4 bg-red-50 border border-red-200 text-red-600 rounded-lg font-semibold hover:bg-red-100 transition-colors"
-                    >
-                        <LogOut className="w-5 h-5 mr-2" />
-                        Sign Out
-                    </button>
+                    <div className="flex items-center justify-between py-3">
+                        <div className="flex items-center space-x-3">
+                            <KeyRound className="w-5 h-5 text-gray-500" />
+                            <div>
+                                <p className="font-medium text-gray-800">Password</p>
+                                <p className="text-sm text-gray-500">Change your password regularly</p>
+                            </div>
+                        </div>
+                        <div>
+                            <button onClick={() => setShowChangePassword(true)} className="text-sm font-medium text-blue-600 hover:underline">Change</button>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <div className="pt-2">
+                <button onClick={handleSignOut} className="w-full flex items-center justify-center py-3 px-4 bg-white border border-gray-200 text-red-600 rounded-lg font-semibold hover:bg-red-50 transition-colors shadow-sm">
+                    <LogOut className="w-5 h-5 mr-2" />
+                    Sign Out
+                </button>
             </div>
             
             {showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
