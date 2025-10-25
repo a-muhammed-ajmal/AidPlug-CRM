@@ -148,6 +148,12 @@ const UpcomingEvents = () => {
 
 
 export default function Dashboard() {
+  const { setTitle } = useUI();
+
+  // Set the page title when this component mounts
+  useEffect(() => {
+    setTitle('Dashboard');
+  }, [setTitle]);
     const navigate = useNavigate();
     const { addNotification, activities } = useUI();
     const { deals, isLoading: dealsLoading } = useDeals();

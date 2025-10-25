@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Building, ChevronRight } from 'lucide-react';
+import { useUI } from '../../contexts/UIContext';
 
 const banks = [
     { name: 'Emirates Islamic Bank', slug: 'emirates-islamic-bank', productCount: 13 }
 ];
 
 export default function ProductsPage() {
+    const { setTitle } = useUI();
+    useEffect(() => {
+        setTitle('Product Hub');
+    }, [setTitle]);
     return (
         <div className="space-y-4">
             <div className="bg-white p-4 rounded-xl border shadow-sm">

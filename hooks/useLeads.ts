@@ -1,51 +1,49 @@
-
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { createCrudHooks } from './createCrudHooks';
 import { leadsService } from '../services/leadsService';
-import { useAuth } from '../contexts/AuthContext';
-import { Lead } from '../types';
 import { useUI } from '../contexts/UIContext';
+import { Lead, Database } from '../types';
+
+type LeadInsert = Database['public']['Tables']['leads']['Insert'];
+type LeadUpdate = Database['public']['Tables']['leads']['Update'];
+
+const { useGetAll, useCreateMutation, useUpdateMutation, useDeleteMutation } =
+  createCrudHooks<Lead, LeadInsert, LeadUpdate>('leads', leadsService);
 
 export function useLeads() {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const { logActivity } = useUI();
+  const { logActivity, addNotification } = useUI();
+  
+  const { data: leads = [], ...query } = useGetAll();
 
-  const { data: leads = [], isLoading, error } = useQuery<Lead[], Error>({
-    queryKey: ['leads', user?.id],
-    queryFn: () => leadsService.getAll(user!.id),
-    enabled: !!user?.id,
-  });
-
-  const createMutation = useMutation({
-    mutationFn: leadsService.create,
+  const createLead = useCreateMutation({
     onSuccess: (newLead) => {
-      queryClient.invalidateQueries({ queryKey: ['leads'] });
       logActivity('lead_add', `Created lead: "${newLead.full_name}"`);
+      addNotification('Success', 'Lead created successfully.');
     },
+    onError: (error) => addNotification('Error', error.message || 'Failed to create lead.'),
   });
 
-  const updateMutation = useMutation({
-    mutationFn: ({ id, updates }: { id: string, updates: Partial<Lead> }) => leadsService.update(id, updates),
+  const updateLead = useUpdateMutation({
     onSuccess: (updatedLead) => {
-      queryClient.invalidateQueries({ queryKey: ['leads'] });
       logActivity('lead_update', `Updated lead: "${updatedLead.full_name}"`);
+      addNotification('Success', 'Lead updated successfully.');
     },
+    onError: (error) => addNotification('Error', error.message || 'Failed to update lead.'),
   });
-
-  const deleteMutation = useMutation({
-    mutationFn: (lead: Lead) => leadsService.delete(lead.id),
-    onSuccess: (data, lead) => {
-      queryClient.invalidateQueries({ queryKey: ['leads'] });
-      logActivity('lead_delete', `Deleted lead: "${lead.full_name}"`);
+  
+  const deleteLead = useDeleteMutation({
+    onSuccess: () => {
+      logActivity('lead_delete', `Deleted a lead.`);
+      addNotification('Success', 'Lead deleted.');
     },
+    onError: (error) => addNotification('Error', error.message || 'Failed to delete lead.'),
   });
 
   return {
     leads,
-    isLoading,
-    error,
-    createLead: createMutation.mutate,
-    updateLead: updateMutation.mutate,
-    deleteLead: deleteMutation.mutate,
+    isLoading: query.isLoading,
+    error: query.error,
+    createLead,
+    updateLead,
+    deleteLead,
   };
 }

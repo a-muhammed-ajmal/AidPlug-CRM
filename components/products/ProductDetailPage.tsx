@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { productDetailsData } from '../../lib/productData';
 import { Star, Percent, Shield, Award, Briefcase, FileText, ChevronUp, ChevronDown, CheckCircle, ArrowLeft } from 'lucide-react';
 import EmptyState from '../common/EmptyState';
+import { useUI } from '../../contexts/UIContext';
 
 const InfoSection = React.memo(({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) => {
     const [isOpen, setIsOpen] = useState(true);
@@ -64,7 +65,14 @@ const DetailsList: React.FC<{ items: string[] }> = ({ items }) => (
 
 export default function ProductDetailPage() {
     const { productSlug, bankSlug, typeSlug } = useParams();
+    const { setTitle } = useUI();
     const product = productDetailsData.find(p => p.slug === productSlug);
+
+    useEffect(() => {
+        if (product) {
+            setTitle(product.name);
+        }
+    }, [product, setTitle]);
 
     if (!product) {
         return (

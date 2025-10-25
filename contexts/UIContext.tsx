@@ -1,5 +1,11 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, PropsWithChildren } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo } from 'react';
 
+// Define a type for the component props for better clarity
+type UIProviderProps = {
+  children: ReactNode;
+};
+
+// --- Type Definitions ---
 interface ConfirmationState {
   isOpen: boolean;
   title: string;
@@ -7,23 +13,22 @@ interface ConfirmationState {
   onConfirm: () => void;
   onCancel: () => void;
 }
-
 interface Notification {
   id: number;
   title: string;
   message: string;
-  time: string;
+  time: string; // Consider using a Date object for more flexible formatting
   unread: boolean;
 }
-
 export interface Activity {
   id: string;
   type: 'lead_add' | 'lead_update' | 'lead_delete' | 'lead_convert' | 'client_add' | 'deal_add' | 'deal_stage_update' | 'deal_delete' | 'task_add' | 'task_complete';
   message: string;
-  timestamp: string;
+  timestamp: string; // ISO string
 }
-
 interface UIContextType {
+  title: string;
+  setTitle: (title: string) => void;
   confirmation: ConfirmationState;
   showConfirmation: (title: string, message: string, onConfirm: () => void) => void;
   hideConfirmation: () => void;
@@ -50,8 +55,8 @@ export const useUI = () => {
 const ACTIVITY_STORAGE_KEY = 'aidplug-crm-activities';
 const MAX_ACTIVITIES = 30;
 
-// FIX: Updated component definition to use React.FC<PropsWithChildren<{}>> to resolve children prop typing error.
-export const UIProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+export const UIProvider = ({ children }: UIProviderProps) => {
+  const [title, setTitle] = useState('Dashboard');
   const [confirmation, setConfirmation] = useState<ConfirmationState>({
     isOpen: false,
     title: '',
@@ -59,11 +64,11 @@ export const UIProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     onConfirm: () => {},
     onCancel: () => {},
   });
-
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [activities, setActivities] = useState<Activity[]>([]);
 
+  // Load initial activities from localStorage
   useEffect(() => {
     try {
       const storedActivities = localStorage.getItem(ACTIVITY_STORAGE_KEY);
@@ -97,7 +102,7 @@ export const UIProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
       id: Date.now(),
       title,
       message,
-      time: 'Just now',
+      time: 'Just now', // SUGGESTION: For a better UX, use a library like `date-fns` to format this dynamically.
       unread: true,
     };
     setNotifications(prev => [newNotification, ...prev]);
@@ -130,8 +135,10 @@ export const UIProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     });
   }, []);
 
-
-  const value = {
+  // REASON: Memoize the context value to prevent unnecessary re-renders of consuming components.
+  const value = useMemo(() => ({
+    title,
+    setTitle,
     confirmation,
     showConfirmation,
     hideConfirmation,
@@ -143,7 +150,19 @@ export const UIProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     setShowNotifications,
     activities,
     logActivity,
-  };
+  }), [
+    title, 
+    confirmation, 
+    notifications, 
+    showNotifications, 
+    activities, 
+    showConfirmation, 
+    hideConfirmation, 
+    addNotification, 
+    dismissNotification, 
+    clearAllNotifications, 
+    logActivity
+  ]);
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
 };

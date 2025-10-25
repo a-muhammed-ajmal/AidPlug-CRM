@@ -8,6 +8,7 @@ import LeadFilterModal from './LeadFilterModal';
 import EmptyState from '../common/EmptyState';
 import { Lead } from '../../types';
 import SkeletonLoader from '../common/SkeletonLoader';
+import { useUI } from '../../contexts/UIContext';
 
 type LeadStatusFilter = 'all' | NonNullable<Lead['qualification_status']>;
 type LeadUrgencyFilter = 'all' | NonNullable<Lead['urgency_level']>;
@@ -19,6 +20,10 @@ interface LeadFilters {
 }
 
 export default function LeadsPage() {
+  const { setTitle } = useUI();
+  useEffect(() => {
+    setTitle('Leads');
+  }, [setTitle]);
   const location = useLocation();
   const { leads, isLoading } = useLeads();
   const [showAddModal, setShowAddModal] = useState(location.state?.showAddModal || false);

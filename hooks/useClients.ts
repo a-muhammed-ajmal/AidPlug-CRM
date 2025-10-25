@@ -1,49 +1,45 @@
-
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { createCrudHooks } from './createCrudHooks';
 import { clientsService } from '../services/clientsService';
-import { useAuth } from '../contexts/AuthContext';
-import { Client } from '../types';
 import { useUI } from '../contexts/UIContext';
+import { Client, Database } from '../types';
+
+type ClientInsert = Database['public']['Tables']['clients']['Insert'];
+type ClientUpdate = Database['public']['Tables']['clients']['Update'];
+
+const { useGetAll, useCreateMutation, useUpdateMutation, useDeleteMutation } =
+  createCrudHooks<Client, ClientInsert, ClientUpdate>('clients', clientsService);
 
 export function useClients() {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const { logActivity } = useUI();
+  const { logActivity, addNotification } = useUI();
+  
+  const { data: clients = [], ...query } = useGetAll();
 
-  const { data: clients = [], isLoading, error } = useQuery<Client[], Error>({
-    queryKey: ['clients', user?.id],
-    queryFn: () => clientsService.getAll(user!.id),
-    enabled: !!user?.id,
-  });
-
-  const createMutation = useMutation({
-    mutationFn: clientsService.create,
+  const createClient = useCreateMutation({
     onSuccess: (newClient) => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
       logActivity('client_add', `Added new client: "${newClient.full_name}"`);
+      addNotification('Success', 'Client created successfully.');
     },
+    onError: (error) => {
+      addNotification('Error', error.message || 'Failed to create client.');
+    }
   });
 
-  const updateMutation = useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<Client> }) => clientsService.update(id, updates),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
-    },
+  const updateClient = useUpdateMutation({
+    onSuccess: () => addNotification('Success', 'Client updated successfully.'),
+    onError: (error) => addNotification('Error', error.message || 'Failed to update client.'),
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: clientsService.delete,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
-    },
+  const deleteClient = useDeleteMutation({
+    onSuccess: () => addNotification('Success', 'Client deleted.'),
+    onError: (error) => addNotification('Error', error.message || 'Failed to delete client.'),
   });
 
   return {
     clients,
-    isLoading,
-    error,
-    createClient: createMutation.mutate,
-    updateClient: updateMutation.mutate,
-    deleteClient: deleteMutation.mutate,
+    isLoading: query.isLoading,
+    error: query.error,
+    createClient,
+    updateClient,
+    deleteClient,
   };
 }

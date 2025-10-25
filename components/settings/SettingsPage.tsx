@@ -100,6 +100,10 @@ const TermsOfServiceModal = ({ onClose }: { onClose: () => void }) => (
 
 
 export default function SettingsPage() {
+  const { setTitle } = useUI();
+  useEffect(() => {
+    setTitle('Settings');
+  }, [setTitle]);
     const { preferences, updatePreferences, isLoading: prefsLoading } = useUserPreferences();
     const { salesCycle, updateSalesCycle, isLoading: cycleLoading } = useSalesCycle();
 

@@ -10,26 +10,29 @@ export function useSalesCycle() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { addNotification } = useUI();
+  const queryKey = ['salesCycle', user?.id];
 
   const { data: salesCycle, isLoading, error } = useQuery({
-    queryKey: ['salesCycle', user?.id],
+    queryKey,
     queryFn: () => salesCycleService.get(user!.id),
     enabled: !!user,
   });
 
-  const updateSalesCycleMutation = useMutation({
+  const updateSalesCycle = useMutation({
     mutationFn: (updates: SalesCycleUpdate) => salesCycleService.update(user!.id, updates),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['salesCycle', user?.id] });
-      queryClient.setQueryData(['salesCycle', user?.id], data);
+    onSuccess: (updatedSalesCycle) => {
+      queryClient.setQueryData(queryKey, updatedSalesCycle);
       addNotification('Sales Cycle Updated', 'Your sales cycle dates have been saved.');
     },
+    onError: (error: Error) => {
+      addNotification('Update Failed', error.message || 'Could not save the sales cycle.');
+    }
   });
 
   return {
     salesCycle,
     isLoading,
     error,
-    updateSalesCycle: updateSalesCycleMutation.mutate,
+    updateSalesCycle,
   };
 }

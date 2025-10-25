@@ -10,18 +10,22 @@ export function useUserPreferences() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { addNotification } = useUI();
+  const queryKey = ['userPreferences', user?.id];
 
   const { data: preferences, isLoading, error } = useQuery({
-    queryKey: ['userPreferences', user?.id],
+    queryKey,
     queryFn: () => userService.getPreferences(user!.id),
     enabled: !!user,
   });
 
-  const updatePreferencesMutation = useMutation({
+  const updatePreferences = useMutation({
     mutationFn: (updates: UserPreferencesUpdate) => userService.updatePreferences(user!.id, updates),
-    onSuccess: (data) => {
-      queryClient.setQueryData(['userPreferences', user?.id], data);
+    onSuccess: (updatedPreferences) => {
+      queryClient.setQueryData(queryKey, updatedPreferences);
       addNotification('Settings Updated', 'Your preferences have been saved successfully.');
+    },
+    onError: (error: Error) => {
+      addNotification('Update Failed', error.message || 'Could not save your preferences.');
     },
   });
 
@@ -29,6 +33,6 @@ export function useUserPreferences() {
     preferences,
     isLoading,
     error,
-    updatePreferences: updatePreferencesMutation.mutate,
+    updatePreferences,
   };
 }

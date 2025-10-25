@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ChevronRight, Info } from 'lucide-react';
 import { EIB_CREDIT_CARDS } from '../../lib/constants';
 import { productDetailsData } from '../../lib/productData';
+import { useUI } from '../../contexts/UIContext';
 
 export default function ProductListPage() {
     const { bankSlug, typeSlug } = useParams();
+    const { setTitle } = useUI();
+
+    useEffect(() => {
+        if (typeSlug) {
+            const formattedTitle = typeSlug.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+            setTitle(formattedTitle);
+        }
+    }, [typeSlug, setTitle]);
 
     const detailedSlugs = productDetailsData.map(p => p.slug);
 

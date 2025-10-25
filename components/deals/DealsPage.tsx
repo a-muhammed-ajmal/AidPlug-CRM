@@ -264,8 +264,12 @@ export interface Stage {
 }
 
 export default function DealsPage() {
+  const { showConfirmation, addNotification, setTitle } = useUI();
+  useEffect(() => {
+    setTitle('Deals');
+  }, [setTitle]);
+
   const { deals, isLoading, deleteDeal } = useDeals();
-  const { showConfirmation, addNotification } = useUI();
   const location = useLocation();
   
   const [isModalOpen, setIsModalOpen] = useState(false);

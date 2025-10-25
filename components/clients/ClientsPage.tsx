@@ -121,8 +121,12 @@ const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }: ClientDetails
 
 
 export default function ClientsPage() {
+  const { showConfirmation, addNotification, setTitle } = useUI();
+  useEffect(() => {
+    setTitle('Clients');
+  }, [setTitle]);
+
   const { clients, isLoading, deleteClient } = useClients();
-  const { showConfirmation, addNotification } = useUI();
   const location = useLocation();
   
   const [searchTerm, setSearchTerm] = useState('');

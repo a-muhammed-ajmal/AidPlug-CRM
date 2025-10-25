@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { CreditCard, ChevronRight } from 'lucide-react';
+import { useUI } from '../../contexts/UIContext';
 
 // In a real app, this would be fetched based on the bankSlug
 const productTypes = [
@@ -9,6 +10,14 @@ const productTypes = [
 
 export default function ProductTypesPage() {
     const { bankSlug } = useParams();
+    const { setTitle } = useUI();
+
+    useEffect(() => {
+        if (bankSlug) {
+            const formattedTitle = bankSlug.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+            setTitle(formattedTitle);
+        }
+    }, [bankSlug, setTitle]);
 
     return (
         <div className="space-y-4">

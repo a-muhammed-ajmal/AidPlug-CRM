@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Plus, List } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import TaskCard from './TaskCard';
@@ -6,10 +6,15 @@ import AddTaskModal from './AddTaskModal';
 import EmptyState from '../common/EmptyState';
 import { Task } from '../../types';
 import SkeletonLoader from '../common/SkeletonLoader';
+import { useUI } from '../../contexts/UIContext';
 
 type FilterOption = 'all' | 'today' | 'pending' | 'completed';
 
 export default function TasksPage() {
+  const { setTitle } = useUI();
+  useEffect(() => {
+    setTitle('Tasks');
+  }, [setTitle]);
   const { tasks, isLoading } = useTasks();
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
