@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react';
 
 // Define a type for the component props for better clarity
 type UIProviderProps = {
@@ -22,7 +30,17 @@ interface Notification {
 }
 export interface Activity {
   id: string;
-  type: 'lead_add' | 'lead_update' | 'lead_delete' | 'lead_convert' | 'client_add' | 'deal_add' | 'deal_stage_update' | 'deal_delete' | 'task_add' | 'task_complete';
+  type:
+    | 'lead_add'
+    | 'lead_update'
+    | 'lead_delete'
+    | 'lead_convert'
+    | 'client_add'
+    | 'deal_add'
+    | 'deal_stage_update'
+    | 'deal_delete'
+    | 'task_add'
+    | 'task_complete';
   message: string;
   timestamp: string; // ISO string
 }
@@ -30,7 +48,11 @@ interface UIContextType {
   title: string;
   setTitle: (title: string) => void;
   confirmation: ConfirmationState;
-  showConfirmation: (title: string, message: string, onConfirm: () => void) => void;
+  showConfirmation: (
+    title: string,
+    message: string,
+    onConfirm: () => void
+  ) => void;
   hideConfirmation: () => void;
   notifications: Notification[];
   addNotification: (title: string, message: string) => void;
@@ -76,26 +98,29 @@ export const UIProvider = ({ children }: UIProviderProps) => {
         setActivities(JSON.parse(storedActivities));
       }
     } catch (error) {
-      console.error("Failed to load activities from localStorage", error);
+      console.error('Failed to load activities from localStorage', error);
     }
   }, []);
 
   const hideConfirmation = useCallback(() => {
-    setConfirmation(prev => ({ ...prev, isOpen: false }));
+    setConfirmation((prev) => ({ ...prev, isOpen: false }));
   }, []);
 
-  const showConfirmation = useCallback((title: string, message: string, onConfirm: () => void) => {
-    setConfirmation({
-      isOpen: true,
-      title,
-      message,
-      onConfirm: () => {
-        onConfirm();
-        hideConfirmation();
-      },
-      onCancel: hideConfirmation,
-    });
-  }, [hideConfirmation]);
+  const showConfirmation = useCallback(
+    (title: string, message: string, onConfirm: () => void) => {
+      setConfirmation({
+        isOpen: true,
+        title,
+        message,
+        onConfirm: () => {
+          onConfirm();
+          hideConfirmation();
+        },
+        onCancel: hideConfirmation,
+      });
+    },
+    [hideConfirmation]
+  );
 
   const addNotification = useCallback((title: string, message: string) => {
     const newNotification: Notification = {
@@ -105,15 +130,17 @@ export const UIProvider = ({ children }: UIProviderProps) => {
       time: 'Just now', // SUGGESTION: For a better UX, use a library like `date-fns` to format this dynamically.
       unread: true,
     };
-    setNotifications(prev => [newNotification, ...prev]);
+    setNotifications((prev) => [newNotification, ...prev]);
   }, []);
 
   const dismissNotification = useCallback((id: number) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, unread: false } : n));
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, unread: false } : n))
+    );
   }, []);
 
   const clearAllNotifications = useCallback(() => {
-    setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
+    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
   }, []);
 
   const logActivity = useCallback((type: Activity['type'], message: string) => {
@@ -123,46 +150,55 @@ export const UIProvider = ({ children }: UIProviderProps) => {
       message,
       timestamp: new Date().toISOString(),
     };
-    
-    setActivities(prevActivities => {
-      const updatedActivities = [newActivity, ...prevActivities].slice(0, MAX_ACTIVITIES);
+
+    setActivities((prevActivities) => {
+      const updatedActivities = [newActivity, ...prevActivities].slice(
+        0,
+        MAX_ACTIVITIES
+      );
       try {
-        localStorage.setItem(ACTIVITY_STORAGE_KEY, JSON.stringify(updatedActivities));
+        localStorage.setItem(
+          ACTIVITY_STORAGE_KEY,
+          JSON.stringify(updatedActivities)
+        );
       } catch (error) {
-        console.error("Failed to save activities to localStorage", error);
+        console.error('Failed to save activities to localStorage', error);
       }
       return updatedActivities;
     });
   }, []);
 
   // REASON: Memoize the context value to prevent unnecessary re-renders of consuming components.
-  const value = useMemo(() => ({
-    title,
-    setTitle,
-    confirmation,
-    showConfirmation,
-    hideConfirmation,
-    notifications,
-    addNotification,
-    dismissNotification,
-    clearAllNotifications,
-    showNotifications,
-    setShowNotifications,
-    activities,
-    logActivity,
-  }), [
-    title, 
-    confirmation, 
-    notifications, 
-    showNotifications, 
-    activities, 
-    showConfirmation, 
-    hideConfirmation, 
-    addNotification, 
-    dismissNotification, 
-    clearAllNotifications, 
-    logActivity
-  ]);
+  const value = useMemo(
+    () => ({
+      title,
+      setTitle,
+      confirmation,
+      showConfirmation,
+      hideConfirmation,
+      notifications,
+      addNotification,
+      dismissNotification,
+      clearAllNotifications,
+      showNotifications,
+      setShowNotifications,
+      activities,
+      logActivity,
+    }),
+    [
+      title,
+      confirmation,
+      notifications,
+      showNotifications,
+      activities,
+      showConfirmation,
+      hideConfirmation,
+      addNotification,
+      dismissNotification,
+      clearAllNotifications,
+      logActivity,
+    ]
+  );
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
 };

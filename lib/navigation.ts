@@ -1,13 +1,20 @@
 import React from 'react';
 import {
-  Home, Users, Briefcase, List, Inbox, Settings, User as UserIcon, PieChart
+  Home,
+  Users,
+  Briefcase,
+  List,
+  Inbox,
+  Settings,
+  User as UserIcon,
+  PieChart,
 } from 'lucide-react';
 
 export interface NavItem {
-    key: string;
-    icon: React.ComponentType<any>;
-    label: string;
-    path: string;
+  key: string;
+  icon: React.ComponentType<any>;
+  label: string;
+  path: string;
 }
 
 export const mainNavItems: NavItem[] = [
@@ -20,9 +27,15 @@ export const mainNavItems: NavItem[] = [
 ];
 
 export const secondaryNavItems: NavItem[] = [
-    { key: 'account', icon: UserIcon, label: 'My Account', path: '/account' },
-    { key: 'settings', icon: Settings, label: 'Settings', path: '/settings' },
+  { key: 'account', icon: UserIcon, label: 'My Account', path: '/account' },
+  { key: 'settings', icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
 // Define which items appear in the bottom nav by their key
-export const bottomNavKeys: string[] = ['dashboard', 'leads', 'deals', 'clients', 'tasks'];
+export const bottomNavKeys: string[] = [
+  'dashboard',
+  'leads',
+  'deals',
+  'clients',
+  'tasks',
+];

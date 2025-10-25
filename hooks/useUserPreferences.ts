@@ -4,7 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { Database } from '../types';
 import { useUI } from '../contexts/UIContext';
 
-type UserPreferencesUpdate = Database['public']['Tables']['user_preferences']['Update'];
+type UserPreferencesUpdate =
+  Database['public']['Tables']['user_preferences']['Update'];
 
 export function useUserPreferences() {
   const { user } = useAuth();
@@ -12,20 +13,31 @@ export function useUserPreferences() {
   const { addNotification } = useUI();
   const queryKey = ['userPreferences', user?.id];
 
-  const { data: preferences, isLoading, error } = useQuery({
+  const {
+    data: preferences,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey,
     queryFn: () => userService.getPreferences(user!.id),
     enabled: !!user,
   });
 
   const updatePreferences = useMutation({
-    mutationFn: (updates: UserPreferencesUpdate) => userService.updatePreferences(user!.id, updates),
+    mutationFn: (updates: UserPreferencesUpdate) =>
+      userService.updatePreferences(user!.id, updates),
     onSuccess: (updatedPreferences) => {
       queryClient.setQueryData(queryKey, updatedPreferences);
-      addNotification('Settings Updated', 'Your preferences have been saved successfully.');
+      addNotification(
+        'Settings Updated',
+        'Your preferences have been saved successfully.'
+      );
     },
     onError: (error: Error) => {
-      addNotification('Update Failed', error.message || 'Could not save your preferences.');
+      addNotification(
+        'Update Failed',
+        error.message || 'Could not save your preferences.'
+      );
     },
   });
 

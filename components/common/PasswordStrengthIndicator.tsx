@@ -14,25 +14,34 @@ const requirements = [
   { text: 'At least one special character', regex: /[^A-Za-z0-9]/ },
 ];
 
-export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({ password = '', onValidationChange }) => {
+export const PasswordStrengthIndicator: React.FC<
+  PasswordStrengthIndicatorProps
+> = ({ password = '', onValidationChange }) => {
   const [validation, setValidation] = useState(
-    requirements.map(req => ({ ...req, valid: false }))
+    requirements.map((req) => ({ ...req, valid: false }))
   );
 
   useEffect(() => {
-    const newValidation = requirements.map(req => ({
+    const newValidation = requirements.map((req) => ({
       ...req,
       valid: req.regex.test(password),
     }));
     setValidation(newValidation);
-    onValidationChange(newValidation.every(req => req.valid));
+    onValidationChange(newValidation.every((req) => req.valid));
   }, [password, onValidationChange]);
 
   return (
     <div className="space-y-1 mt-2">
       {validation.map(({ text, valid }) => (
-        <div key={text} className={`flex items-center text-sm transition-colors ${valid ? 'text-green-600' : 'text-gray-500'}`}>
-          {valid ? <Check className="w-4 h-4 mr-2 flex-shrink-0" /> : <X className="w-4 h-4 mr-2 flex-shrink-0" />}
+        <div
+          key={text}
+          className={`flex items-center text-sm transition-colors ${valid ? 'text-green-600' : 'text-gray-500'}`}
+        >
+          {valid ? (
+            <Check className="w-4 h-4 mr-2 flex-shrink-0" />
+          ) : (
+            <X className="w-4 h-4 mr-2 flex-shrink-0" />
+          )}
           <span>{text}</span>
         </div>
       ))}

@@ -19,7 +19,9 @@ export default function ForgotPasswordPage() {
 
     try {
       await sendPasswordResetEmail(email);
-      setMessage(`If an account exists for ${email}, you will receive an email with password reset instructions.`);
+      setMessage(
+        `If an account exists for ${email}, you will receive an email with password reset instructions.`
+      );
     } catch (err: any) {
       setError(err.message || 'Failed to send reset email');
     } finally {
@@ -35,7 +37,9 @@ export default function ForgotPasswordPage() {
             <Mail className="w-8 h-8" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800">Forgot Password</h1>
-          <p className="text-gray-600 mt-2">Enter your email to get a reset link</p>
+          <p className="text-gray-600 mt-2">
+            Enter your email to get a reset link
+          </p>
         </div>
 
         {error && (

@@ -14,9 +14,9 @@ type LeadStatusFilter = 'all' | NonNullable<Lead['qualification_status']>;
 type LeadUrgencyFilter = 'all' | NonNullable<Lead['urgency_level']>;
 
 interface LeadFilters {
-    urgency: LeadUrgencyFilter;
-    salaryRange: [number, number];
-    products: string[];
+  urgency: LeadUrgencyFilter;
+  salaryRange: [number, number];
+  products: string[];
 }
 
 export default function LeadsPage() {
@@ -26,12 +26,15 @@ export default function LeadsPage() {
   }, [setTitle]);
   const location = useLocation();
   const { leads, isLoading } = useLeads();
-  const [showAddModal, setShowAddModal] = useState(location.state?.showAddModal || false);
+  const [showAddModal, setShowAddModal] = useState(
+    location.state?.showAddModal || false
+  );
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [leadStatusFilter, setLeadStatusFilter] = useState<LeadStatusFilter>('all');
-  
+  const [leadStatusFilter, setLeadStatusFilter] =
+    useState<LeadStatusFilter>('all');
+
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const initialLeadFilters: LeadFilters = {
     urgency: 'all',
@@ -39,10 +42,13 @@ export default function LeadsPage() {
     products: [],
   };
   const [leadFilters, setLeadFilters] = useState(initialLeadFilters);
-  const [appliedLeadFilters, setAppliedLeadFilters] = useState(initialLeadFilters);
-  
+  const [appliedLeadFilters, setAppliedLeadFilters] =
+    useState(initialLeadFilters);
+
   const isFilterApplied = useMemo(() => {
-    return JSON.stringify(appliedLeadFilters) !== JSON.stringify(initialLeadFilters);
+    return (
+      JSON.stringify(appliedLeadFilters) !== JSON.stringify(initialLeadFilters)
+    );
   }, [appliedLeadFilters]);
 
   useEffect(() => {
@@ -55,7 +61,7 @@ export default function LeadsPage() {
     setLeadFilters(appliedLeadFilters);
     setIsFilterModalOpen(true);
   };
-  
+
   const handleApplyFilters = () => {
     setAppliedLeadFilters(leadFilters);
     setIsFilterModalOpen(false);
@@ -67,41 +73,56 @@ export default function LeadsPage() {
 
   const filteredLeads = useMemo(() => {
     if (!leads) return [];
-    return leads.filter(lead => {
-        const searchMatch = searchQuery === '' || 
-            lead.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            lead.company_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            lead.phone.includes(searchQuery);
+    return leads.filter((lead) => {
+      const searchMatch =
+        searchQuery === '' ||
+        lead.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lead.company_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lead.phone.includes(searchQuery);
 
-        const statusMatch = leadStatusFilter === 'all' || lead.qualification_status === leadStatusFilter;
+      const statusMatch =
+        leadStatusFilter === 'all' ||
+        lead.qualification_status === leadStatusFilter;
 
-        const urgencyMatch = appliedLeadFilters.urgency === 'all' || lead.urgency_level === appliedLeadFilters.urgency;
-        const salaryMatch = (lead.monthly_salary || 0) >= appliedLeadFilters.salaryRange[0];
-        const productMatch = appliedLeadFilters.products.length === 0 || appliedLeadFilters.products.some(p => lead.product_interest?.includes(p));
-        
-        return searchMatch && statusMatch && urgencyMatch && salaryMatch && productMatch;
+      const urgencyMatch =
+        appliedLeadFilters.urgency === 'all' ||
+        lead.urgency_level === appliedLeadFilters.urgency;
+      const salaryMatch =
+        (lead.monthly_salary || 0) >= appliedLeadFilters.salaryRange[0];
+      const productMatch =
+        appliedLeadFilters.products.length === 0 ||
+        appliedLeadFilters.products.some((p) =>
+          lead.product_interest?.includes(p)
+        );
+
+      return (
+        searchMatch &&
+        statusMatch &&
+        urgencyMatch &&
+        salaryMatch &&
+        productMatch
+      );
     });
   }, [searchQuery, leadStatusFilter, appliedLeadFilters, leads]);
-
 
   if (isLoading) {
     return (
       <div className="space-y-4">
         {/* Search/Filter Skeleton */}
         <div className="bg-white p-4 rounded-xl border shadow-sm">
-            <SkeletonLoader className="h-10 w-full" />
-            <div className="flex space-x-1 mt-4">
-                <SkeletonLoader className="h-10 flex-1" />
-                <SkeletonLoader className="h-10 flex-1" />
-                <SkeletonLoader className="h-10 flex-1" />
-                <SkeletonLoader className="h-10 flex-1" />
-            </div>
+          <SkeletonLoader className="h-10 w-full" />
+          <div className="flex space-x-1 mt-4">
+            <SkeletonLoader className="h-10 flex-1" />
+            <SkeletonLoader className="h-10 flex-1" />
+            <SkeletonLoader className="h-10 flex-1" />
+            <SkeletonLoader className="h-10 flex-1" />
+          </div>
         </div>
         {/* Card Skeletons */}
         <div className="space-y-4">
-            <SkeletonLoader className="h-40 rounded-xl" />
-            <SkeletonLoader className="h-40 rounded-xl" />
-            <SkeletonLoader className="h-40 rounded-xl" />
+          <SkeletonLoader className="h-40 rounded-xl" />
+          <SkeletonLoader className="h-40 rounded-xl" />
+          <SkeletonLoader className="h-40 rounded-xl" />
         </div>
       </div>
     );
@@ -132,27 +153,40 @@ export default function LeadsPage() {
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               />
             </div>
-            <button 
+            <button
               onClick={handleOpenFilterModal}
               className="relative p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <Filter className={`w-4 h-4 transition-colors ${isFilterApplied ? 'text-blue-600' : 'text-gray-600'}`} />
+              <Filter
+                className={`w-4 h-4 transition-colors ${isFilterApplied ? 'text-blue-600' : 'text-gray-600'}`}
+              />
               {isFilterApplied && (
                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full border-2 border-white"></span>
               )}
             </button>
           </div>
-          
+
           <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-            {(['all', 'warm', 'qualified', 'appointment_booked'] as LeadStatusFilter[]).map((status) => (
+            {(
+              [
+                'all',
+                'warm',
+                'qualified',
+                'appointment_booked',
+              ] as LeadStatusFilter[]
+            ).map((status) => (
               <button
                 key={status}
                 onClick={() => setLeadStatusFilter(status)}
                 className={`flex-1 py-2 px-3 text-xs font-medium rounded-md transition-all ${
-                  leadStatusFilter === status ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  leadStatusFilter === status
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                {status === 'appointment_booked' ? 'Appointment' : status.charAt(0).toUpperCase() + status.slice(1)}
+                {status === 'appointment_booked'
+                  ? 'Appointment'
+                  : status.charAt(0).toUpperCase() + status.slice(1)}
               </button>
             ))}
           </div>
@@ -161,11 +195,7 @@ export default function LeadsPage() {
         <div className="space-y-4">
           {filteredLeads.length > 0 ? (
             filteredLeads.map((lead) => (
-              <LeadCard 
-                key={lead.id} 
-                lead={lead} 
-                onEdit={handleEdit}
-              />
+              <LeadCard key={lead.id} lead={lead} onEdit={handleEdit} />
             ))
           ) : (
             <EmptyState
@@ -177,15 +207,20 @@ export default function LeadsPage() {
         </div>
       </div>
       <button
-        onClick={() => { setEditingLead(null); setShowAddModal(true); }}
+        onClick={() => {
+          setEditingLead(null);
+          setShowAddModal(true);
+        }}
         className="fixed bottom-20 right-5 z-30 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-90"
         aria-label="Add new lead"
       >
         <Plus className="w-7 h-7" />
       </button>
 
-      {(showAddModal || editingLead) && <AddLeadModal onClose={handleCloseModal} initialData={editingLead} />}
-      
+      {(showAddModal || editingLead) && (
+        <AddLeadModal onClose={handleCloseModal} initialData={editingLead} />
+      )}
+
       <LeadFilterModal
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}

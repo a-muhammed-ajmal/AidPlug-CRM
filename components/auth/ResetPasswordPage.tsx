@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +20,9 @@ export default function ResetPasswordPage() {
     // which signs them in temporarily via a token in the URL. If the auth state is
     // finished loading and there's no user, redirect to login.
     if (!authLoading && !user) {
-      navigate('/login', { state: { message: 'Invalid or expired password reset link.' } });
+      navigate('/login', {
+        state: { message: 'Invalid or expired password reset link.' },
+      });
     }
   }, [user, authLoading, navigate]);
 
@@ -32,7 +33,9 @@ export default function ResetPasswordPage() {
 
     try {
       await updateUserPassword(password);
-      navigate('/login', { state: { message: 'Your password has been reset. Please sign in.' } });
+      navigate('/login', {
+        state: { message: 'Your password has been reset. Please sign in.' },
+      });
     } catch (err: any) {
       setError(err.message || 'Failed to update password');
     } finally {
@@ -75,12 +78,19 @@ export default function ResetPasswordPage() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500 hover:text-gray-700"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </button>
             </div>
-            <PasswordStrengthIndicator password={password} onValidationChange={setIsPasswordValid} />
+            <PasswordStrengthIndicator
+              password={password}
+              onValidationChange={setIsPasswordValid}
+            />
           </div>
 
           <div>
@@ -97,19 +107,30 @@ export default function ResetPasswordPage() {
                 required
               />
               <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500 hover:text-gray-700"
-                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                >
-                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500 hover:text-gray-700"
+                aria-label={
+                  showConfirmPassword ? 'Hide password' : 'Show password'
+                }
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </button>
             </div>
           </div>
 
           <button
             type="submit"
-            disabled={loading || authLoading || !isPasswordValid || password !== confirmPassword}
+            disabled={
+              loading ||
+              authLoading ||
+              !isPasswordValid ||
+              password !== confirmPassword
+            }
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? 'Updating...' : 'Update Password'}

@@ -1,11 +1,21 @@
-import { useQuery, useMutation, useQueryClient, UseMutationOptions } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseMutationOptions,
+} from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { CrudService } from '../services/baseService';
 import { PostgrestError } from '@supabase/supabase-js';
 
 // Type for mutation options, allowing consumers to add their own callbacks
 type MutateOptions<TData, TVariables> = Omit<
-  UseMutationOptions<TData, Error | PostgrestError, TVariables, OptimisticUpdateContext<TData>>,
+  UseMutationOptions<
+    TData,
+    Error | PostgrestError,
+    TVariables,
+    OptimisticUpdateContext<TData>
+  >,
   'mutationFn'
 >;
 
@@ -23,11 +33,8 @@ interface OptimisticUpdateContext<TData> {
 export function createCrudHooks<
   TRow extends { id: string },
   TInsert extends { user_id: string },
-  TUpdate
->(
-  resourceKey: string,
-  service: CrudService<TRow, TInsert, TUpdate>
-) {
+  TUpdate,
+>(resourceKey: string, service: CrudService<TRow, TInsert, TUpdate>) {
   // Hook to fetch all items for the resource
   const useGetAll = () => {
     const { user } = useAuth();
@@ -44,13 +51,21 @@ export function createCrudHooks<
     const { user } = useAuth();
     const queryKey = [resourceKey, user?.id];
 
-    return useMutation<TRow, Error | PostgrestError, TInsert, OptimisticUpdateContext<TRow>>({
+    return useMutation<
+      TRow,
+      Error | PostgrestError,
+      TInsert,
+      OptimisticUpdateContext<TRow>
+    >({
       mutationFn: service.create,
       onMutate: async (newItemData) => {
         await queryClient.cancelQueries({ queryKey });
         const previousItems = queryClient.getQueryData<TRow[]>(queryKey) || [];
         const tempId = `temp-${Date.now()}`; // Create a temporary ID
-        queryClient.setQueryData<TRow[]>(queryKey, [...previousItems, { ...newItemData, id: tempId } as unknown as TRow]);
+        queryClient.setQueryData<TRow[]>(queryKey, [
+          ...previousItems,
+          { ...newItemData, id: tempId } as unknown as TRow,
+        ]);
         return { previousItems };
       },
       onError: (err, newItem, context) => {
@@ -67,17 +82,26 @@ export function createCrudHooks<
   };
 
   // Hook for updating an item
-  const useUpdateMutation = (options?: MutateOptions<TRow, { id: string; updates: TUpdate }>) => {
+  const useUpdateMutation = (
+    options?: MutateOptions<TRow, { id: string; updates: TUpdate }>
+  ) => {
     const queryClient = useQueryClient();
     const { user } = useAuth();
     const queryKey = [resourceKey, user?.id];
 
-    return useMutation<TRow, Error | PostgrestError, { id: string; updates: TUpdate }, OptimisticUpdateContext<TRow>>({
+    return useMutation<
+      TRow,
+      Error | PostgrestError,
+      { id: string; updates: TUpdate },
+      OptimisticUpdateContext<TRow>
+    >({
       mutationFn: ({ id, updates }) => service.update(id, updates),
       onMutate: async ({ id, updates }) => {
         await queryClient.cancelQueries({ queryKey });
         const previousItems = queryClient.getQueryData<TRow[]>(queryKey) || [];
-        const updatedItems = previousItems.map(item => item.id === id ? { ...item, ...updates } : item);
+        const updatedItems = previousItems.map((item) =>
+          item.id === id ? { ...item, ...updates } : item
+        );
         queryClient.setQueryData(queryKey, updatedItems);
         return { previousItems };
       },
@@ -100,12 +124,17 @@ export function createCrudHooks<
     const { user } = useAuth();
     const queryKey = [resourceKey, user?.id];
 
-    return useMutation<void, Error | PostgrestError, string, OptimisticUpdateContext<TRow>>({
+    return useMutation<
+      void,
+      Error | PostgrestError,
+      string,
+      OptimisticUpdateContext<TRow>
+    >({
       mutationFn: service.delete,
       onMutate: async (itemId) => {
         await queryClient.cancelQueries({ queryKey });
         const previousItems = queryClient.getQueryData<TRow[]>(queryKey) || [];
-        const updatedItems = previousItems.filter(item => item.id !== itemId);
+        const updatedItems = previousItems.filter((item) => item.id !== itemId);
         queryClient.setQueryData(queryKey, updatedItems);
         return { previousItems };
       },

@@ -1,4 +1,4 @@
-// This reference was commented out to resolve a "Cannot find type definition file" error. 
+// This reference was commented out to resolve a "Cannot find type definition file" error.
 // The manual type definitions below serve as a sufficient workaround.
 // /// <reference types="vite/client" />
 

@@ -6,4 +6,8 @@ type ClientInsert = Database['public']['Tables']['clients']['Insert'];
 type ClientUpdate = Database['public']['Tables']['clients']['Update'];
 
 // Create the service with a single function call
-export const clientsService = createCrudService<Client, ClientInsert, ClientUpdate>('clients');
+export const clientsService = createCrudService<
+  Client,
+  ClientInsert,
+  ClientUpdate
+>('clients');

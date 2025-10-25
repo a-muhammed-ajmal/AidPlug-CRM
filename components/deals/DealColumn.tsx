@@ -11,7 +11,13 @@ interface DealColumnProps {
   onDeleteDeal: (deal: Deal) => void;
 }
 
-const DealColumn: React.FC<DealColumnProps> = ({ stage, deals, onViewDeal, onEditDeal, onDeleteDeal }) => {
+const DealColumn: React.FC<DealColumnProps> = ({
+  stage,
+  deals,
+  onViewDeal,
+  onEditDeal,
+  onDeleteDeal,
+}) => {
   const colorClasses: { [key: string]: string } = {
     blue: 'bg-blue-100 text-blue-800 border-blue-200',
     yellow: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -29,9 +35,9 @@ const DealColumn: React.FC<DealColumnProps> = ({ stage, deals, onViewDeal, onEdi
 
       <div className="space-y-3 overflow-y-auto flex-grow p-3 bg-gray-50">
         {deals.map((deal) => (
-          <DealCard 
-            key={deal.id} 
-            deal={deal} 
+          <DealCard
+            key={deal.id}
+            deal={deal}
             onView={onViewDeal}
             onEdit={onEditDeal}
             onDelete={onDeleteDeal}

@@ -24,10 +24,12 @@ export interface CrudService<TRow, TInsert, TUpdate> {
 export function createCrudService<
   TRow extends { id: string },
   TInsert extends { user_id: string },
-  TUpdate
+  TUpdate,
 >(tableName: TableName): CrudService<TRow, TInsert, TUpdate> {
-  
-  const handleSupabaseError = (error: PostgrestError | null, context: string) => {
+  const handleSupabaseError = (
+    error: PostgrestError | null,
+    context: string
+  ) => {
     if (error) {
       console.error(`Error in ${context} for table ${tableName}:`, error);
       throw error; // Re-throw the original error
@@ -81,10 +83,7 @@ export function createCrudService<
     },
 
     delete: async (id: string): Promise<void> => {
-      const { error } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from(tableName).delete().eq('id', id);
 
       handleSupabaseError(error, 'delete');
     },

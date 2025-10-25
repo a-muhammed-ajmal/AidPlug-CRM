@@ -11,11 +11,15 @@ if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
   // Use the 'load' event to register the service worker after the page has finished loading
   // to avoid any potential impact on initial page load performance.
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((registration) => {
+        console.log(
+          'ServiceWorker registration successful with scope: ',
+          registration.scope
+        );
       })
-      .catch(error => {
+      .catch((error) => {
         console.log('ServiceWorker registration failed: ', error);
       });
   });
@@ -27,7 +31,9 @@ const rootElement = document.getElementById('root');
 // A robust check to ensure the root element exists in your index.html.
 // This provides a clear error message if it's missing.
 if (!rootElement) {
-  throw new Error("Could not find root element with id 'root' to mount the application to.");
+  throw new Error(
+    "Could not find root element with id 'root' to mount the application to."
+  );
 }
 
 const root = ReactDOM.createRoot(rootElement);

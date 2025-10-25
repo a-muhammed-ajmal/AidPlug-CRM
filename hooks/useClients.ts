@@ -7,11 +7,14 @@ type ClientInsert = Database['public']['Tables']['clients']['Insert'];
 type ClientUpdate = Database['public']['Tables']['clients']['Update'];
 
 const { useGetAll, useCreateMutation, useUpdateMutation, useDeleteMutation } =
-  createCrudHooks<Client, ClientInsert, ClientUpdate>('clients', clientsService);
+  createCrudHooks<Client, ClientInsert, ClientUpdate>(
+    'clients',
+    clientsService
+  );
 
 export function useClients() {
   const { logActivity, addNotification } = useUI();
-  
+
   const { data: clients = [], ...query } = useGetAll();
 
   const createClient = useCreateMutation({
@@ -21,17 +24,19 @@ export function useClients() {
     },
     onError: (error) => {
       addNotification('Error', error.message || 'Failed to create client.');
-    }
+    },
   });
 
   const updateClient = useUpdateMutation({
     onSuccess: () => addNotification('Success', 'Client updated successfully.'),
-    onError: (error) => addNotification('Error', error.message || 'Failed to update client.'),
+    onError: (error) =>
+      addNotification('Error', error.message || 'Failed to update client.'),
   });
 
   const deleteClient = useDeleteMutation({
     onSuccess: () => addNotification('Success', 'Client deleted.'),
-    onError: (error) => addNotification('Error', error.message || 'Failed to delete client.'),
+    onError: (error) =>
+      addNotification('Error', error.message || 'Failed to delete client.'),
   });
 
   return {

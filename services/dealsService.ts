@@ -5,7 +5,9 @@ type DealInsert = Database['public']['Tables']['deals']['Insert'];
 type DealUpdate = Database['public']['Tables']['deals']['Update'];
 
 // Create the base service
-const baseDealsService = createCrudService<Deal, DealInsert, DealUpdate>('deals');
+const baseDealsService = createCrudService<Deal, DealInsert, DealUpdate>(
+  'deals'
+);
 
 // Extend the base service with custom methods
 export const dealsService = {

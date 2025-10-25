@@ -8,7 +8,9 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   // This is a safeguard in case the hardcoded values are accidentally removed.
-  throw new Error('Supabase URL or anonymous key is missing in the configuration.');
+  throw new Error(
+    'Supabase URL or anonymous key is missing in the configuration.'
+  );
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {

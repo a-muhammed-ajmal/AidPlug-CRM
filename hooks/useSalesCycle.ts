@@ -4,7 +4,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { Database } from '../types';
 import { useUI } from '../contexts/UIContext';
 
-type SalesCycleUpdate = Partial<Database['public']['Tables']['sales_cycles']['Row']>;
+type SalesCycleUpdate = Partial<
+  Database['public']['Tables']['sales_cycles']['Row']
+>;
 
 export function useSalesCycle() {
   const { user } = useAuth();
@@ -12,21 +14,32 @@ export function useSalesCycle() {
   const { addNotification } = useUI();
   const queryKey = ['salesCycle', user?.id];
 
-  const { data: salesCycle, isLoading, error } = useQuery({
+  const {
+    data: salesCycle,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey,
     queryFn: () => salesCycleService.get(user!.id),
     enabled: !!user,
   });
 
   const updateSalesCycle = useMutation({
-    mutationFn: (updates: SalesCycleUpdate) => salesCycleService.update(user!.id, updates),
+    mutationFn: (updates: SalesCycleUpdate) =>
+      salesCycleService.update(user!.id, updates),
     onSuccess: (updatedSalesCycle) => {
       queryClient.setQueryData(queryKey, updatedSalesCycle);
-      addNotification('Sales Cycle Updated', 'Your sales cycle dates have been saved.');
+      addNotification(
+        'Sales Cycle Updated',
+        'Your sales cycle dates have been saved.'
+      );
     },
     onError: (error: Error) => {
-      addNotification('Update Failed', error.message || 'Could not save the sales cycle.');
-    }
+      addNotification(
+        'Update Failed',
+        error.message || 'Could not save the sales cycle.'
+      );
+    },
   });
 
   return {

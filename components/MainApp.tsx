@@ -6,57 +6,61 @@ import MobileNavigation from './navigation/MobileNavigation';
 import DesktopSidebar from './navigation/DesktopSidebar';
 
 const MainAppLayout = () => {
-    const location = useLocation();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    
-    const getTitle = (pathname: string) => {
-        const segments = pathname.split('/').filter(Boolean);
-        if (segments.length === 0) return 'Home';
-        
-        const lastSegment = segments[segments.length - 1];
-        if (lastSegment === 'dashboard') return 'Home';
-        
-        // Custom titles for product pages
-        if(segments[0] === 'products') {
-            if(segments.length === 1) return 'Product Hub';
-            if(segments.length > 1) {
-                 return lastSegment
-                    .replace(/-/g, ' ')
-                    .replace(/\b\w/g, char => char.toUpperCase());
-            }
-        }
+  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-        return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1);
-    };
+  const getTitle = (pathname: string) => {
+    const segments = pathname.split('/').filter(Boolean);
+    if (segments.length === 0) return 'Home';
 
-    const [title, setTitle] = useState(getTitle(location.pathname));
+    const lastSegment = segments[segments.length - 1];
+    if (lastSegment === 'dashboard') return 'Home';
 
-    useEffect(() => {
-        setTitle(getTitle(location.pathname));
-    }, [location.pathname]);
+    // Custom titles for product pages
+    if (segments[0] === 'products') {
+      if (segments.length === 1) return 'Product Hub';
+      if (segments.length > 1) {
+        return lastSegment
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, (char) => char.toUpperCase());
+      }
+    }
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <DesktopSidebar />
-            
-            <div className="lg:ml-64">
-                <MobileHeader title={title} onMenuClick={() => setIsSidebarOpen(true)} />
-                <DesktopHeader title={title} />
-                
-                <main className="pb-24 pt-20 lg:pt-[85px] lg:pb-6 px-3 lg:px-4">
-                    <Outlet />
-                </main>
-            </div>
+    return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1);
+  };
 
-            <MobileNavigation isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-        </div>
-    );
+  const [title, setTitle] = useState(getTitle(location.pathname));
+
+  useEffect(() => {
+    setTitle(getTitle(location.pathname));
+  }, [location.pathname]);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <DesktopSidebar />
+
+      <div className="lg:ml-64">
+        <MobileHeader
+          title={title}
+          onMenuClick={() => setIsSidebarOpen(true)}
+        />
+        <DesktopHeader title={title} />
+
+        <main className="pb-24 pt-20 lg:pt-[85px] lg:pb-6 px-3 lg:px-4">
+          <Outlet />
+        </main>
+      </div>
+
+      <MobileNavigation
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
+    </div>
+  );
 };
 
 const MainApp = () => {
-    return (
-        <MainAppLayout />
-    );
+  return <MainAppLayout />;
 };
 
 export default MainApp;

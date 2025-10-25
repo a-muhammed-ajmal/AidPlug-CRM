@@ -15,7 +15,7 @@ export function useTasks() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { logActivity, addNotification } = useUI();
-  
+
   const { data: tasks = [], ...query } = useGetAll();
 
   const createTask = useCreateMutation({
@@ -23,28 +23,36 @@ export function useTasks() {
       logActivity('task_add', `Created task: "${newTask.title}"`);
       addNotification('Success', 'Task created successfully.');
     },
-    onError: (error) => addNotification('Error', error.message || 'Failed to create task.'),
+    onError: (error) =>
+      addNotification('Error', error.message || 'Failed to create task.'),
   });
 
   const updateTask = useUpdateMutation({
     onSuccess: () => addNotification('Success', 'Task updated successfully.'),
-    onError: (error) => addNotification('Error', error.message || 'Failed to update task.'),
+    onError: (error) =>
+      addNotification('Error', error.message || 'Failed to update task.'),
   });
-  
+
   const toggleTaskComplete = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: Task['status'] }) => tasksService.toggleComplete(id, status),
+    mutationFn: ({ id, status }: { id: string; status: Task['status'] }) =>
+      tasksService.toggleComplete(id, status),
     onSuccess: (updatedTask) => {
       queryClient.invalidateQueries({ queryKey: ['tasks', user?.id] });
       if (updatedTask.status === 'completed') {
         logActivity('task_complete', `Completed task: "${updatedTask.title}"`);
       }
     },
-    onError: (error: Error) => addNotification('Error', error.message || 'Failed to update task status.'),
+    onError: (error: Error) =>
+      addNotification(
+        'Error',
+        error.message || 'Failed to update task status.'
+      ),
   });
 
   const deleteTask = useDeleteMutation({
     onSuccess: () => addNotification('Success', 'Task deleted.'),
-    onError: (error) => addNotification('Error', error.message || 'Failed to delete task.'),
+    onError: (error) =>
+      addNotification('Error', error.message || 'Failed to delete task.'),
   });
 
   return {

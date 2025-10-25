@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Download, X } from 'lucide-react';
 import { BeforeInstallPromptEvent } from '../../types';
 
 export default function PWAInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function PWAInstallPrompt() {
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     console.log(`User response: ${outcome}`);
     setDeferredPrompt(null);
     setShowPrompt(false);
@@ -48,7 +48,8 @@ export default function PWAInstallPrompt() {
         <div className="flex-1">
           <h3 className="font-semibold mb-1">Install AidPlug CRM</h3>
           <p className="text-sm text-blue-100 mb-3">
-            For quick access and a better experience, install our app on your device.
+            For quick access and a better experience, install our app on your
+            device.
           </p>
           <button
             onClick={handleInstall}
