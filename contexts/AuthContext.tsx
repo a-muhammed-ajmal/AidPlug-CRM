@@ -1,14 +1,14 @@
-import React, {
+import { AuthError, AuthResponse, User } from '@supabase/supabase-js';
+import {
   createContext,
+  ReactNode,
   useContext,
   useEffect,
-  useState,
-  ReactNode,
   useMemo,
+  useState,
 } from 'react';
-import { supabase } from '../lib/supabase';
-import { AuthError, AuthResponse, Session, User } from '@supabase/supabase-js';
 import { authStorage } from '../lib/authStorage';
+import { supabase } from '../lib/supabase';
 
 // Define a type for the component props for better clarity
 type AuthProviderProps = {

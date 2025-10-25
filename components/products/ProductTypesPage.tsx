@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import { ChevronRight, CreditCard } from 'lucide-react';
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { CreditCard, ChevronRight } from 'lucide-react';
 import { useUI } from '../../contexts/UIContext';
 
 // In a real app, this would be fetched based on the bankSlug

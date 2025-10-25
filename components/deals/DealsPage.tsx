@@ -1,38 +1,36 @@
+import {
+  Briefcase,
+  Building,
+  Calendar,
+  ChevronDown,
+  DollarSign,
+  Edit3,
+  Hash,
+  Plus,
+  Search,
+  TrendingUp,
+  X
+} from 'lucide-react';
 import React, {
-  useState,
-  useEffect,
   ComponentType,
   useCallback,
+  useEffect,
   useMemo,
+  useState,
 } from 'react';
 import { useLocation } from 'react-router-dom';
-import {
-  Plus,
-  X,
-  Edit3,
-  DollarSign,
-  Calendar,
-  TrendingUp,
-  Briefcase,
-  ChevronDown,
-  Hash,
-  Building,
-  Phone,
-  Mail,
-  Search,
-} from 'lucide-react';
-import { useDeals } from '../../hooks/useDeals';
-import DealColumn from './DealColumn';
-import { Deal } from '../../types';
-import { useUI } from '../../contexts/UIContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useUI } from '../../contexts/UIContext';
+import { useDeals } from '../../hooks/useDeals';
 import {
-  KANBAN_STAGES,
-  UAE_BANK_NAMES,
-  PRODUCT_TYPES,
   EIB_CREDIT_CARDS,
+  KANBAN_STAGES,
+  PRODUCT_TYPES,
+  UAE_BANK_NAMES,
 } from '../../lib/constants';
+import { Deal } from '../../types';
 import SkeletonLoader from '../common/SkeletonLoader';
+import DealColumn from './DealColumn';
 
 // --- DealModal Component Definition ---
 

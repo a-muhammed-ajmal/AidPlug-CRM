@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';
-import { dealsService } from '../services/dealsService';
-import { useUI } from '../contexts/UIContext';
-import { Deal, Database } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { useUI } from '../contexts/UIContext';
+import { dealsService } from '../services/dealsService';
+import { Database, Deal } from '../types';
+import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';
 
 type DealInsert = Database['public']['Tables']['deals']['Insert'];
 type DealUpdate = Database['public']['Tables']['deals']['Update'];
@@ -51,7 +51,7 @@ export function useDeals() {
   });
 
   const deleteDeal = useDeleteMutation({
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       // Note: For optimistic delete, we don't have the full object here.
       // The activity log might need to be adjusted or fired onMutate.
       logActivity('deal_delete', `Deleted a deal.`);

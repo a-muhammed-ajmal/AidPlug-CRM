@@ -1,26 +1,10 @@
 import {
-  User,
+  Building,
+  Car,
   CreditCard,
   DollarSign,
-  Car,
   Home,
-  Building,
-  CheckCircle,
-  List,
-  Users,
-  Briefcase,
-  FileText,
-  Activity,
-  Award,
-  Star,
-  Gift,
-  Phone,
-  Shield,
-  Clock,
-  Inbox,
-  Zap,
-  Upload,
-  Folder,
+  User
 } from 'lucide-react';
 
 export const mockProducts = [

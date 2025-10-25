@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
 import {
-  User,
-  Upload,
   CheckCircle,
-  X,
-  KeyRound,
   Eye,
   EyeOff,
+  KeyRound,
+  Upload,
+  User,
+  X,
 } from 'lucide-react';
-import { useUserProfile } from '../../hooks/useUserProfile';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
+import { useUserProfile } from '../../hooks/useUserProfile';
 import { supabase } from '../../lib/supabase';
 import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator';
 import SkeletonLoader from '../common/SkeletonLoader';
@@ -20,9 +20,9 @@ interface AccountModalProps {
 }
 
 const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
-  const { user, updateUserPassword, signOut } = useAuth();
+  const { user, updateUserPassword } = useAuth();
   const { profile, updateProfile, isLoading } = useUserProfile();
-  const { addNotification, showConfirmation } = useUI();
+  const { addNotification } = useUI();
   const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
 
   // Profile form state

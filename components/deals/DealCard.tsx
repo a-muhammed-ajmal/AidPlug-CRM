@@ -1,16 +1,15 @@
-import React from 'react';
 import {
-  DollarSign,
-  Calendar,
-  TrendingUp,
-  MoreVertical,
-  Edit3,
-  Trash2,
-  Phone,
-  Mail,
   Briefcase,
   Building,
+  Calendar,
+  DollarSign,
+  Edit3,
+  Mail,
+  MoreVertical,
+  Phone,
+  Trash2
 } from 'lucide-react';
+import React from 'react';
 import { Deal } from '../../types';
 import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
 

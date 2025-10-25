@@ -1,8 +1,7 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
 import { Building, X } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { bottomNavKeys, mainNavItems } from '../../lib/navigation';
 import NavList from './NavList';
-import { mainNavItems, bottomNavKeys } from '../../lib/navigation';
 
 interface MobileNavigationProps {
   isOpen: boolean;

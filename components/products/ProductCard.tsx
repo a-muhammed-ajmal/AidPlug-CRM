@@ -1,5 +1,4 @@
-import React from 'react';
-import { TrendingUp, TrendingDown, LucideIcon } from 'lucide-react';
+import { LucideIcon, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface Product {
   id: number;

@@ -1,14 +1,14 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { Filter, Plus, Search, Users } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Plus, Search, Users, Filter } from 'lucide-react';
-import { useLeads } from '../../hooks/useLeads';
-import LeadCard from './LeadCard';
-import AddLeadModal from './AddLeadModal';
-import LeadFilterModal from './LeadFilterModal';
-import EmptyState from '../common/EmptyState';
-import { Lead } from '../../types';
-import SkeletonLoader from '../common/SkeletonLoader';
 import { useUI } from '../../contexts/UIContext';
+import { useLeads } from '../../hooks/useLeads';
+import { Lead } from '../../types';
+import EmptyState from '../common/EmptyState';
+import SkeletonLoader from '../common/SkeletonLoader';
+import AddLeadModal from './AddLeadModal';
+import LeadCard from './LeadCard';
+import LeadFilterModal from './LeadFilterModal';
 
 type LeadStatusFilter = 'all' | NonNullable<Lead['qualification_status']>;
 type LeadUrgencyFilter = 'all' | NonNullable<Lead['urgency_level']>;

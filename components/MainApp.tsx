@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, Outlet } from 'react-router-dom';
-import MobileHeader from './navigation/MobileHeader';
+import { useEffect, useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import DesktopHeader from './navigation/DesktopHeader';
-import MobileNavigation from './navigation/MobileNavigation';
 import DesktopSidebar from './navigation/DesktopSidebar';
+import MobileHeader from './navigation/MobileHeader';
+import MobileNavigation from './navigation/MobileNavigation';
 
 const MainAppLayout = () => {
   const location = useLocation();

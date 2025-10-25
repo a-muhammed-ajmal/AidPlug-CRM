@@ -1,12 +1,12 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Plus, List } from 'lucide-react';
-import { useTasks } from '../../hooks/useTasks';
-import TaskCard from './TaskCard';
-import AddTaskModal from './AddTaskModal';
-import EmptyState from '../common/EmptyState';
-import { Task } from '../../types';
-import SkeletonLoader from '../common/SkeletonLoader';
+import { List, Plus } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useUI } from '../../contexts/UIContext';
+import { useTasks } from '../../hooks/useTasks';
+import { Task } from '../../types';
+import EmptyState from '../common/EmptyState';
+import SkeletonLoader from '../common/SkeletonLoader';
+import AddTaskModal from './AddTaskModal';
+import TaskCard from './TaskCard';
 
 type FilterOption = 'all' | 'today' | 'pending' | 'completed';
 

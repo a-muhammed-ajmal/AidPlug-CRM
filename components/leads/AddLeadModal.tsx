@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { X, ChevronDown } from 'lucide-react';
-import { useLeads } from '../../hooks/useLeads';
+import { ChevronDown, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useClients } from '../../hooks/useClients';
-import { Lead } from '../../types';
 import { useUI } from '../../contexts/UIContext';
+import { useLeads } from '../../hooks/useLeads';
 import {
-  UAE_BANK_NAMES,
   EIB_CREDIT_CARDS,
   PRODUCT_TYPES,
+  UAE_BANK_NAMES,
   UAE_EMIRATES,
-  mockReferrals,
 } from '../../lib/constants';
+import { Lead } from '../../types';
 
 interface AddLeadModalProps {
   onClose: () => void;
@@ -73,7 +71,6 @@ export default function AddLeadModal({
   const { createLead, updateLead } = useLeads();
   const { user } = useAuth();
   const { addNotification } = useUI();
-  const { clients } = useClients();
 
   const [loading, setLoading] = useState(false);
   const mode = initialData ? 'edit' : 'add';
@@ -97,14 +94,6 @@ export default function AddLeadModal({
   const [isProductDropdownVisible, setIsProductDropdownVisible] =
     useState(true);
 
-  const referralOptions = useMemo(() => {
-    const clientsAsReferrals = clients.map((c) => ({
-      id: `client-${c.id}`,
-      name: c.full_name,
-      type: 'Client',
-    }));
-    return [...clientsAsReferrals, ...mockReferrals];
-  }, [clients]);
 
   useEffect(() => {
     let newProducts: string[] = [];

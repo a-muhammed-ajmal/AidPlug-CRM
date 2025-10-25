@@ -1,6 +1,5 @@
-import React from 'react';
+import { AlertTriangle, CheckCircle, Server } from 'lucide-react';
 import { mockStatusUpdates } from '../../lib/constants';
-import { Server, AlertTriangle, CheckCircle } from 'lucide-react';
 
 const getStatusStyles = (status: string) => {
   switch (status) {

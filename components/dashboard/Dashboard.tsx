@@ -1,26 +1,25 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDeals } from '../../hooks/useDeals';
-import { useTasks } from '../../hooks/useTasks';
-import { useClients } from '../../hooks/useClients';
 import {
-  Briefcase,
-  Clock,
-  CheckCircle as CheckCircleIcon,
-  Zap,
-  Plus,
-  List,
-  User,
-  Users,
-  Upload,
   Activity,
   Award,
-  Gift,
-  Star,
+  Briefcase,
   Calendar,
+  CheckCircle as CheckCircleIcon,
+  Clock,
+  Gift,
+  List,
+  Plus,
+  Star,
+  User,
+  Users,
+  Zap
 } from 'lucide-react';
-import QuickActionButton from '../common/QuickActionButton';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUI } from '../../contexts/UIContext';
+import { useClients } from '../../hooks/useClients';
+import { useDeals } from '../../hooks/useDeals';
+import { useTasks } from '../../hooks/useTasks';
+import QuickActionButton from '../common/QuickActionButton';
 import SkeletonLoader from '../common/SkeletonLoader';
 
 // Reusable component from the monolithic file, now placed here for dashboard use
@@ -216,7 +215,7 @@ export default function Dashboard() {
     setTitle('Dashboard');
   }, [setTitle]);
   const navigate = useNavigate();
-  const { addNotification, activities } = useUI();
+  const { activities } = useUI();
   const { deals, isLoading: dealsLoading } = useDeals();
 
   const activeDeals = deals.filter(

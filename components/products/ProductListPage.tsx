@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import { ChevronRight } from 'lucide-react';
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronRight, Info } from 'lucide-react';
+import { useUI } from '../../contexts/UIContext';
 import { EIB_CREDIT_CARDS } from '../../lib/constants';
 import { productDetailsData } from '../../lib/productData';
-import { useUI } from '../../contexts/UIContext';
 
 export default function ProductListPage() {
   const { bankSlug, typeSlug } = useParams();
