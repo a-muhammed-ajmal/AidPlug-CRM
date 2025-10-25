@@ -74,7 +74,11 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !profile) return;
+    console.log('handleProfileSubmit called');
+    if (!user || !profile) {
+      console.log('No user or profile available');
+      return;
+    }
 
     // Update profile (temporarily removed avatar upload)
     const profileUpdates = {
@@ -86,6 +90,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
       // photo_url: profile.photo_url, // Keep existing photo URL
     };
 
+    console.log('Updating profile with:', profileUpdates);
     updateProfile.mutate(profileUpdates);
   };
 

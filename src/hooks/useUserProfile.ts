@@ -27,10 +27,12 @@ export function useUserProfile() {
     mutationFn: (updates: UserProfileUpdate) =>
       userService.updateProfile(user!.id, updates),
     onSuccess: (updatedProfile) => {
+      console.log('Profile update successful:', updatedProfile);
       queryClient.setQueryData(queryKey, updatedProfile); // Optimistically update cache
       addNotification('Profile Updated', 'Your changes have been saved.');
     },
     onError: (error: Error) => {
+      console.error('Profile update failed:', error);
       addNotification(
         'Update Failed',
         error.message || 'Could not save your profile.'

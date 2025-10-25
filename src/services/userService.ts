@@ -23,13 +23,18 @@ export const userService = {
     userId: string,
     updates: UserProfileUpdate
   ): Promise<UserProfile> => {
+    console.log('userService.updateProfile called with:', { userId, updates });
     const { data, error } = await supabase
       .from('user_profiles')
       .update(updates)
       .eq('id', userId)
       .select()
       .single();
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase update error:', error);
+      throw error;
+    }
+    console.log('Supabase update successful:', data);
     return data;
   },
 
