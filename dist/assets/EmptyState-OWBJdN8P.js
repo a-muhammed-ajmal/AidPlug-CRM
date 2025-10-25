@@ -1,0 +1,1 @@
+import{j as e}from"./index-BK3vLjjw.js";function a({icon:t,title:s,message:r}){return e.jsxs("div",{className:"text-center py-12 px-6 bg-white rounded-xl border",children:[e.jsx("div",{className:"mb-4 flex justify-center",children:t}),e.jsx("h3",{className:"text-lg font-semibold text-gray-800",children:s}),e.jsx("p",{className:"text-gray-500 mt-1",children:r})]})}export{a as E};
