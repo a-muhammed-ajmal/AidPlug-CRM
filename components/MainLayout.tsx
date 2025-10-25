@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import MobileHeader from './navigation/MobileHeader';
 import DesktopHeader from './navigation/DesktopHeader';
 import MobileNavigation from './navigation/MobileNavigation';
 import DesktopSidebar from './navigation/DesktopSidebar';
-import { useUI } from '@/contexts/UIContext';
+import { useUI } from '../contexts/UIContext';
 
 const MainLayout = () => {
   // State for the mobile sidebar remains local to the layout, which is perfect.
