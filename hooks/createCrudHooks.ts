@@ -5,9 +5,14 @@ import { PostgrestError } from '@supabase/supabase-js';
 
 // Type for mutation options, allowing consumers to add their own callbacks
 type MutateOptions<TData, TVariables> = Omit<
-  UseMutationOptions<TData, Error | PostgrestError, TVariables, any>,
+  UseMutationOptions<TData, Error | PostgrestError, TVariables, OptimisticUpdateContext<TData>>,
   'mutationFn'
 >;
+
+// Define the context type for optimistic updates
+interface OptimisticUpdateContext<TData> {
+  previousItems: TData[];
+}
 
 /**
  * A factory function to create a standard set of TanStack Query hooks for a resource.
@@ -39,13 +44,13 @@ export function createCrudHooks<
     const { user } = useAuth();
     const queryKey = [resourceKey, user?.id];
 
-    return useMutation<TRow, Error | PostgrestError, TInsert>({
+    return useMutation<TRow, Error | PostgrestError, TInsert, OptimisticUpdateContext<TRow>>({
       mutationFn: service.create,
       onMutate: async (newItemData) => {
         await queryClient.cancelQueries({ queryKey });
         const previousItems = queryClient.getQueryData<TRow[]>(queryKey) || [];
         const tempId = `temp-${Date.now()}`; // Create a temporary ID
-        queryClient.setQueryData<TRow[]>(queryKey, [...previousItems, { ...newItemData, id: tempId } as TRow]);
+        queryClient.setQueryData<TRow[]>(queryKey, [...previousItems, { ...newItemData, id: tempId } as unknown as TRow]);
         return { previousItems };
       },
       onError: (err, newItem, context) => {
@@ -67,7 +72,7 @@ export function createCrudHooks<
     const { user } = useAuth();
     const queryKey = [resourceKey, user?.id];
 
-    return useMutation<TRow, Error | PostgrestError, { id: string; updates: TUpdate }>({
+    return useMutation<TRow, Error | PostgrestError, { id: string; updates: TUpdate }, OptimisticUpdateContext<TRow>>({
       mutationFn: ({ id, updates }) => service.update(id, updates),
       onMutate: async ({ id, updates }) => {
         await queryClient.cancelQueries({ queryKey });
@@ -95,7 +100,7 @@ export function createCrudHooks<
     const { user } = useAuth();
     const queryKey = [resourceKey, user?.id];
 
-    return useMutation<void, Error | PostgrestError, string>({
+    return useMutation<void, Error | PostgrestError, string, OptimisticUpdateContext<TRow>>({
       mutationFn: service.delete,
       onMutate: async (itemId) => {
         await queryClient.cancelQueries({ queryKey });

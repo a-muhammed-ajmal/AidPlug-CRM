@@ -35,10 +35,15 @@ export const salesCycleService = {
   update: async (userId: string, updates: Partial<SalesCycleUpdate>): Promise<SalesCycle> => {
     const { data, error } = await supabase
       .from('sales_cycles')
-      .upsert({ ...updates, user_id: userId }) // Upsert is perfect here
+      .upsert({
+        user_id: userId,
+        start_date: updates.start_date || new Date().toISOString().split('T')[0],
+        end_date: updates.end_date || new Date().toISOString().split('T')[0],
+        ...updates
+      }) // Upsert is perfect here
       .select()
       .single();
-      
+
     if (error) throw error;
     return data;
   },

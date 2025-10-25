@@ -41,9 +41,9 @@ export function createCrudService<
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
-      
+
       handleSupabaseError(error, 'getAll');
-      return (data as TRow[]) || [];
+      return (data as unknown as TRow[]) || [];
     },
 
     getById: async (id: string): Promise<TRow> => {
@@ -54,7 +54,7 @@ export function createCrudService<
         .single();
 
       handleSupabaseError(error, 'getById');
-      return data as TRow;
+      return data as unknown as TRow;
     },
 
     create: async (insertData: TInsert): Promise<TRow> => {
@@ -65,19 +65,19 @@ export function createCrudService<
         .single();
 
       handleSupabaseError(error, 'create');
-      return data as TRow;
+      return data as unknown as TRow;
     },
 
     update: async (id: string, updates: TUpdate): Promise<TRow> => {
       const { data, error } = await supabase
         .from(tableName)
-        .update(updates)
+        .update(updates as any)
         .eq('id', id)
         .select()
         .single();
 
       handleSupabaseError(error, 'update');
-      return data as TRow;
+      return data as unknown as TRow;
     },
 
     delete: async (id: string): Promise<void> => {
