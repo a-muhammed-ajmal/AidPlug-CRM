@@ -3,6 +3,7 @@ import {
   Eye,
   EyeOff,
   KeyRound,
+  LogOut,
   Upload,
   User,
   X,
@@ -20,9 +21,9 @@ interface AccountModalProps {
 }
 
 const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
-  const { user, updateUserPassword } = useAuth();
+  const { user, updateUserPassword, signOut } = useAuth();
   const { profile, updateProfile, isLoading } = useUserProfile();
-  const { addNotification } = useUI();
+  const { addNotification, showConfirmation } = useUI();
   const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
 
   // Profile form state
@@ -342,8 +343,15 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
                   </div>
                 </div>
               </div>
-              {/* Save Button */}
-              <div className="flex justify-end p-4 border-t bg-gray-50 flex-shrink-0">
+              {/* Save Button and Sign Out */}
+              <div className="flex justify-between items-center p-4 border-t bg-gray-50 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => showConfirmation('Sign Out', 'Are you sure you want to sign out?', signOut)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 flex items-center"
+                >
+                  <LogOut className="w-4 h-4 mr-2" /> Sign Out
+                </button>
                 <button
                   type="submit"
                   disabled={isSaving}

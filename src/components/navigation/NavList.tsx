@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { useClients } from '../../hooks/useClients';
 import { useDeals } from '../../hooks/useDeals';
 import { useTasks } from '../../hooks/useTasks';
 import { mockProducts } from '../../lib/constants';
-import { useAuth } from '../../contexts/AuthContext';
-import { useUI } from '../../contexts/UIContext';
+
+
 import { mainNavItems, secondaryNavItems, NavItem } from '../../lib/navigation';
 
 // Import the account modal
@@ -74,8 +73,7 @@ export default function NavList({ onClose }: NavListProps) {
   const { clients } = useClients();
   const { deals } = useDeals();
   const { tasks } = useTasks();
-  const { signOut } = useAuth();
-  const { showConfirmation } = useUI();
+
 
   // Add account modal state
   const [showAccountModal, setShowAccountModal] = useState(false);
@@ -99,9 +97,7 @@ export default function NavList({ onClose }: NavListProps) {
     if (onClose) onClose();
   };
 
-  const handleSignOut = () => {
-    showConfirmation('Sign Out', 'Are you sure you want to sign out?', signOut);
-  };
+
 
   return (
     <>
@@ -134,17 +130,6 @@ export default function NavList({ onClose }: NavListProps) {
               item={secondaryNavItems.find((item) => item.key === 'settings')!}
               onClick={handleLinkClick}
             />
-
-            {/* Sign Out Button */}
-            <button
-              onClick={handleSignOut}
-              className="w-full flex items-center justify-between p-3 rounded-lg mb-1 text-left transition-all text-red-600 hover:bg-red-50"
-            >
-              <div className="flex items-center space-x-3">
-                <LogOut className="w-5 h-5" />
-                <span className="font-medium">Sign Out</span>
-              </div>
-            </button>
           </div>
         </div>
       </div>
