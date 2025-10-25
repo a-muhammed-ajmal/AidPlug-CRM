@@ -23,6 +23,7 @@ interface AccountModalProps {
 const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
   const { user, updateUserPassword, signOut } = useAuth();
   const { profile, updateProfile, isLoading } = useUserProfile();
+  const isUpdating = updateProfile.isPending;
   const { addNotification, showConfirmation } = useUI();
   const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
 
@@ -37,7 +38,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
   });
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Password change state
@@ -81,7 +82,6 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !profile) return;
-    setIsSaving(true);
 
     let newAvatarUrl = profile.photo_url;
 
@@ -105,7 +105,6 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
           'Upload Failed',
           err instanceof Error ? err.message : 'An error occurred while uploading the avatar.'
         );
-        setIsSaving(false);
         return;
       }
     }
@@ -120,11 +119,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
       photo_url: newAvatarUrl,
     };
 
-    updateProfile.mutate(profileUpdates, {
-      onSettled: () => {
-        setIsSaving(false);
-      },
-    });
+    updateProfile.mutate(profileUpdates);
   };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -343,10 +338,10 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSaving}
+                  disabled={isUpdating}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 flex items-center"
                 >
-                  {isSaving ? (
+                  {isUpdating ? (
                     'Saving...'
                   ) : (
                     <>

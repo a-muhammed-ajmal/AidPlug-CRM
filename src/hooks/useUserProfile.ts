@@ -26,6 +26,9 @@ export function useUserProfile() {
   const updateProfile = useMutation({
     mutationFn: (updates: UserProfileUpdate) =>
       userService.updateProfile(user!.id, updates),
+    onMutate: () => {
+      // Optional: Add loading state management here if needed
+    },
     onSuccess: (updatedProfile) => {
       queryClient.setQueryData(queryKey, updatedProfile); // Optimistically update cache
       addNotification('Profile Updated', 'Your changes have been saved.');
