@@ -1,5 +1,6 @@
 import { Bell, Menu } from 'lucide-react';
-import { useUI } from '../../contexts/UIContext';
+// FIX: Corrected folder casing from 'Contexts' to 'contexts' and added Notification type
+import { useUI, Notification } from '../../contexts/UIContext';
 
 interface MobileHeaderProps {
   title: string;
@@ -11,7 +12,11 @@ export default function MobileHeader({
   onMenuClick,
 }: MobileHeaderProps) {
   const { notifications, setShowNotifications } = useUI();
-  const unreadCount = notifications.filter((n) => n.unread).length;
+
+  // FIX: Explicitly typing 'n' to solve the 'implicit any' error
+  const unreadCount = notifications.filter(
+    (n: Notification) => n.unread
+  ).length;
 
   return (
     <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40 shadow-sm lg:hidden">
@@ -24,7 +29,7 @@ export default function MobileHeader({
             <Menu className="w-5 h-5 text-gray-600" />
           </button>
           <div className="flex items-center space-x-2">
-            <img src="/logo.svg" alt="AidPlug CRM" className="w-6 h-6" />
+            <img src="/favicon.svg" alt="AidPlug CRM" className="w-6 h-6" />
             <h1 className="text-lg font-bold text-gray-900">{title}</h1>
           </div>
         </div>
