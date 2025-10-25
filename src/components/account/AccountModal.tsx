@@ -4,15 +4,15 @@ import {
   EyeOff,
   KeyRound,
   LogOut,
-  Upload,
+
   User,
   X,
 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
 import { useUserProfile } from '../../hooks/useUserProfile';
-import { supabase } from '../../lib/supabase';
+
 import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator';
 import SkeletonLoader from '../common/SkeletonLoader';
 
@@ -36,10 +36,9 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
     company_name: '',
     bio: '',
   });
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
+
 
   // Password change state
   const [passwordData, setPasswordData] = useState({
@@ -61,17 +60,11 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
         company_name: profile.company_name || '',
         bio: profile.bio || '',
       });
-      setAvatarPreview(profile.photo_url || null);
+      // setAvatarPreview(profile.photo_url || null); // Temporarily disabled
     }
   }, [profile]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setAvatarFile(file);
-      setAvatarPreview(URL.createObjectURL(file));
-    }
-  };
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -83,40 +76,14 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
     e.preventDefault();
     if (!user || !profile) return;
 
-    let newAvatarUrl = profile.photo_url;
-
-    // Handle avatar upload
-    if (avatarFile) {
-      try {
-        const filePath = `${user.id}/${Date.now()}_${avatarFile.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(filePath, avatarFile, { upsert: true });
-
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(filePath);
-
-        newAvatarUrl = urlData.publicUrl;
-      } catch (err: unknown) {
-        addNotification(
-          'Upload Failed',
-          err instanceof Error ? err.message : 'An error occurred while uploading the avatar.'
-        );
-        return;
-      }
-    }
-
-    // Update profile
+    // Update profile (temporarily removed avatar upload)
     const profileUpdates = {
       ...formData,
       phone: formData.phone ? `+971 ${formData.phone}` : null,
       whatsapp_number: formData.whatsapp_number
         ? `+971 ${formData.whatsapp_number}`
         : null,
-      photo_url: newAvatarUrl,
+      // photo_url: profile.photo_url, // Keep existing photo URL
     };
 
     updateProfile.mutate(profileUpdates);
@@ -188,34 +155,12 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
           {activeTab === 'profile' ? (
             <form onSubmit={handleProfileSubmit}>
               <div className="p-6 space-y-6">
-                {/* Avatar Section */}
+                {/* Avatar Section - Temporarily disabled */}
                 <div className="flex items-center space-x-6">
                   <div className="relative">
                     <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
-                      {avatarPreview ? (
-                        <img
-                          src={avatarPreview}
-                          alt="Profile"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <User className="w-10 h-10 text-gray-400" />
-                      )}
+                      <User className="w-10 h-10 text-gray-400" />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="absolute bottom-0 right-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center shadow"
-                    >
-                      <Upload className="w-3 h-3" />
-                    </button>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      accept="image/*"
-                      className="hidden"
-                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">
