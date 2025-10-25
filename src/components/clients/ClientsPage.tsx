@@ -181,7 +181,11 @@ const ClientDetailsModal = ({
                   label="Date of Birth"
                   value={
                     client.dob
-                      ? new Date(client.dob).toLocaleDateString()
+                      ? new Date(client.dob).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                        })
                       : null
                   }
                   icon={Calendar}
@@ -259,7 +263,11 @@ const ClientDetailsModal = ({
                   label="Client Since"
                   value={
                     client.client_since
-                      ? new Date(client.client_since).toLocaleDateString()
+                      ? new Date(client.client_since).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                        })
                       : null
                   }
                   icon={Calendar}

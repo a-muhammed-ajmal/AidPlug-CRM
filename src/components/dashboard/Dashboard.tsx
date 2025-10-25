@@ -88,7 +88,7 @@ const ThingsToDo = () => {
                 <p className="text-sm font-medium text-gray-800 truncate">
                   {task.title}
                 </p>
-                <p className="text-xs text-gray-500">{`Due: ${new Date(task.due_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}`}</p>
+                <p className="text-xs text-gray-500">{`Due: ${new Date(task.due_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`}</p>
               </div>
               <span
                 className={`text-xs font-medium px-2 py-1 rounded-full ${task.priority === 'urgent' ? 'bg-red-100 text-red-800' : 'bg-gray-200 text-gray-700'}`}
@@ -234,7 +234,7 @@ export default function Dashboard() {
   ).length;
 
   // Calculate days remaining in sales cycle
-  const daysRemaining = salesCycle ? (() => {
+  const daysRemaining = salesCycle && salesCycle.start_date && salesCycle.end_date ? (() => {
     const endDate = new Date(salesCycle.end_date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);

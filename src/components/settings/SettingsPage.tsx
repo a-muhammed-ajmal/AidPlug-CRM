@@ -211,8 +211,8 @@ export default function SettingsPage() {
   } = useSalesCycle();
 
   const [cycleDates, setCycleDates] = useState({
-    start_date: '',
-    end_date: '',
+    start_date: salesCycle?.start_date || '',
+    end_date: salesCycle?.end_date || '',
   });
   const [dateError, setDateError] = useState<string | null>(null);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced'>(
@@ -228,6 +228,11 @@ export default function SettingsPage() {
       setCycleDates({
         start_date: salesCycle.start_date || '',
         end_date: salesCycle.end_date || '',
+      });
+    } else {
+      setCycleDates({
+        start_date: '',
+        end_date: '',
       });
     }
   }, [salesCycle]);
@@ -267,7 +272,7 @@ export default function SettingsPage() {
   const handleDateBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!dateError) {
       const { name, value } = e.target;
-      if (salesCycle && salesCycle[name as keyof typeof salesCycle] !== value) {
+      if (value && (salesCycle?.[name as keyof typeof salesCycle] !== value)) {
         updateSalesCycle.mutate({ [name]: value });
       }
     }

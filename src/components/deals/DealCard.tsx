@@ -122,7 +122,12 @@ const DealCard = React.memo(
             <span>
               Submitted:{' '}
               {new Date(deal.created_at || Date.now()).toLocaleDateString(
-                'en-GB'
+                'en-GB',
+                {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                }
               )}
             </span>
           </div>
