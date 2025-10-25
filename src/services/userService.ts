@@ -64,7 +64,7 @@ export const userService = {
   ): Promise<UserPreferences> => {
     const { data, error } = await supabase
       .from('user_preferences')
-      .upsert({ ...updates, user_id: userId })
+      .upsert({ ...updates, user_id: userId }, { onConflict: 'user_id' })
       .select()
       .single();
     if (error) throw error;
