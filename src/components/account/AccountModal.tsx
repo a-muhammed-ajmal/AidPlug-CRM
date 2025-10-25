@@ -75,8 +75,11 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('handleProfileSubmit called');
+    console.log('User:', user);
+    console.log('Profile:', profile);
     if (!user || !profile) {
       console.log('No user or profile available');
+      addNotification('Error', 'You must be logged in to update your profile.');
       return;
     }
 

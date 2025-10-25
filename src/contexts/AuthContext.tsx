@@ -53,7 +53,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     // Check the current session on initial load
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log('Auth session check:', { session: !!session, error });
       setUser(session?.user ?? null);
       setLoading(false);
     });
@@ -61,7 +62,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Listen for changes in authentication state
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state change:', event, { session: !!session });
       setUser(session?.user ?? null);
       // Ensure loading is false once we have auth state
       if (loading) setLoading(false);
@@ -69,7 +71,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Cleanup the subscription on component unmount
     return () => subscription.unsubscribe();
-  }, [loading]); // Added loading to dependency array to satisfy exhaustive-deps, though effect only runs once
+  }, []); // Remove loading from deps since we only want this to run once
 
   const signUp = async (
     email: string,
