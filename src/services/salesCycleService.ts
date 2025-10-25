@@ -23,19 +23,45 @@ export const salesCycleService = {
     userId: string,
     updates: Partial<SalesCycleUpdate>
   ): Promise<SalesCycle> => {
-    const { data, error } = await supabase
-      .from('sales_cycles')
-      .upsert(
-        {
-          user_id: userId,
-          ...updates,
-        } as Database['public']['Tables']['sales_cycles']['Insert'],
-        { onConflict: 'user_id' }
-      )
-      .select()
-      .single();
+    // Only upsert if we have both start_date and end_date
+    if (updates.start_date && updates.end_date) {
+      const { data, error } = await supabase
+        .from('sales_cycles')
+        .upsert(
+          {
+            user_id: userId,
+            start_date: updates.start_date,
+            end_date: updates.end_date,
+          },
+          { onConflict: 'user_id' }
+        )
+        .select()
+        .single();
 
-    if (error) throw error;
-    return data;
+      if (error) throw error;
+      return data;
+    } else {
+      // If only partial updates, try to update existing record
+      const { data: existing } = await supabase
+        .from('sales_cycles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from('sales_cycles')
+          .update(updates)
+          .eq('user_id', userId)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      } else {
+        // No existing record and incomplete data, throw error
+        throw new Error('Cannot create sales cycle without both start and end dates');
+      }
+    }
   },
 };
