@@ -18,6 +18,7 @@ import { useUI, Activity } from '../../contexts/UIContext';
 import { useClients } from '../../hooks/useClients';
 import { useDeals } from '../../hooks/useDeals';
 import { useTasks } from '../../hooks/useTasks';
+import { useSalesCycle } from '../../hooks/useSalesCycle';
 import QuickActionButton from '../common/QuickActionButton';
 import SkeletonLoader from '../common/SkeletonLoader';
 
@@ -226,12 +227,25 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { activities } = useUI();
   const { deals, isLoading: dealsLoading } = useDeals();
+  const { salesCycle } = useSalesCycle();
 
   const activeDeals = deals.filter(
     (d) => !['completed', 'unsuccessful'].includes(d.stage || '')
   ).length;
-  // Note: sales cycle logic will be implemented in settings/account pages
-  const daysRemaining = 15; // Placeholder
+
+  // Calculate days remaining in sales cycle
+  const daysRemaining = salesCycle ? (() => {
+    const endDate = new Date(salesCycle.end_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
+
+    const diffTime = endDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return Math.max(0, diffDays); // Don't show negative days
+  })() : 0;
+
   const doneSuccessfully = deals.filter((d) => d.stage === 'completed').length;
 
   const timeSince = (dateString: string) => {
