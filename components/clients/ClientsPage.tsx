@@ -175,7 +175,7 @@ export default function ClientsPage() {
       'Delete Client?',
       `Are you sure you want to permanently delete ${clientToDelete.full_name}? This action cannot be undone.`,
       () => {
-        deleteClient(id, {
+        deleteClient.mutate(id, {
             onSuccess: () => {
               addNotification('Client Deleted', `${clientToDelete.full_name} has been removed.`);
               handleCloseModals();

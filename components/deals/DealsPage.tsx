@@ -159,18 +159,25 @@ function DealModal({ isOpen, onClose, initialData, initialMode = 'view' }: DealM
         aecb_score: formData.aecb_score ? parseInt(formData.aecb_score, 10) : null,
     };
     
-    const mutation = initialData 
-      ? (data: any) => updateDeal({ id: initialData!.id, updates: data })
-      : createDeal;
-
-    mutation(dealData, {
-      onSuccess: () => {
-        addNotification(initialData ? 'Deal Updated' : 'Deal Created', `${formData.title} has been saved.`);
-        onClose();
-      },
-      onError: (err) => addNotification('Error', (err as Error).message),
-      onSettled: () => setLoading(false)
-    });
+    if (initialData) {
+        updateDeal.mutate({ id: initialData.id, updates: dealData }, {
+            onSuccess: () => {
+                addNotification('Deal Updated', `${formData.title} has been saved.`);
+                onClose();
+            },
+            onError: (err: Error) => addNotification('Error', err.message),
+            onSettled: () => setLoading(false)
+        });
+    } else {
+        createDeal.mutate(dealData, {
+            onSuccess: () => {
+                addNotification('Deal Created', `${formData.title} has been saved.`);
+                onClose();
+            },
+            onError: (err: Error) => addNotification('Error', err.message),
+            onSettled: () => setLoading(false)
+        });
+    }
   };
 
   if (!isOpen) return null;
@@ -327,9 +334,9 @@ export default function DealsPage() {
       'Delete Deal?',
       `Are you sure you want to permanently delete the deal "${deal.title}"? This action cannot be undone.`,
       () => {
-        deleteDeal(deal, {
+        deleteDeal.mutate(deal.id, {
           onSuccess: () => addNotification('Deal Deleted', `The deal has been successfully removed.`),
-          onError: (error) => addNotification('Error', (error as Error).message || 'Failed to delete deal.'),
+          onError: (error: Error) => addNotification('Error', error.message || 'Failed to delete deal.'),
         });
       }
     );

@@ -9,7 +9,7 @@ interface TaskListProps {
 }
 
 export default function TaskList({ tasks }: TaskListProps) {
-  const { toggleComplete } = useTasks();
+  const { updateTask } = useTasks();
 
   if (tasks.length === 0) {
     return (
@@ -27,7 +27,7 @@ export default function TaskList({ tasks }: TaskListProps) {
           className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg"
         >
           <button
-            onClick={() => toggleComplete({ id: task.id, status: task.status })}
+            onClick={() => updateTask.mutate({ id: task.id, updates: { status: task.status === 'completed' ? 'pending' : 'completed' } })}
             className="mt-1"
           >
             {task.status === 'completed' ? (

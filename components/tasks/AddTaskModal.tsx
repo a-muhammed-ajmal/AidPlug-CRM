@@ -75,21 +75,21 @@ export default function AddTaskModal({ onClose, initialData }: AddTaskModalProps
         related_to_id: null,
         related_to_type: null,
       };
-      createTask(taskData, {
+      createTask.mutate(taskData, {
         onSuccess: () => {
           addNotification('Task Created', `"${formData.title}" has been added.`);
           onClose();
         },
-        onError: (err) => addNotification('Error', (err as Error).message),
+        onError: (err: Error) => addNotification('Error', err.message),
         onSettled: () => setLoading(false),
       });
     } else if (initialData) {
-      updateTask({ id: initialData.id, updates: commonData }, {
+      updateTask.mutate({ id: initialData.id, updates: commonData }, {
         onSuccess: () => {
           addNotification('Task Updated', `"${formData.title}" has been saved.`);
           onClose();
         },
-        onError: (err) => addNotification('Error', (err as Error).message),
+        onError: (err: Error) => addNotification('Error', err.message),
         onSettled: () => setLoading(false),
       });
     }

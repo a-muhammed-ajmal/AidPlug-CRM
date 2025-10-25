@@ -13,7 +13,7 @@ interface TaskCardProps {
 
 
 const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
-  const { toggleComplete, deleteTask } = useTasks();
+  const { updateTask, deleteTask } = useTasks();
   const { showConfirmation, addNotification } = useUI();
 
 
@@ -53,9 +53,9 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
       'Delete Task?',
       'Are you sure you want to delete this task? This action cannot be undone.',
       () => {
-        deleteTask(task.id, {
+        deleteTask.mutate(task.id, {
           onSuccess: () => addNotification('Task Deleted', `"${task.title}" has been removed.`),
-          onError: (error) => addNotification('Error', (error as Error).message || 'Failed to delete task.'),
+          onError: (error: Error) => addNotification('Error', error.message || 'Failed to delete task.'),
         });
       }
     );
@@ -66,7 +66,7 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
     <div className={`bg-white rounded-xl shadow-sm p-4 border-l-4 ${priorityColors[task.priority || 'low']}`}>
       <div className="flex items-start space-x-3">
         <button
-          onClick={() => toggleComplete({ id: task.id, status: task.status })}
+          onClick={() => updateTask.mutate({ id: task.id, updates: { status: task.status === 'completed' ? 'pending' : 'completed' } })}
           className="mt-1 flex-shrink-0"
         >
           {task.status === 'completed' ? (

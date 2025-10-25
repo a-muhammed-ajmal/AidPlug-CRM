@@ -1,5 +1,9 @@
 import { supabase } from '../lib/supabase';
 import { PostgrestError } from '@supabase/supabase-js';
+import { Database } from '../types';
+
+// This creates a type that is a list of all your table names, like "clients" | "leads" | ...
+type TableName = keyof Database['public']['Tables'];
 
 // Define a generic interface for the services our factory will create.
 // TRow is the main type (e.g., Client, Deal)
@@ -21,7 +25,7 @@ export function createCrudService<
   TRow extends { id: string },
   TInsert extends { user_id: string },
   TUpdate
->(tableName: string): CrudService<TRow, TInsert, TUpdate> {
+>(tableName: TableName): CrudService<TRow, TInsert, TUpdate> {
   
   const handleSupabaseError = (error: PostgrestError | null, context: string) => {
     if (error) {
@@ -67,7 +71,7 @@ export function createCrudService<
     update: async (id: string, updates: TUpdate): Promise<TRow> => {
       const { data, error } = await supabase
         .from(tableName)
-        .update(updates as any)
+        .update(updates)
         .eq('id', id)
         .select()
         .single();

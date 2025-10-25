@@ -92,21 +92,29 @@ export default function AddClientModal({ onClose, initialData }: AddClientModalP
         user_id: user.id,
     };
     
-    const mutation = mode === 'add' ? createClient : (data: any) => updateClient({ id: initialData!.id, updates: data });
-
-    mutation(clientData as any, {
-        onSuccess: () => {
-            addNotification(
-                mode === 'add' ? 'Client Created' : 'Client Updated',
-                `${formData.full_name} has been saved.`
-            );
-            onClose();
-        },
-        onError: (err) => {
-            addNotification('Error', (err as Error).message);
-            setLoading(false);
-        },
-    });
+    if (mode === 'add') {
+        createClient.mutate(clientData, {
+            onSuccess: () => {
+                addNotification('Client Created', `${formData.full_name} has been saved.`);
+                onClose();
+            },
+            onError: (err) => {
+                addNotification('Error', (err as Error).message);
+                setLoading(false);
+            },
+        });
+    } else {
+        updateClient.mutate({ id: initialData!.id, updates: clientData }, {
+            onSuccess: () => {
+                addNotification('Client Updated', `${formData.full_name} has been saved.`);
+                onClose();
+            },
+            onError: (err) => {
+                addNotification('Error', (err as Error).message);
+                setLoading(false);
+            },
+        });
+    }
   };
 
   return (

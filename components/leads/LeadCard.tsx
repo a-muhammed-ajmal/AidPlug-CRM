@@ -39,7 +39,7 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
       'Delete Lead?',
       'This action cannot be undone. Are you sure you want to permanently delete this lead?',
       () => {
-        deleteLead(lead, {
+        deleteLead.mutate(lead, {
             onSuccess: () => addNotification('Lead Deleted', `Lead "${lead.full_name}" has been removed.`),
             onError: (e) => addNotification('Error', (e as Error).message),
         });
@@ -62,20 +62,20 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
       bdi_number: `BDI-${Math.floor(10000 + Math.random() * 90000)}`,
     };
 
-    createDeal(newDeal as any, {
+    createDeal.mutate(newDeal, {
       onSuccess: () => {
         addNotification("Lead Converted", `${lead.full_name} is now a deal.`);
         logActivity('lead_convert', `Converted lead "${lead.full_name}" to a deal.`);
-        deleteLead(lead);
+        deleteLead.mutate(lead.id);
       },
-      onError: (e) => addNotification('Conversion Failed', (e as Error).message),
+      onError: (e: Error) => addNotification('Conversion Failed', e.message),
     });
   };
 
   const handleStatusChange = (newStatus: 'warm' | 'qualified' | 'appointment_booked') => {
-    updateLead({ id: lead.id, updates: { qualification_status: newStatus } }, {
-        onSuccess: (updatedLead) => addNotification('Status Updated', `${updatedLead.full_name} is now ${newStatus.replace(/_/g, ' ')}.`),
-        onError: (e) => addNotification('Update Failed', (e as Error).message),
+    updateLead.mutate({ id: lead.id, updates: { qualification_status: newStatus } }, {
+        onSuccess: (updatedLead: Lead) => addNotification('Status Updated', `${updatedLead.full_name} is now ${newStatus.replace(/_/g, ' ')}.`),
+        onError: (e: Error) => addNotification('Update Failed', e.message),
     });
   };
 

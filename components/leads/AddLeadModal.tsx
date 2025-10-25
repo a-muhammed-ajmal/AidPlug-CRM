@@ -118,21 +118,29 @@ export default function AddLeadModal({ onClose, initialData }: AddLeadModalProps
         user_id: user.id,
     };
     
-    const mutation = mode === 'add' ? createLead : (data: any) => updateLead({ id: initialData!.id, updates: data });
-
-    mutation(leadData as any, {
-        onSuccess: () => {
-            addNotification(
-                mode === 'add' ? 'Lead Created' : 'Lead Updated',
-                `${formData.fullName} has been saved.`
-            );
-            onClose();
-        },
-        onError: (err) => {
-            addNotification('Error', (err as Error).message);
-            setLoading(false);
-        },
-    });
+    if (mode === 'add') {
+        createLead.mutate(leadData, {
+            onSuccess: () => {
+                addNotification('Lead Created', `${formData.fullName} has been saved.`);
+                onClose();
+            },
+            onError: (err) => {
+                addNotification('Error', (err as Error).message);
+                setLoading(false);
+            },
+        });
+    } else {
+        updateLead.mutate({ id: initialData!.id, updates: leadData }, {
+            onSuccess: () => {
+                addNotification('Lead Updated', `${formData.fullName} has been saved.`);
+                onClose();
+            },
+            onError: (err) => {
+                addNotification('Error', (err as Error).message);
+                setLoading(false);
+            },
+        });
+    }
   };
 
   return (

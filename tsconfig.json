@@ -29,7 +29,8 @@
 
     // --- Project Setup ---
     "noEmit": true, // IMPORTANT: TypeScript only type-checks; Vite handles the build.
-    "baseUrl": "." // Sets the base directory for path resolutions.
+    "baseUrl": ".", // Sets the base directory for path resolutions.
+    "types": ["node", "vite/client"] // Add Vite client types for import.meta.env
   },
   // Explicitly tell TypeScript which files to include in the compilation.
   "include": ["src", "vite.config.ts", "components"], 
