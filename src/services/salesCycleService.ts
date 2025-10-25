@@ -38,13 +38,16 @@ export const salesCycleService = {
   ): Promise<SalesCycle> => {
     const { data, error } = await supabase
       .from('sales_cycles')
-      .upsert({
-        user_id: userId,
-        start_date:
-          updates.start_date || new Date().toISOString().split('T')[0],
-        end_date: updates.end_date || new Date().toISOString().split('T')[0],
-        ...updates,
-      }) // Upsert is perfect here
+      .upsert(
+        {
+          user_id: userId,
+          start_date:
+            updates.start_date || new Date().toISOString().split('T')[0],
+          end_date: updates.end_date || new Date().toISOString().split('T')[0],
+          ...updates,
+        },
+        { onConflict: 'user_id' }
+      )
       .select()
       .single();
 
