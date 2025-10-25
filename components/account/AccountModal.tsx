@@ -99,10 +99,10 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
           .getPublicUrl(filePath);
 
         newAvatarUrl = urlData.publicUrl;
-      } catch (err: any) {
+      } catch (err: unknown) {
         addNotification(
           'Upload Failed',
-          err.message || 'An error occurred while uploading the avatar.'
+          err instanceof Error ? err.message : 'An error occurred while uploading the avatar.'
         );
         setIsSaving(false);
         return;
@@ -127,10 +127,10 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
         );
         setIsSaving(false);
       },
-      onError: (err: any) => {
+      onError: (err: unknown) => {
         addNotification(
           'Save Failed',
-          err.message || 'An error occurred while saving your profile.'
+          err instanceof Error ? err.message : 'An error occurred while saving your profile.'
         );
         setIsSaving(false);
       },
@@ -149,8 +149,8 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
       await updateUserPassword(passwordData.password);
       addNotification('Success', 'Your password has been updated.');
       setPasswordData({ password: '', confirmPassword: '' });
-    } catch (err: any) {
-      addNotification('Error', err.message || 'Failed to update password.');
+    } catch (err: unknown) {
+      addNotification('Error', err instanceof Error ? err.message : 'Failed to update password.');
     } finally {
       setChangingPassword(false);
     }

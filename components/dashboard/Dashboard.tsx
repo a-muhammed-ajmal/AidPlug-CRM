@@ -108,9 +108,17 @@ const ThingsToDo = () => {
   );
 };
 
+interface Event {
+  id: string;
+  type: 'Birthday' | 'Anniversary';
+  date: Date;
+  clientName: string;
+  years: number | null;
+}
+
 const UpcomingEvents = () => {
   const { clients } = useClients();
-  const events: any[] = [];
+  const events: Event[] = [];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const sevenDaysFromNow = new Date();
@@ -150,7 +158,7 @@ const UpcomingEvents = () => {
     }
   });
 
-  const sortedEvents = events.sort((a, b) => a.date - b.date);
+  const sortedEvents = events.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
     <div className="bg-white rounded-xl p-4 border shadow-sm">
