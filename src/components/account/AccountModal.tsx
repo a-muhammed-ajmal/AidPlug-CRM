@@ -4,14 +4,15 @@ import {
   EyeOff,
   KeyRound,
   LogOut,
-
   User,
   X,
+  Camera,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
 import { useUserProfile } from '../../hooks/useUserProfile';
+import { supabase } from '../../lib/supabase';
 
 import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator';
 import SkeletonLoader from '../common/SkeletonLoader';
@@ -37,6 +38,10 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
     bio: '',
   });
 
+  // Photo upload state
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
 
 
 
@@ -60,7 +65,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
         company_name: profile.company_name || '',
         bio: profile.bio || '',
       });
-      // setAvatarPreview(profile.photo_url || null); // Temporarily disabled
+      setAvatarPreview(profile.photo_url || null);
     }
   }, [profile]);
 
@@ -70,6 +75,62 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      addNotification('Error', 'Please select a valid image file.');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      addNotification('Error', 'Image size must be less than 5MB.');
+      return;
+    }
+
+    setUploadingPhoto(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user!.id}_${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      setAvatarPreview(data.publicUrl);
+
+      // Update profile with new photo URL
+      const profileUpdates = {
+        ...formData,
+        phone: formData.phone ? `+971 ${formData.phone}` : null,
+        whatsapp_number: formData.whatsapp_number
+          ? `+971 ${formData.whatsapp_number}`
+          : null,
+        photo_url: data.publicUrl,
+      };
+
+      updateProfile.mutate(profileUpdates);
+      addNotification('Success', 'Profile photo updated successfully.');
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      addNotification('Error', 'Failed to upload photo. Please try again.');
+    } finally {
+      setUploadingPhoto(false);
+    }
   };
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
@@ -83,14 +144,14 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
       return;
     }
 
-    // Update profile (temporarily removed avatar upload)
+    // Update profile
     const profileUpdates = {
       ...formData,
       phone: formData.phone ? `+971 ${formData.phone}` : null,
       whatsapp_number: formData.whatsapp_number
         ? `+971 ${formData.whatsapp_number}`
         : null,
-      // photo_url: profile.photo_url, // Keep existing photo URL
+      photo_url: avatarPreview || profile.photo_url,
     };
 
     console.log('Updating profile with:', profileUpdates);
@@ -163,12 +224,39 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
           {activeTab === 'profile' ? (
             <form onSubmit={handleProfileSubmit}>
               <div className="p-6 space-y-6">
-                {/* Avatar Section - Temporarily disabled */}
+                {/* Avatar Section */}
                 <div className="flex items-center space-x-6">
                   <div className="relative">
                     <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
-                      <User className="w-10 h-10 text-gray-400" />
+                      {avatarPreview ? (
+                        <img
+                          src={avatarPreview}
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-10 h-10 text-gray-400" />
+                      )}
                     </div>
+                    <label
+                      htmlFor="photo-upload"
+                      className="absolute bottom-0 right-0 bg-blue-600 text-white p-1.5 rounded-full cursor-pointer hover:bg-blue-700 transition-colors"
+                    >
+                      <Camera className="w-3 h-3" />
+                      <input
+                        id="photo-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        className="hidden"
+                        disabled={uploadingPhoto}
+                      />
+                    </label>
+                    {uploadingPhoto && (
+                      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">
@@ -176,6 +264,9 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
                     </h3>
                     <p className="text-sm text-gray-500">
                       {profile?.designation || 'No designation'}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Click the camera icon to upload a new photo
                     </p>
                   </div>
                 </div>
