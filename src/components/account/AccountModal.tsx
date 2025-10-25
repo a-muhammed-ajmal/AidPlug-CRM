@@ -295,7 +295,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
                     'Saving...'
                   ) : (
                     <>
-                      <CheckCircle className="w-4 h-4 mr-2" /> Save Changes
+                      <CheckCircle className="w-4 h-4 mr-2" /> Update Profile
                     </>
                   )}
                 </button>
