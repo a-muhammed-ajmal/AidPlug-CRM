@@ -1,5 +1,5 @@
 import { Bell } from 'lucide-react';
-import { useUI } from '../../contexts/UIContext';
+import { useUI, Notification } from '../../contexts/UIContext';
 
 interface DesktopHeaderProps {
   title: string;
@@ -7,13 +7,15 @@ interface DesktopHeaderProps {
 
 export default function DesktopHeader({ title }: DesktopHeaderProps) {
   const { notifications, setShowNotifications } = useUI();
-  const unreadCount = notifications.filter((n) => n.unread).length;
+
+  const unreadCount = notifications.filter(
+    (n: Notification) => n.unread
+  ).length;
 
   return (
     <header className="hidden lg:block bg-white border-b border-gray-200 fixed top-0 left-64 right-0 z-30 shadow-sm">
       <div className="flex items-center justify-between px-6 py-3 h-[61px]">
         <div className="flex items-center space-x-3">
-          {/* FIX: Changed src from "/logo.svg" to "/favicon.svg" to match your file name */}
           <img src="/favicon.svg" alt="AidPlug CRM" className="w-8 h-8" />
           <h1 className="text-lg font-bold text-gray-900">{title}</h1>
         </div>
