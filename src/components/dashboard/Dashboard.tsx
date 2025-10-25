@@ -233,18 +233,17 @@ export default function Dashboard() {
     (d) => !['completed', 'unsuccessful'].includes(d.stage || '')
   ).length;
 
-  // Calculate days remaining in sales cycle
+  // Calculate total days in sales cycle (start to end difference)
   const daysRemaining = salesCycle && salesCycle.start_date && salesCycle.end_date ? (() => {
+    const startDate = new Date(salesCycle.start_date);
     const endDate = new Date(salesCycle.end_date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0);
     endDate.setHours(0, 0, 0, 0);
 
-    const diffTime = endDate.getTime() - today.getTime();
+    const diffTime = endDate.getTime() - startDate.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    const result = Math.max(0, diffDays); // Don't show negative days
-    return result;
+    return Math.max(0, diffDays + 1); // Include both start and end dates
   })() : 0;
 
   const doneSuccessfully = deals.filter((d) => d.stage === 'completed').length;

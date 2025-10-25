@@ -22,6 +22,7 @@ export function useSalesCycle() {
     queryKey,
     queryFn: () => salesCycleService.get(user!.id),
     enabled: !!user,
+    retry: false, // Don't retry on error to avoid defaulting
   });
 
   const updateSalesCycle = useMutation({

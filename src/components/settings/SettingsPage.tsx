@@ -211,8 +211,8 @@ export default function SettingsPage() {
   } = useSalesCycle();
 
   const [cycleDates, setCycleDates] = useState({
-    start_date: salesCycle?.start_date || '',
-    end_date: salesCycle?.end_date || '',
+    start_date: '',
+    end_date: '',
   });
   const [dateError, setDateError] = useState<string | null>(null);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced'>(
