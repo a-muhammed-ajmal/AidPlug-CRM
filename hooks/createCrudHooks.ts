@@ -8,21 +8,15 @@ import { useAuth } from '../contexts/AuthContext';
 import { CrudService } from '../services/baseService';
 import { PostgrestError } from '@supabase/supabase-js';
 
-// Type for mutation options, allowing consumers to add their own callbacks
-type MutateOptions<TData, TVariables> = Omit<
-  UseMutationOptions<
-    TData,
-    Error | PostgrestError,
-    TVariables,
-    OptimisticUpdateContext<TData>
-  >,
+// This interface now only covers create and update
+interface OptimisticUpdateContext<TRow> {
+  previousItems?: TRow[];
+}
+
+type MutateOptions<TData, TVariables, TContext> = Omit<
+  UseMutationOptions<TData, Error | PostgrestError, TVariables, TContext>,
   'mutationFn'
 >;
-
-// Define the context type for optimistic updates
-interface OptimisticUpdateContext<TData> {
-  previousItems: TData[];
-}
 
 /**
  * A factory function to create a standard set of TanStack Query hooks for a resource.
@@ -46,7 +40,7 @@ export function createCrudHooks<
   };
 
   // Hook for creating a new item
-  const useCreateMutation = (options?: MutateOptions<TRow, TInsert>) => {
+  const useCreateMutation = (options?: MutateOptions<TRow, TInsert, OptimisticUpdateContext<TRow>>) => {
     const queryClient = useQueryClient();
     const { user } = useAuth();
     const queryKey = [resourceKey, user?.id];
@@ -83,7 +77,7 @@ export function createCrudHooks<
 
   // Hook for updating an item
   const useUpdateMutation = (
-    options?: MutateOptions<TRow, { id: string; updates: TUpdate }>
+    options?: MutateOptions<TRow, { id: string; updates: TUpdate }, OptimisticUpdateContext<TRow>>
   ) => {
     const queryClient = useQueryClient();
     const { user } = useAuth();
@@ -119,7 +113,7 @@ export function createCrudHooks<
   };
 
   // Hook for deleting an item
-  const useDeleteMutation = (options?: MutateOptions<void, string>) => {
+  const useDeleteMutation = (options?: MutateOptions<void, string, OptimisticUpdateContext<TRow>>) => {
     const queryClient = useQueryClient();
     const { user } = useAuth();
     const queryKey = [resourceKey, user?.id];
