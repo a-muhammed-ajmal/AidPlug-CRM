@@ -1,6 +1,5 @@
 import {
   createContext,
-  useContext,
   useState,
   ReactNode,
   useCallback,
@@ -63,14 +62,6 @@ interface UIContextType {
 }
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
-
-export const useUI = () => {
-  const context = useContext(UIContext);
-  if (!context) {
-    throw new Error('useUI must be used within a UIProvider');
-  }
-  return context;
-};
 
 const ACTIVITY_STORAGE_KEY = 'aidplug-crm-activities';
 const MAX_ACTIVITIES = 30;
