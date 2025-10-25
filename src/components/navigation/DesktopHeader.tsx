@@ -1,5 +1,5 @@
 import { Bell } from 'lucide-react';
-import { useUI } from '@/contexts/UIContext'; // FIX: Corrected import path
+import { useUI } from '../../contexts/UIContext';
 
 interface DesktopHeaderProps {
   title: string;
