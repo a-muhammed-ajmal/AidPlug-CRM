@@ -243,7 +243,8 @@ export default function Dashboard() {
     const diffTime = endDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    return Math.max(0, diffDays); // Don't show negative days
+    const result = Math.max(0, diffDays); // Don't show negative days
+    return result;
   })() : 0;
 
   const doneSuccessfully = deals.filter((d) => d.stage === 'completed').length;
