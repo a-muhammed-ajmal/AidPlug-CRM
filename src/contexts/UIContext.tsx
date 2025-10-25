@@ -1,5 +1,6 @@
 import {
   createContext,
+  useContext,
   useState,
   ReactNode,
   useCallback,
@@ -7,7 +8,7 @@ import {
   useMemo,
 } from 'react';
 
-// FIX: Added 'export' so other files can import this type
+// EXPORTED so other files can use it
 export interface Notification {
   id: number;
   title: string;
@@ -16,6 +17,7 @@ export interface Notification {
   unread: boolean;
 }
 
+// EXPORTED so other files can use it
 export interface Activity {
   id: string;
   type:
@@ -63,9 +65,19 @@ interface UIContextType {
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
 
+// EXPORTED so other files can use it
+export const useUI = () => {
+  const context = useContext(UIContext);
+  if (!context) {
+    throw new Error('useUI must be used within a UIProvider');
+  }
+  return context;
+};
+
 const ACTIVITY_STORAGE_KEY = 'aidplug-crm-activities';
 const MAX_ACTIVITIES = 30;
 
+// EXPORTED so other files can use it
 export const UIProvider = ({ children }: { children: ReactNode }) => {
   const [title, setTitle] = useState('Dashboard');
   const [confirmation, setConfirmation] = useState<ConfirmationState>({
@@ -75,7 +87,6 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
     onConfirm: () => {},
     onCancel: () => {},
   });
-
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [activities, setActivities] = useState<Activity[]>([]);

@@ -1,5 +1,4 @@
 import {
-  Activity,
   Award,
   Briefcase,
   Calendar,
@@ -11,11 +10,11 @@ import {
   Star,
   User,
   Users,
-  Zap
+  Zap,
 } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUI } from '../../contexts/UIContext';
+import { useUI, Activity } from '../../contexts/UIContext';
 import { useClients } from '../../hooks/useClients';
 import { useDeals } from '../../hooks/useDeals';
 import { useTasks } from '../../hooks/useTasks';
@@ -158,7 +157,9 @@ const UpcomingEvents = () => {
     }
   });
 
-  const sortedEvents = events.sort((a, b) => a.date.getTime() - b.date.getTime());
+  const sortedEvents = events.sort(
+    (a, b) => a.date.getTime() - b.date.getTime()
+  );
 
   return (
     <div className="bg-white rounded-xl p-4 border shadow-sm">
@@ -372,12 +373,12 @@ export default function Dashboard() {
 
       <div className="bg-white rounded-xl p-4 border shadow-sm">
         <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
-          <Activity className="w-5 h-5 mr-2 text-green-600" />
+          <Zap className="w-5 h-5 mr-2 text-green-600" />
           Recent Activity
         </h3>
         {activities.length > 0 ? (
           <div className="space-y-4">
-            {activities.slice(0, 5).map((item) => (
+            {activities.slice(0, 5).map((item: Activity) => (
               <div key={item.id} className="flex items-center space-x-3">
                 {getActivityIcon(item.type)}
                 <div className="flex-1">
@@ -393,7 +394,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="text-center py-4">
-            <Activity className="w-8 h-8 mx-auto text-gray-300 mb-2" />
+            <Zap className="w-8 h-8 mx-auto text-gray-300 mb-2" />
             <p className="text-sm text-gray-500">
               Your recent activities will show up here.
             </p>
