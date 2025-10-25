@@ -121,18 +121,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
     };
 
     updateProfile.mutate(profileUpdates, {
-      onSuccess: () => {
-        addNotification(
-          'Profile Saved',
-          'Your information has been updated successfully.'
-        );
-        setIsSaving(false);
-      },
-      onError: (err: unknown) => {
-        addNotification(
-          'Save Failed',
-          err instanceof Error ? err.message : 'An error occurred while saving your profile.'
-        );
+      onSettled: () => {
         setIsSaving(false);
       },
     });
