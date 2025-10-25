@@ -29,7 +29,7 @@ export const salesCycleService = {
         {
           user_id: userId,
           ...updates,
-        },
+        } as Database['public']['Tables']['sales_cycles']['Insert'],
         { onConflict: 'user_id' }
       )
       .select()
