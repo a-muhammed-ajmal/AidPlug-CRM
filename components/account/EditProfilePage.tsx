@@ -97,7 +97,7 @@ export default function EditProfilePage() {
       photo_url: newAvatarUrl,
     };
 
-    updateProfile(profileUpdates, {
+    updateProfile.mutate(profileUpdates, {
       onSuccess: () => {
         addNotification(
           'Profile Saved',

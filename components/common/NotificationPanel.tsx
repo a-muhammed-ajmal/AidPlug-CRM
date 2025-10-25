@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { X, Inbox } from 'lucide-react';
 import { useUI } from '../../contexts/UIContext';
 import EmptyState from './EmptyState';

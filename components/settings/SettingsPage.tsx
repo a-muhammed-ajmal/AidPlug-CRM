@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useUserPreferences } from '../../hooks/useUserPreferences';
 import { useSalesCycle } from '../../hooks/useSalesCycle';
+import { useUI } from '../../contexts/UIContext';
 import SkeletonLoader from '../common/SkeletonLoader';
 
 const Toggle = ({
@@ -234,7 +235,7 @@ export default function SettingsPage() {
   const handlePrefChange = (key: 'mobile_sync') => {
     if (preferences) {
       const newValue = !preferences[key];
-      updatePreferences({ [key]: newValue });
+      updatePreferences.mutate({ [key]: newValue });
 
       if (key === 'mobile_sync') {
         if (newValue) {
@@ -267,7 +268,7 @@ export default function SettingsPage() {
     if (!dateError) {
       const { name, value } = e.target;
       if (salesCycle && salesCycle[name as keyof typeof salesCycle] !== value) {
-        updateSalesCycle({ [name]: value });
+        updateSalesCycle.mutate({ [name]: value });
       }
     }
   };

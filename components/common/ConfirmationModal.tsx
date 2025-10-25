@@ -2,7 +2,7 @@ import React from 'react';
 import { useUI } from '../../contexts/UIContext';
 
 const ConfirmationModal = () => {
-  const { confirmation, hideConfirmation } = useUI();
+  const { confirmation } = useUI();
   const { isOpen, title, message, onConfirm, onCancel } = confirmation;
 
   if (!isOpen) return null;

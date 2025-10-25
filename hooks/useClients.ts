@@ -1,4 +1,4 @@
-import { createCrudHooks } from './createCrudHooks';
+import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';
 import { clientsService } from '../services/clientsService';
 import { useUI } from '../contexts/UIContext';
 import { Client, Database } from '../types';
@@ -6,11 +6,13 @@ import { Client, Database } from '../types';
 type ClientInsert = Database['public']['Tables']['clients']['Insert'];
 type ClientUpdate = Database['public']['Tables']['clients']['Update'];
 
-const { useGetAll, useCreateMutation, useUpdateMutation, useDeleteMutation } =
+const { useGetAll, useCreateMutation, useUpdateMutation } =
   createCrudHooks<Client, ClientInsert, ClientUpdate>(
     'clients',
     clientsService
   );
+
+const useDeleteMutation = createDeleteMutationHook<Client>('clients', clientsService);
 
 export function useClients() {
   const { logActivity, addNotification } = useUI();

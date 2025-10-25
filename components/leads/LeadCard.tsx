@@ -54,7 +54,7 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
       'Delete Lead?',
       'This action cannot be undone. Are you sure you want to permanently delete this lead?',
       () => {
-        deleteLead.mutate(lead, {
+        deleteLead.mutate(lead.id, {
           onSuccess: () =>
             addNotification(
               'Lead Deleted',

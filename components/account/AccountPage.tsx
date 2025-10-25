@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Edit3,
   User,
-  Shield,
   LogOut,
   KeyRound,
   Eye,

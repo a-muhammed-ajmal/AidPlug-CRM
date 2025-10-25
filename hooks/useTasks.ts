@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createCrudHooks } from './createCrudHooks';
+import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';
 import { tasksService } from '../services/tasksService';
 import { useUI } from '../contexts/UIContext';
 import { Task, Database } from '../types';
@@ -8,8 +8,10 @@ import { useAuth } from '../contexts/AuthContext';
 type TaskInsert = Database['public']['Tables']['tasks']['Insert'];
 type TaskUpdate = Database['public']['Tables']['tasks']['Update'];
 
-const { useGetAll, useCreateMutation, useUpdateMutation, useDeleteMutation } =
+const { useGetAll, useCreateMutation, useUpdateMutation } =
   createCrudHooks<Task, TaskInsert, TaskUpdate>('tasks', tasksService);
+
+const useDeleteMutation = createDeleteMutationHook<Task>('tasks', tasksService);
 
 export function useTasks() {
   const { user } = useAuth();

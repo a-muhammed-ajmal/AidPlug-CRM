@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Edit3,
   User,
   Upload,
   CheckCircle,
   X,
   KeyRound,
-  LogOut,
   Eye,
   EyeOff,
 } from 'lucide-react';
@@ -121,7 +119,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
       photo_url: newAvatarUrl,
     };
 
-    updateProfile(profileUpdates, {
+    updateProfile.mutate(profileUpdates, {
       onSuccess: () => {
         addNotification(
           'Profile Saved',
@@ -158,12 +156,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
     }
   };
 
-  const handleSignOut = () => {
-    showConfirmation('Sign Out', 'Are you sure you want to sign out?', () => {
-      signOut();
-      onClose();
-    });
-  };
+
 
   if (isLoading) {
     return (

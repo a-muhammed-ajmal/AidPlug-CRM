@@ -4,7 +4,7 @@ import MobileHeader from './navigation/MobileHeader';
 import DesktopHeader from './navigation/DesktopHeader';
 import MobileNavigation from './navigation/MobileNavigation';
 import DesktopSidebar from './navigation/DesktopSidebar';
-import { useUI } from '../../contexts/UIContext'; // Assuming path to your UIContext
+import { useUI } from '@/contexts/UIContext';
 
 const MainLayout = () => {
   // State for the mobile sidebar remains local to the layout, which is perfect.
