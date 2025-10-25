@@ -1,123 +1,223 @@
 # AidPlug CRM
 
-**A Strategic Partner for Banking Sales Professionals**
+**Empowering Banking Sales Professionals with Intelligent CRM Solutions**
 
-![React](https://img.shields.io/badge/React-19-blue?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript)
-![Supabase](https://img.shields.io/badge/Supabase-green?logo=supabase)
-![PWA](https://img.shields.io/badge/PWA-Ready-purple)
+[![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-green?logo=supabase)](https://supabase.com/)
+[![PWA](https://img.shields.io/badge/PWA-Ready-purple)](https://web.dev/progressive-web-apps/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-AidPlug CRM is a modern, mobile-first Progressive Web App (PWA) built to empower banking sales professionals. It provides an intuitive and powerful suite of tools to manage leads, clients, deals, and tasks, ensuring you stay organized, efficient, and ahead of your targets, whether you're at your desk or on the go.
+AidPlug CRM is a cutting-edge, mobile-first Progressive Web App (PWA) designed specifically for banking sales professionals. Built with modern web technologies, it delivers a seamless, intuitive experience to manage leads, clients, deals, and tasks efficiently. Whether in the office or on the field, AidPlug CRM ensures you maintain peak productivity and achieve your sales targets with confidence.
 
-## ✨ Key Features
+## 🚀 Key Features
 
-- **Dynamic Dashboard:** Get a complete, at-a-glance overview of your sales performance with key metrics, a list of tasks to be done, upcoming client events like birthdays and anniversaries, and a feed of your recent activities.
-- **Efficient Lead Management:** Capture, track, and qualify leads with detailed information. Filter and search through prospects with ease, and seamlessly convert qualified leads into active deals.
-- **360° Client View:** Maintain a comprehensive and centralized database of your clients. Access personal, contact, employment, and financial details in a well-organized and easily accessible format.
-- **Visual Deal Pipeline:** Track your sales journey with an intuitive Kanban board. Drag and drop deals through customizable stages, from initial application to successful completion.
-- **Actionable Task Management:** Stay on top of your schedule with a powerful task manager. Create, prioritize, and track tasks to ensure nothing falls through the cracks.
-- **In-Depth Product Hub:** Access a detailed repository of banking products. View features, benefits, fee structures, and eligibility criteria for offerings like credit cards, helping you provide accurate information to clients instantly.
-- **Secure Authentication:** Robust and secure authentication system supporting both email/password and Google OAuth for quick and easy access.
-- **Progressive Web App (PWA):** Installable on any device (desktop or mobile) for a native-app experience, including offline access to cached data.
+### Core Functionality
+- **Intelligent Dashboard:** Comprehensive overview of sales performance with real-time KPIs, pending tasks, upcoming client milestones (birthdays/anniversaries), and activity feeds.
+- **Advanced Lead Management:** Streamlined lead capture, qualification, and conversion workflows with powerful filtering and search capabilities.
+- **Comprehensive Client Profiles:** 360-degree client view with personal, contact, employment, and financial information in a structured, accessible format.
+- **Visual Deal Pipeline:** Interactive Kanban board for tracking sales progress through customizable stages from prospect to completion.
 
-## 🛠️ Tech Stack
+### Productivity Tools
+- **Task Management System:** Prioritized task creation, assignment, and tracking to maintain productivity and meet deadlines.
+- **Product Knowledge Base:** Detailed banking product catalog with features, benefits, pricing, and eligibility criteria for instant client consultations.
+- **Quick Actions:** One-click access to frequently used functions for rapid workflow execution.
 
-| Category          | Technology                           |
-| ----------------- | ------------------------------------ |
-| **Frontend**      | React 19, TypeScript, Vite           |
-| **Styling**       | Tailwind CSS                         |
-| **Backend**       | Supabase (Auth, PostgreSQL, Storage) |
-| **Data Fetching** | TanStack Query (React Query)         |
-| **Routing**       | React Router                         |
-| **UI Icons**      | Lucide React                         |
+### Security & Accessibility
+- **Multi-Factor Authentication:** Secure login with email/password and Google OAuth integration.
+- **Progressive Web App (PWA):** Native app-like experience on any device with offline data access and push notifications.
+- **Responsive Design:** Optimized for desktop, tablet, and mobile devices with consistent performance across platforms.
 
-## 🚀 Getting Started
+## 🛠️ Technology Stack
 
-To get a local copy up and running, follow these steps.
+### Frontend Architecture
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Framework** | React 19 | Modern component-based UI development |
+| **Language** | TypeScript 5.8 | Type-safe JavaScript with enhanced developer experience |
+| **Build Tool** | Vite | Fast development server and optimized production builds |
+| **Styling** | Tailwind CSS | Utility-first CSS framework for responsive design |
+| **Routing** | React Router | Client-side navigation and route management |
+| **Icons** | Lucide React | Consistent, scalable icon library |
 
-### Prerequisites
+### Backend & Infrastructure
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Database** | Supabase PostgreSQL | Scalable relational database with real-time capabilities |
+| **Authentication** | Supabase Auth | Secure user authentication with OAuth support |
+| **File Storage** | Supabase Storage | Secure file upload and management |
+| **API Layer** | Supabase Client | Type-safe API interactions |
+| **State Management** | TanStack Query | Efficient server state management and caching |
+| **Deployment** | Vercel | Global CDN deployment with automatic scaling |
 
-- Node.js (v18.x or later)
-- npm, yarn, or pnpm
-- Git
-- A free [Supabase](https://supabase.com/) account
+## 🚀 Quick Start Guide
 
-### Installation & Setup
+Get AidPlug CRM up and running on your local machine in minutes.
 
-1.  **Clone the repository:**
+### System Requirements
 
-    ```sh
-    git clone https://github.com/your_username/aidplug-crm.git
-    cd aidplug-crm
-    ```
+- **Node.js**: Version 18.x or higher
+- **Package Manager**: npm, yarn, or pnpm
+- **Version Control**: Git
+- **Cloud Backend**: Free Supabase account
 
-2.  **Install dependencies:**
+### Installation Steps
 
-    ```sh
-    npm install
-    ```
+#### 1. Clone and Setup Project
+```bash
+git clone https://github.com/your_username/aidplug-crm.git
+cd aidplug-crm
+npm install
+```
 
-3.  **Set up your Supabase backend:**
-    - Go to [Supabase](https://app.supabase.com) and create a new project.
-    - Inside your project, go to the **SQL Editor** and run the contents of `schema.sql` (you will need to create this file based on the table structure in `types.ts`) to set up your database tables.
-    - Navigate to **Project Settings > API** to find your **Project URL** and `anon` **public key**.
-    - Navigate to **Authentication > Providers** and enable the **Google** provider. Follow the instructions to add your Google OAuth credentials.
-    - Navigate to **Storage** and create a new **public bucket** named `avatars`.
+#### 2. Configure Supabase Backend
 
-4.  **Configure environment variables:**
-    - Create a new file named `.env.local` in the root of the project.
-    - Add your Supabase credentials to it:
-      ```env
-      VITE_SUPABASE_URL=YOUR_PROJECT_URL
-      VITE_SUPABASE_ANON_KEY=YOUR_ANON_PUBLIC_KEY
-      ```
+1. **Create Supabase Project**
+   - Visit [Supabase Dashboard](https://app.supabase.com)
+   - Create a new project with your preferred settings
 
-5.  **Run the development server:**
-    ```sh
-    npm run dev
-    ```
-    The application should now be running on `http://localhost:5173`.
+2. **Database Setup**
+   - Navigate to **SQL Editor** in your Supabase project
+   - Execute the schema from `db-optimizations.sql` to create database tables
 
-## 📂 Project Structure
+3. **Authentication Configuration**
+   - Go to **Authentication > Providers**
+   - Enable **Google OAuth** and configure credentials
+   - Set up email/password authentication if needed
+
+4. **Storage Setup**
+   - Navigate to **Storage** section
+   - Create a public bucket named `avatars` for profile images
+
+5. **API Credentials**
+   - Go to **Project Settings > API**
+   - Copy your **Project URL** and **anon public key**
+
+#### 3. Environment Configuration
+
+Create `.env.local` in the project root:
+
+```env
+VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+```
+
+#### 4. Launch Development Server
+
+```bash
+npm run dev
+```
+
+Access the application at `http://localhost:5173`
+
+### Build for Production
+
+```bash
+npm run build
+npm run preview
+```
+## 📁 Project Architecture
 
 ```
-/
-├── public/              # Static assets and PWA icons
+aidplug-crm/
+├── public/                    # Static assets and PWA resources
+│   ├── manifest.json         # PWA configuration
+│   └── logo.svg              # Application logo
 ├── src/
-│   ├── components/      # UI components organized by feature
-│   │   ├── auth/
-│   │   ├── clients/
-│   │   ├── common/      # Shared components (Modals, Spinners, etc.)
-│   │   ├── dashboard/
-│   │   ├── deals/
-│   │   ├── leads/
-│   │   ├── navigation/
-│   │   └── ...
-│   ├── contexts/        # React Context for global state (Auth, UI)
-│   ├── hooks/           # Custom hooks for data fetching and business logic
-│   ├── lib/             # Core libraries, constants, and Supabase client
-│   ├── services/        # API service functions for Supabase tables
-│   ├── App.tsx          # Main app component with routing setup
-│   ├── index.css        # Global styles
-│   ├── index.tsx        # Application entry point
-│   └── types.ts         # TypeScript definitions and Supabase schema types
-├── .gitignore
-├── index.html           # Main HTML entry file
-├── package.json
-├── README.md            # You are here!
-└── tsconfig.json
+│   ├── components/           # Reusable UI components
+│   │   ├── auth/            # Authentication components
+│   │   ├── clients/         # Client management UI
+│   │   ├── common/          # Shared components (modals, loaders)
+│   │   ├── dashboard/       # Dashboard widgets and views
+│   │   ├── deals/           # Deal pipeline components
+│   │   ├── leads/           # Lead management interface
+│   │   ├── navigation/      # Navigation and routing components
+│   │   ├── products/        # Product catalog components
+│   │   ├── settings/        # User settings and configuration
+│   │   └── tasks/           # Task management UI
+│   ├── contexts/            # React Context providers
+│   │   ├── AuthContext.tsx  # Authentication state
+│   │   └── UIContext.tsx    # UI state management
+│   ├── hooks/               # Custom React hooks
+│   │   ├── useClients.ts    # Client data operations
+│   │   ├── useDeals.ts      # Deal management hooks
+│   │   └── ...              # Additional business logic hooks
+│   ├── lib/                 # Core utilities and configurations
+│   │   ├── supabase.ts      # Supabase client setup
+│   │   ├── constants.ts     # Application constants
+│   │   └── queryClient.ts   # TanStack Query configuration
+│   ├── services/            # API service layer
+│   │   ├── clientsService.ts # Client CRUD operations
+│   │   ├── dealsService.ts   # Deal management services
+│   │   └── ...              # Additional service modules
+│   ├── App.tsx              # Main application component
+│   ├── index.tsx            # Application entry point
+│   ├── index.css            # Global styles and Tailwind imports
+│   └── types.ts             # TypeScript type definitions
+├── .env.local               # Environment variables (gitignored)
+├── package.json             # Dependencies and scripts
+├── tsconfig.json            # TypeScript configuration
+├── vite.config.ts           # Vite build configuration
+├── tailwind.config.js       # Tailwind CSS configuration
+└── README.md                # Project documentation
 ```
 
 ## 🤝 Contributing
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+We welcome contributions from the community! AidPlug CRM thrives on collaborative development and innovative ideas.
 
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
+### How to Contribute
+
+1. **Fork the Repository**
+   - Click the "Fork" button on GitHub
+
+2. **Create a Feature Branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Make Your Changes**
+   - Follow the existing code style and conventions
+   - Add tests for new features
+   - Update documentation as needed
+
+4. **Commit Your Changes**
+   ```bash
+   git commit -m "feat: add your feature description"
+   ```
+
+5. **Push and Create Pull Request**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+   - Open a Pull Request with a clear description
+
+### Development Guidelines
+
+- **Code Style**: Follow TypeScript and React best practices
+- **Testing**: Ensure all tests pass before submitting
+- **Documentation**: Update README and inline comments for complex logic
+- **Commits**: Use conventional commit format
+
+## 📋 Roadmap
+
+- [ ] Advanced analytics and reporting dashboard
+- [ ] Mobile app development (React Native)
+- [ ] Integration with banking APIs
+- [ ] Automated email campaigns
+- [ ] Advanced lead scoring algorithms
+- [ ] Multi-tenant architecture for enterprise clients
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/your_username/aidplug-crm/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your_username/aidplug-crm/discussions)
+- **Email**: support@aidplug.com
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ for banking sales professionals worldwide**
