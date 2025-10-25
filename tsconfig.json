@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    // --- Type Checking ---
+    "strict": true, // ESSENTIAL: Enables all strict type-checking options.
+    "noUnusedLocals": true, // Report errors on unused local variables.
+    "noUnusedParameters": true, // Report errors on unused parameters.
+    "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statements.
+    "noImplicitReturns": true, // Report error when not all code paths in function return a value.
+
+    // --- Module Resolution ---
+    "target": "ESNext", // Target the latest ECMAScript features. Vite handles browser compatibility.
+    "module": "ESNext", // Use modern ES modules.
+    "moduleResolution": "bundler", // The best setting for modern bundlers like Vite.
+    "resolveJsonModule": true, // Allows importing .json files.
+    "isolatedModules": true, // Ensures every file can be transpiled independently, as Vite does.
+    "paths": {
+      "@/*": ["./src/*"] // CRITICAL: This MUST match the alias in vite.config.ts.
+    },
+    
+    // --- React & DOM ---
+    "jsx": "react-jsx", // Use the new JSX transform.
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // Standard libraries for web development.
+    
+    // --- JS & Interoperability ---
+    "allowJs": true, // Allow JavaScript files to be compiled.
+    "skipLibCheck": true, // Skip type checking of all declaration files (*.d.ts).
+    "allowSyntheticDefaultImports": true, // Allows default imports from modules with no default export.
+    "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file.
+
+    // --- Project Setup ---
+    "noEmit": true, // IMPORTANT: TypeScript only type-checks; Vite handles the build.
+    "baseUrl": "." // Sets the base directory for path resolutions.
+  },
+  // Explicitly tell TypeScript which files to include in the compilation.
+  "include": ["src", "vite.config.ts", "components"], 
+  // Explicitly tell TypeScript which files to ignore.
+  "exclude": ["node_modules", "dist"]
+}
