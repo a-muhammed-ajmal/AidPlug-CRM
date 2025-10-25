@@ -112,19 +112,6 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
         .getPublicUrl(filePath);
 
       setAvatarPreview(data.publicUrl);
-
-      // Update profile with new photo URL
-      const profileUpdates = {
-        ...formData,
-        phone: formData.phone ? `+971 ${formData.phone}` : null,
-        whatsapp_number: formData.whatsapp_number
-          ? `+971 ${formData.whatsapp_number}`
-          : null,
-        photo_url: data.publicUrl,
-      };
-
-      updateProfile.mutate(profileUpdates);
-      addNotification('Success', 'Profile photo updated successfully.');
     } catch (error) {
       console.error('Error uploading photo:', error);
       addNotification('Error', 'Failed to upload photo. Please try again.');
