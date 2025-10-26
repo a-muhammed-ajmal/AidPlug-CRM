@@ -1,33 +1,30 @@
-# TODO List for Implementing Lead Components for Credit Card Applications
+# TODO: Implement Lead Components for Credit Card Applications
 
-## Database Schema Update
-- [ ] Create and run Supabase migration to add new fields to the 'leads' table:
-  - salary_months (INT)
-  - salary_variations (BOOLEAN)
-  - existing_cards (BOOLEAN)
-  - cards_duration (TEXT)
-  - total_credit_limit (NUMERIC)
-  - has_emi (BOOLEAN)
-  - emi_amount (NUMERIC)
-  - applied_recently (BOOLEAN)
-  - documents_available (TEXT[])
+## Current Status
+- Code changes completed: types.ts, AddLeadModal.tsx, LeadCard.tsx, LeadDetailModal.tsx, useLeads.ts updated with new credit card fields
+- Migration file created: migration_add_lead_credit_fields.sql
+- Issue: 400 Bad Request errors from Supabase due to missing database columns
 
-## Type Definitions
-- [x] Update src/types.ts to include new fields in Lead, LeadInsert, LeadUpdate interfaces (already done based on provided code)
+## Pending Tasks
+- [ ] Run Supabase migration to add new columns to leads table
+- [ ] Test AddLeadModal appears correctly on LeadsPage
+- [ ] Test dashboard "New Lead" button opens AddLeadModal
+- [ ] Verify no 400 errors in console when fetching leads
+- [ ] Test creating a new lead with credit card fields
+- [ ] Test viewing lead details with new fields in LeadDetailModal
+- [ ] Test lead card displays new information correctly
 
-## Components
-- [x] Update src/components/leads/LeadCard.tsx to be compact, use logo colors (#1a68c7, #74c12d), display key info, show warning for recent applications, include quick actions (already updated)
-- [x] Create src/components/leads/LeadDetailModal.tsx with comprehensive editable form organized into sections (Personal, Product, Salary, Credit & EMI, Application History & Documents) (already created)
+## Migration Steps
+1. Open Supabase dashboard
+2. Go to SQL Editor
+3. Run the contents of migration_add_lead_credit_fields.sql
+4. Verify columns are added to leads table
 
-## Hooks and Services
-- [x] Update src/hooks/useLeads.ts to explicitly select all new fields in the query (currently uses select('*'), but make it explicit for safety) (done)
-
-## Forms
-- [x] Update src/components/leads/AddLeadModal.tsx to include inputs for the new fields (salary_months, salary_variations, existing_cards, cards_duration, total_credit_limit, has_emi, emi_amount, applied_recently, documents_available) (done)
-
-## Testing and Verification
-- [ ] Test LeadCard display and interactions
-- [ ] Test LeadDetailModal form editing and saving
-- [ ] Test AddLeadModal with new fields
-- [ ] Verify data fetching includes new fields
-- [ ] Check for any TypeScript errors or linting issues
+## Testing Checklist
+- [ ] LeadsPage loads without errors
+- [ ] AddLeadModal opens from floating button
+- [ ] AddLeadModal opens from dashboard quick action
+- [ ] Form submits successfully with new fields
+- [ ] Lead appears in list with correct data
+- [ ] LeadDetailModal shows all new fields
+- [ ] No console errors related to missing columns

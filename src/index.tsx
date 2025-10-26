@@ -19,6 +19,8 @@ if ('serviceWorker' in navigator) {
           'ServiceWorker registration successful with scope: ',
           registration.scope
         );
+        // Force update the service worker if there's a new version
+        registration.update();
       })
       .catch((error) => {
         console.log('ServiceWorker registration failed: ', error);

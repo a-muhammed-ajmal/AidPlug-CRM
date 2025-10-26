@@ -6,31 +6,54 @@ export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [isInstallable, setIsInstallable] = useState(false);
 
   useEffect(() => {
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setShowPrompt(true);
+      setIsInstallable(true);
+      // Delay showing the prompt to ensure the page is fully loaded
+      setTimeout(() => setShowPrompt(true), 1000);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    // Check if app is already installed
+    window.addEventListener('appinstalled', () => {
+      console.log('PWA was installed');
+      setIsInstallable(false);
+      setShowPrompt(false);
+    });
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', () => {});
+    };
   }, []);
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
 
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    try {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
 
-    console.log(`User response: ${outcome}`);
+      console.log(`User response: ${outcome}`);
+      if (outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+    } catch (error) {
+      console.error('Error during PWA installation:', error);
+    }
+
     setDeferredPrompt(null);
     setShowPrompt(false);
   };
 
-  if (!showPrompt) return null;
+  if (!showPrompt || !isInstallable) return null;
 
   return (
     <div className="fixed bottom-24 left-4 right-4 bg-blue-600 text-white rounded-xl shadow-lg p-4 z-40 animate-slide-up">

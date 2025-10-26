@@ -4,15 +4,16 @@ const urlsToCache = [
   '/',
   '/index.html',
   '/index.css',
-  '/manifest.json',
+  '/site.webmanifest',
   '/favicon.ico',
   '/apple-touch-icon.png',
-  '/pwa-192x192.png',
-  '/pwa-512x512.png',
+  '/android-chrome-192x192.png',
+  '/android-chrome-512x512.png',
 ];
 
 // Install: Caches app shell
 self.addEventListener('install', (event) => {
+  console.log('Service worker installing');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -21,10 +22,13 @@ self.addEventListener('install', (event) => {
       })
       .catch(err => console.error("Failed to cache app shell", err))
   );
+  // Force activation of new service worker
+  self.skipWaiting();
 });
 
 // Activate: Cleans up old caches
 self.addEventListener('activate', (event) => {
+  console.log('Service worker activating');
   const cacheWhitelist = [CACHE_NAME, API_CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
