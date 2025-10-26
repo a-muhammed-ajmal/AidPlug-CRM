@@ -86,6 +86,16 @@ export default function AddLeadModal({
     productType: initialData?.product_type || 'Credit Card',
     product: initialData?.product || EIB_CREDIT_CARDS[0].name,
     referral: initialData?.referral_source || '',
+    // New credit card application fields
+    salaryMonths: initialData?.salary_months?.toString() || '',
+    salaryVariations: initialData?.salary_variations || false,
+    existingCards: initialData?.existing_cards || false,
+    cardsDuration: initialData?.cards_duration || '',
+    totalCreditLimit: initialData?.total_credit_limit?.toString() || '',
+    hasEmi: initialData?.has_emi || false,
+    emiAmount: initialData?.emi_amount?.toString() || '',
+    appliedRecently: initialData?.applied_recently || false,
+    documentsAvailable: initialData?.documents_available || [],
   });
 
   const [availableProducts, setAvailableProducts] = useState(
@@ -155,6 +165,16 @@ export default function AddLeadModal({
       product_type: formData.productType,
       product: formData.product,
       user_id: user.id,
+      // New credit card application fields
+      salary_months: parseInt(formData.salaryMonths, 10) || null,
+      salary_variations: formData.salaryVariations,
+      existing_cards: formData.existingCards,
+      cards_duration: formData.cardsDuration,
+      total_credit_limit: parseFloat(formData.totalCreditLimit) || null,
+      has_emi: formData.hasEmi,
+      emi_amount: parseFloat(formData.emiAmount) || null,
+      applied_recently: formData.appliedRecently,
+      documents_available: formData.documentsAvailable,
     };
 
     if (mode === 'add') {
@@ -340,6 +360,153 @@ export default function AddLeadModal({
                   />
                 }
               />
+
+              {/* New Credit Card Application Fields */}
+              <FormInput
+                label="Salary getting from (months)"
+                children={
+                  <input
+                    type="number"
+                    name="salaryMonths"
+                    value={formData.salaryMonths}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                  />
+                }
+              />
+
+              <FormInput
+                label="Any variations in salary?"
+                children={
+                  <select
+                    name="salaryVariations"
+                    value={formData.salaryVariations ? 'yes' : 'no'}
+                    onChange={(e) => setFormData(prev => ({ ...prev, salaryVariations: e.target.value === 'yes' }))}
+                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                  >
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                  </select>
+                }
+              />
+
+              <FormInput
+                label="Already using credit cards?"
+                children={
+                  <select
+                    name="existingCards"
+                    value={formData.existingCards ? 'yes' : 'no'}
+                    onChange={(e) => setFormData(prev => ({ ...prev, existingCards: e.target.value === 'yes' }))}
+                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                  >
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                  </select>
+                }
+              />
+
+              <FormInput
+                label="If yes, from how long?"
+                children={
+                  <input
+                    type="text"
+                    name="cardsDuration"
+                    value={formData.cardsDuration}
+                    onChange={handleChange}
+                    placeholder="e.g., 2 years"
+                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                  />
+                }
+              />
+
+              <FormInput
+                label="Total credit limit (AED)"
+                children={
+                  <input
+                    type="number"
+                    name="totalCreditLimit"
+                    value={formData.totalCreditLimit}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                  />
+                }
+              />
+
+              <FormInput
+                label="Any EMI/Loan paying?"
+                children={
+                  <select
+                    name="hasEmi"
+                    value={formData.hasEmi ? 'yes' : 'no'}
+                    onChange={(e) => setFormData(prev => ({ ...prev, hasEmi: e.target.value === 'yes' }))}
+                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                  >
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                  </select>
+                }
+              />
+
+              <FormInput
+                label="Total EMI amount (AED)"
+                children={
+                  <input
+                    type="number"
+                    name="emiAmount"
+                    value={formData.emiAmount}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                  />
+                }
+              />
+
+              <FormInput
+                label="Applied same bank/product in last 60 days?"
+                children={
+                  <select
+                    name="appliedRecently"
+                    value={formData.appliedRecently ? 'yes' : 'no'}
+                    onChange={(e) => setFormData(prev => ({ ...prev, appliedRecently: e.target.value === 'yes' }))}
+                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                  >
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                  </select>
+                }
+              />
+
+              <div>
+                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                  Documents Available?
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {[
+                    'Emirates ID',
+                    'Passport Photo',
+                    'Salary Certificate',
+                    'Labor Contract',
+                    'Payslips',
+                  ].map((doc) => (
+                    <label key={doc} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.documentsAvailable.includes(doc)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData((prev) => ({
+                            ...prev,
+                            documentsAvailable: checked
+                              ? [...prev.documentsAvailable, doc]
+                              : prev.documentsAvailable.filter((d) => d !== doc),
+                          }));
+                        }}
+                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-700">{doc}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
           </main>
           <footer className="p-4 border-t border-gray-200 flex-shrink-0">
