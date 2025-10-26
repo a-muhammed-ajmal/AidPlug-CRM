@@ -128,10 +128,7 @@ export default function LeadsPage() {
     );
   }
 
-  const handleEdit = (lead: Lead) => {
-    setEditingLead(lead);
-    setShowAddModal(true);
-  };
+
 
   const handleCloseModal = () => {
     setShowAddModal(false);
@@ -195,7 +192,7 @@ export default function LeadsPage() {
         <div className="space-y-4">
           {filteredLeads.length > 0 ? (
             filteredLeads.map((lead) => (
-              <LeadCard key={lead.id} lead={lead} onEdit={handleEdit} />
+              <LeadCard key={lead.id} lead={lead} />
             ))
           ) : (
             <EmptyState

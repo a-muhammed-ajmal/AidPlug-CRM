@@ -2,31 +2,26 @@ import React from 'react';
 import {
   Briefcase,
   MoreVertical,
-  Edit3,
-  Trash2,
-  Building,
   Folder,
   DollarSign,
   MapPin,
   Phone,
-  Mail,
-  AlertCircle,
-  Clock,
+  MessageCircle,
   ChevronDown,
+  Eye,
+  Zap,
 } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { useDeals } from '../../hooks/useDeals';
 import { Lead } from '../../types';
-import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
 import { useUI } from '../../contexts/UIContext';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface LeadCardProps {
   lead: Lead;
-  onEdit: (lead: Lead) => void;
 }
 
-export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
+export const LeadCard = React.memo(({ lead }: LeadCardProps) => {
   const { user } = useAuth();
   const { deleteLead, updateLead } = useLeads();
   const { createDeal } = useDeals();
@@ -34,37 +29,14 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
 
   const getStatusColor = (status: Lead['qualification_status']) => {
     const colors = {
-      appointment_booked: 'bg-purple-100 text-purple-800',
-      warm: 'bg-orange-100 text-orange-800',
-      qualified: 'bg-blue-100 text-blue-800',
+      appointment_booked: 'bg-purple-100 text-purple-800 border-purple-500',
+      warm: 'bg-orange-100 text-orange-800 border-orange-500',
+      qualified: 'bg-green-100 text-green-800 border-green-600',
     };
-    return colors[status || 'warm'] || 'bg-gray-100 text-gray-800';
+    return colors[status || 'warm'] || 'bg-gray-100 text-gray-800 border-gray-500';
   };
 
-  const getUrgencyIcon = (urgency: Lead['urgency_level']) => {
-    if (urgency === 'high')
-      return <AlertCircle className="w-3 h-3 text-red-500" />;
-    if (urgency === 'medium')
-      return <Clock className="w-3 h-3 text-orange-500" />;
-    return null;
-  };
 
-  const handleDelete = () => {
-    showConfirmation(
-      'Delete Lead?',
-      'This action cannot be undone. Are you sure you want to permanently delete this lead?',
-      () => {
-        deleteLead.mutate(lead.id, {
-          onSuccess: () =>
-            addNotification(
-              'Lead Deleted',
-              `Lead "${lead.full_name}" has been removed.`
-            ),
-          onError: (e) => addNotification('Error', (e as Error).message),
-        });
-      }
-    );
-  };
 
   const handleConvert = () => {
     if (!user) return;
@@ -113,147 +85,146 @@ export const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
     );
   };
 
-  const handleActionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (!value) return;
 
-    if (value === 'convert') {
-      showConfirmation(
-        'Convert to Deal?',
-        `This will create a new deal for "${lead.full_name}" and remove this lead. Are you sure?`,
-        handleConvert
-      );
-    } else {
-      handleStatusChange(value as 'warm' | 'qualified' | 'appointment_booked');
-    }
-    e.target.value = '';
-  };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all duration-200 active:scale-98">
-      <div className="p-4">
+    <div className={`bg-white border rounded-xl hover:shadow-md transition-all border-l-4 ${getStatusColor(lead.qualification_status).split(' ')[3] || 'border-gray-500'}`}>
+      <div className="p-3">
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">
               <h3
-                className="font-semibold text-gray-900 text-base truncate"
+                className="font-semibold text-gray-900 text-base flex items-center"
                 title={lead.full_name}
               >
                 {lead.full_name}
               </h3>
-              {getUrgencyIcon(lead.urgency_level)}
             </div>
-            <p className="text-sm text-gray-600 flex items-center truncate">
+            <p className="text-sm text-gray-600 flex items-center">
               <Briefcase className="w-3 h-3 mr-1.5 text-gray-400 flex-shrink-0" />
               <span title={lead.company_name || 'N/A'}>
                 {lead.company_name || 'N/A'}
               </span>
             </p>
           </div>
-          <div className="flex flex-col items-end space-y-2">
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(lead.qualification_status)}`}
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (lead.phone)
+                  window.location.href = `tel:${lead.phone.replace(/\s/g, '')}`;
+              }}
+              disabled={!lead.phone}
+              className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+              title="Call"
             >
-              {lead.qualification_status?.replace(/_/g, ' ') || 'N/A'}
-            </span>
-            <DropdownMenu
-              trigger={<MoreVertical className="w-4 h-4 text-gray-500" />}
-              children={
-                <>
-                  <DropdownMenuItem
-                    onClick={() => onEdit(lead)}
-                    icon={<Edit3 className="w-4 h-4 mr-2" />}
-                    children="Edit"
-                  />
-                  <DropdownMenuItem
-                    onClick={handleDelete}
-                    icon={<Trash2 className="w-4 h-4 mr-2" />}
-                    className="text-red-600"
-                    children="Delete"
-                  />
-                </>
-              }
-            />
+              <Phone className="w-5 h-5 text-blue-600" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (lead.phone) window.location.href = `https://wa.me/${lead.phone.replace(/\s/g, '')}`;
+              }}
+              disabled={!lead.phone}
+              className="p-2 hover:bg-green-50 rounded-lg transition-colors"
+              title="WhatsApp"
+            >
+              <MessageCircle className="w-5 h-5 text-green-600" />
+            </button>
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Toggle menu logic would go here
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <MoreVertical className="w-5 h-5 text-gray-500" />
+              </button>
+              {/* Menu would be implemented here */}
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-700 border-t border-gray-100 pt-3">
-          <div className="flex items-center">
-            <Building className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
-            <span className="truncate" title={lead.bank_name || ''}>
-              {lead.bank_name || 'N/A'}
-            </span>
+        <div className="space-y-2 text-sm text-gray-700">
+          <div className="grid grid-cols-2 gap-x-4">
+            <div className="flex items-center space-x-2">
+              <DollarSign className="w-3.5 h-3.5 text-gray-400" />
+              <span>
+                {lead.monthly_salary
+                  ? `${(lead.monthly_salary / 1000).toFixed(0)}K AED`
+                  : 'N/A'}
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Phone className="w-3.5 h-3.5 text-gray-400" />
+              <span>{lead.phone ? lead.phone.substring(4) : 'N/A'}</span>
+            </div>
           </div>
-          <div className="flex items-center">
-            <Folder className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
-            <span className="truncate" title={lead.product || ''}>
-              {lead.product || 'N/A'}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <DollarSign className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
-            <span>
-              {lead.monthly_salary
-                ? `${(lead.monthly_salary / 1000).toFixed(0)}K AED`
-                : 'N/A'}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <MapPin className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
-            <span className="truncate" title={lead.location || ''}>
-              {lead.location || 'N/A'}
-            </span>
+          <div className="grid grid-cols-2 gap-x-4">
+            <div className="flex items-center space-x-2">
+              <Folder className="w-3.5 h-3.5 text-gray-400" />
+              <span className="truncate" title={lead.product || ''}>
+                {lead.product || 'N/A'}
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <MapPin className="w-3.5 h-3.5 text-gray-400" />
+              <span className="truncate" title={lead.location || ''}>
+                {lead.location || 'N/A'}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="border-t border-gray-100 p-2 space-y-2">
-        <div className="relative">
+
+        <div className="relative mt-3">
           <select
-            defaultValue=""
-            onChange={handleActionChange}
-            className="w-full appearance-none py-2 pl-3 pr-8 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            aria-label="Lead Actions"
+            defaultValue={lead.qualification_status || 'warm'}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === 'convert') {
+                showConfirmation(
+                  'Convert to Deal?',
+                  `This will create a new deal for "${lead.full_name}" and remove this lead. Are you sure?`,
+                  handleConvert
+                );
+              } else {
+                handleStatusChange(value as 'warm' | 'qualified' | 'appointment_booked');
+              }
+              e.target.value = lead.qualification_status || 'warm';
+            }}
+            className={`w-full appearance-none text-xs font-bold pl-3 pr-8 py-1.5 rounded-md border ${getStatusColor(lead.qualification_status)} focus:outline-none`}
           >
-            <option value="" disabled>
-              Change Status...
-            </option>
             <option value="warm">Warm</option>
             <option value="qualified">Qualified</option>
             <option value="appointment_booked">Appointment</option>
-            <option
-              value="convert"
-              className="font-medium text-green-700 bg-green-50"
-            >
-              Convert to Deal
-            </option>
           </select>
-          <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500" />
+          <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-current" />
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (lead.phone)
-                window.location.href = `tel:${lead.phone.replace(/\s/g, '')}`;
-            }}
-            disabled={!lead.phone}
-            className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50"
-            aria-label="Call lead"
-          >
-            <Phone className="w-3.5 h-3.5 mr-1" /> Call
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (lead.email) window.location.href = `mailto:${lead.email}`;
-            }}
-            disabled={!lead.email}
-            className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50"
-            aria-label="Email lead"
-          >
-            <Mail className="w-3.5 h-3.5 mr-1" /> Email
-          </button>
-        </div>
+      </div>
+      <div className="border-t border-gray-100 p-2 grid grid-cols-2 gap-2">
+        <button
+          onClick={() => {
+            // View details logic would go here
+          }}
+          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold"
+        >
+          <Eye className="w-3.5 h-3.5 mr-1" />
+          Details
+        </button>
+        <button
+          onClick={() => {
+            showConfirmation(
+              'Convert to Deal?',
+              `This will create a new deal for "${lead.full_name}" and remove this lead. Are you sure?`,
+              handleConvert
+            );
+          }}
+          className="flex items-center justify-center py-2 px-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-xs font-semibold"
+        >
+          <Zap className="w-3.5 h-3.5 mr-1" />
+          To Deal
+        </button>
       </div>
     </div>
   );
