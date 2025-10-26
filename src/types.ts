@@ -266,6 +266,15 @@ export interface Database {
           updated_at: string | null;
           urgency_level: 'low' | 'medium' | 'high' | null;
           user_id: string;
+          salary_months: number | null;
+          salary_variations: boolean | null;
+          existing_cards: boolean | null;
+          cards_duration: string | null;
+          total_credit_limit: number | null;
+          has_emi: boolean | null;
+          emi_amount: number | null;
+          applied_recently: boolean | null;
+          documents_available: string[] | null;
         };
         Insert: {
           bank_name?: string | null;
@@ -293,6 +302,15 @@ export interface Database {
           updated_at?: string | null;
           urgency_level?: 'low' | 'medium' | 'high' | null;
           user_id: string;
+          salary_months?: number | null;
+          salary_variations?: boolean | null;
+          existing_cards?: boolean | null;
+          cards_duration?: string | null;
+          total_credit_limit?: number | null;
+          has_emi?: boolean | null;
+          emi_amount?: number | null;
+          applied_recently?: boolean | null;
+          documents_available?: string[] | null;
         };
         Update: {
           bank_name?: string | null;
@@ -320,6 +338,15 @@ export interface Database {
           updated_at?: string | null;
           urgency_level?: 'low' | 'medium' | 'high' | null;
           user_id?: string;
+          salary_months?: number | null;
+          salary_variations?: boolean | null;
+          existing_cards?: boolean | null;
+          cards_duration?: string | null;
+          total_credit_limit?: number | null;
+          has_emi?: boolean | null;
+          emi_amount?: number | null;
+          applied_recently?: boolean | null;
+          documents_available?: string[] | null;
         };
         Relationships: [
           {
