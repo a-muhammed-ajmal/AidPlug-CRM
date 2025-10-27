@@ -142,10 +142,6 @@ export default function AddLeadModal({
       addNotification('Authentication Error', 'You must be logged in.');
       return;
     }
-    if (!formData.fullName || !formData.mobile) {
-      alert('Please fill in Full Name and Mobile Number.');
-      return;
-    }
     setLoading(true);
 
     const leadData = {
@@ -229,14 +225,13 @@ export default function AddLeadModal({
           <main className="flex-1 p-6 overflow-y-auto">
             <div className="space-y-6">
               <FormInput
-                label="Full Name*"
+                label="Full Name"
                 children={
                   <input
                     type="text"
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
-                    required
                     className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
                   />
                 }
@@ -279,7 +274,7 @@ export default function AddLeadModal({
                 }
               />
               <FormInput
-                label="Mobile Number*"
+                label="Mobile Number"
                 children={
                   <div className="flex">
                     <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg">
@@ -290,7 +285,6 @@ export default function AddLeadModal({
                       name="mobile"
                       value={formData.mobile}
                       onChange={handleChange}
-                      required
                       className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-r-lg focus:ring-blue-500 focus:border-blue-500 p-3"
                       placeholder="50 123 4567"
                     />
