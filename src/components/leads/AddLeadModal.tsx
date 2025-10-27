@@ -101,6 +101,14 @@ export default function AddLeadModal({
   });
 
   const [createTaskOption, setCreateTaskOption] = useState(false);
+  const [taskFormData, setTaskFormData] = useState({
+    title: `Follow up with ${formData.fullName || 'Lead'}`,
+    description: `Follow up on lead for ${formData.productType} - ${formData.product}`,
+    type: 'follow_up' as const,
+    priority: 'medium' as const,
+    due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    time: '',
+  });
 
   const [availableProducts, setAvailableProducts] = useState(
     EIB_CREDIT_CARDS.map((card) => card.name)
@@ -138,6 +146,15 @@ export default function AddLeadModal({
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleTaskChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setTaskFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -186,12 +203,12 @@ export default function AddLeadModal({
           );
           if (createTaskOption) {
             const taskData = {
-              title: `Follow up with ${formData.fullName}`,
-              description: `Follow up on lead for ${formData.productType} - ${formData.product}`,
-              type: 'follow_up' as const,
-              priority: 'medium' as const,
-              due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days from now
-              time: null,
+              title: taskFormData.title,
+              description: taskFormData.description,
+              type: taskFormData.type as NonNullable<Task['type']>,
+              priority: taskFormData.priority as NonNullable<Task['priority']>,
+              due_date: taskFormData.due_date,
+              time: taskFormData.time || null,
               status: 'pending' as const,
               estimated_duration: null,
               related_to_id: newLead.id,
@@ -531,18 +548,109 @@ export default function AddLeadModal({
 
               {/* Create Task Option */}
               {mode === 'add' && (
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="createTask"
-                    checked={createTaskOption}
-                    onChange={(e) => setCreateTaskOption(e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
-                  />
-                  <label htmlFor="createTask" className="text-sm text-gray-700">
-                    Create a follow-up task
-                  </label>
-                </div>
+                <>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="createTask"
+                      checked={createTaskOption}
+                      onChange={(e) => setCreateTaskOption(e.target.checked)}
+                      className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
+                    />
+                    <label htmlFor="createTask" className="text-sm text-gray-700">
+                      Create a follow-up task
+                    </label>
+                  </div>
+                  {createTaskOption && (
+                    <div className="space-y-4 border-t pt-4">
+                      <FormInput
+                        label="Task Title*"
+                        children={
+                          <input
+                            type="text"
+                            name="title"
+                            value={taskFormData.title}
+                            onChange={handleTaskChange}
+                            required
+                            className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                          />
+                        }
+                      />
+                      <FormInput
+                        label="Description"
+                        children={
+                          <textarea
+                            name="description"
+                            value={taskFormData.description}
+                            onChange={handleTaskChange}
+                            rows={3}
+                            className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                          />
+                        }
+                      />
+                      <FormInput
+                        label="Task Type"
+                        children={
+                          <SelectInput
+                            id="taskType"
+                            name="type"
+                            value={taskFormData.type}
+                            onChange={handleTaskChange}
+                            options={[
+                              { value: 'call', label: '📞 Call' },
+                              { value: 'meeting', label: '👥 Meeting' },
+                              { value: 'documentation', label: '📄 Documentation' },
+                              { value: 'verification', label: '✓ Verification' },
+                              { value: 'follow_up', label: '🔄 Follow Up' },
+                            ]}
+                          />
+                        }
+                      />
+                      <FormInput
+                        label="Priority"
+                        children={
+                          <SelectInput
+                            id="taskPriority"
+                            name="priority"
+                            value={taskFormData.priority}
+                            onChange={handleTaskChange}
+                            options={[
+                              { value: 'low', label: 'Low' },
+                              { value: 'medium', label: 'Medium' },
+                              { value: 'high', label: 'High' },
+                              { value: 'urgent', label: 'Urgent' },
+                            ]}
+                          />
+                        }
+                      />
+                      <FormInput
+                        label="Due Date*"
+                        children={
+                          <input
+                            type="date"
+                            name="due_date"
+                            value={taskFormData.due_date}
+                            onChange={handleTaskChange}
+                            required
+                            className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                          />
+                        }
+                      />
+                      <FormInput
+                        label="Time (Optional)"
+                        children={
+                          <input
+                            type="time"
+                            name="time"
+                            value={taskFormData.time}
+                            onChange={handleTaskChange}
+                            className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                          />
+                        }
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </main>
