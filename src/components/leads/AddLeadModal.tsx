@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
 import { useLeads } from '../../hooks/useLeads';
+import { useTasks } from '../../hooks/useTasks';
 import {
   EIB_CREDIT_CARDS,
   PRODUCT_TYPES,
@@ -69,6 +70,7 @@ export default function AddLeadModal({
   initialData,
 }: AddLeadModalProps) {
   const { createLead, updateLead } = useLeads();
+  const { createTask } = useTasks();
   const { user } = useAuth();
   const { addNotification } = useUI();
 
@@ -97,6 +99,8 @@ export default function AddLeadModal({
     appliedRecently: initialData?.applied_recently || false,
     documentsAvailable: initialData?.documents_available || [],
   });
+
+  const [createTaskOption, setCreateTaskOption] = useState(false);
 
   const [availableProducts, setAvailableProducts] = useState(
     EIB_CREDIT_CARDS.map((card) => card.name)
@@ -175,11 +179,34 @@ export default function AddLeadModal({
 
     if (mode === 'add') {
       createLead.mutate(leadData, {
-        onSuccess: () => {
+        onSuccess: (newLead) => {
           addNotification(
             'Lead Created',
             `${formData.fullName} has been saved.`
           );
+          if (createTaskOption) {
+            const taskData = {
+              title: `Follow up with ${formData.fullName}`,
+              description: `Follow up on lead for ${formData.productType} - ${formData.product}`,
+              type: 'follow_up' as const,
+              priority: 'medium' as const,
+              due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days from now
+              time: null,
+              status: 'pending' as const,
+              estimated_duration: null,
+              related_to_id: newLead.id,
+              related_to_type: 'lead' as const,
+              user_id: user.id,
+            };
+            createTask.mutate(taskData, {
+              onSuccess: () => {
+                addNotification('Task Created', 'Follow-up task has been added.');
+              },
+              onError: (err: Error) => {
+                addNotification('Task Creation Failed', err.message);
+              },
+            });
+          }
           onClose();
         },
         onError: (err) => {
@@ -501,6 +528,22 @@ export default function AddLeadModal({
                   ))}
                 </div>
               </div>
+
+              {/* Create Task Option */}
+              {mode === 'add' && (
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="createTask"
+                    checked={createTaskOption}
+                    onChange={(e) => setCreateTaskOption(e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
+                  />
+                  <label htmlFor="createTask" className="text-sm text-gray-700">
+                    Create a follow-up task
+                  </label>
+                </div>
+              )}
             </div>
           </main>
           <footer className="p-4 border-t border-gray-200 flex-shrink-0">
