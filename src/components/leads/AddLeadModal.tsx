@@ -10,7 +10,7 @@ import {
   UAE_BANK_NAMES,
   UAE_EMIRATES,
 } from '../../lib/constants';
-import { Lead } from '../../types';
+import { Lead, Task } from '../../types';
 
 interface AddLeadModalProps {
   onClose: () => void;
@@ -597,11 +597,11 @@ export default function AddLeadModal({
                             value={taskFormData.type}
                             onChange={handleTaskChange}
                             options={[
-                              { value: 'call', label: '📞 Call' },
-                              { value: 'meeting', label: '👥 Meeting' },
-                              { value: 'documentation', label: '📄 Documentation' },
-                              { value: 'verification', label: '✓ Verification' },
-                              { value: 'follow_up', label: '🔄 Follow Up' },
+                              'call',
+                              'meeting',
+                              'documentation',
+                              'verification',
+                              'follow_up',
                             ]}
                           />
                         }
@@ -615,10 +615,10 @@ export default function AddLeadModal({
                             value={taskFormData.priority}
                             onChange={handleTaskChange}
                             options={[
-                              { value: 'low', label: 'Low' },
-                              { value: 'medium', label: 'Medium' },
-                              { value: 'high', label: 'High' },
-                              { value: 'urgent', label: 'Urgent' },
+                              'low',
+                              'medium',
+                              'high',
+                              'urgent',
                             ]}
                           />
                         }
