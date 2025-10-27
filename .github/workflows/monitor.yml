@@ -1,43 +1,32 @@
-# .github/workflows/monitor.yml (CORRECTED VERSION)
+# .github/workflows/monitor.yml (FINAL CORRECTED VERSION)
 
 name: AI Assistant Proactive Monitor
 
 on:
   schedule:
+    # This runs at the top of every hour
     - cron: '0 * * * *'
   workflow_dispatch:
 
 jobs:
   run-monitor:
     runs-on: ubuntu-latest
-    
-    # === FIX: Tell all steps to run inside this subfolder ===
-    defaults:
-      run:
-        working-directory: ./aidplug-ai-assistant
-    # =========================================================
-
     steps:
-      # Step 1: Check out your repository's code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Set up a stable Python environment
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # Step 3: Install all the necessary Python libraries
-      # This will now run 'pip install' inside the correct folder
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # Step 4: Run the watcher script
-      # This will now run 'python watcher.py' inside the correct folder
       - name: Run watcher script
         env:
-          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          # Use the correct secret name you created
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }} # This line is now correct
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           ALERT_EMAIL_SENDER: ${{ secrets.ALERT_EMAIL_SENDER }}
