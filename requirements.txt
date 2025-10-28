@@ -1,0 +1,12 @@
+python-dotenv==1.0.1
+PyGithub==2.3.0
+supabase==2.4.2
+langchain==0.2.1
+langchain-community==0.2.1
+langchainhub==0.1.18
+psycopg2-binary
+langchain-chroma
+sentence-transformers
+unstructured
+GitPython
+streamlit
