@@ -51,7 +51,7 @@ export default function TaskList({ tasks }: TaskListProps) {
               <p className="text-sm text-gray-600 mt-1">{task.time}</p>
             )}
             <span
-              className={`inline-block mt-2 px-2 py-1 text-xs rounded-full ${
+              className={`inline-block mt-2 px-2 py-1 text-xs rounded-full cursor-pointer ${
                 task.priority === 'urgent'
                   ? 'bg-red-100 text-red-700'
                   : task.priority === 'high'
@@ -60,6 +60,10 @@ export default function TaskList({ tasks }: TaskListProps) {
                       ? 'bg-yellow-100 text-yellow-700'
                       : 'bg-green-100 text-green-700'
               }`}
+              onClick={() => {
+                // Add functionality for priority click - could open task details or edit modal
+                console.log('Priority clicked for task:', task.id);
+              }}
             >
               {task.priority}
             </span>

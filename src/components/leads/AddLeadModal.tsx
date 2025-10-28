@@ -100,6 +100,18 @@ export default function AddLeadModal({
     documentsAvailable: initialData?.documents_available || [],
   });
 
+  // Set default bank and product based on common selections
+  useEffect(() => {
+    if (!initialData) {
+      setFormData(prev => ({
+        ...prev,
+        bank: 'Emirates Islamic Bank',
+        productType: 'Credit Card',
+        product: EIB_CREDIT_CARDS[0].name,
+      }));
+    }
+  }, [initialData]);
+
   const [createTaskOption, setCreateTaskOption] = useState(false);
   const [taskFormData, setTaskFormData] = useState({
     title: `Follow up with ${formData.fullName || 'Lead'}`,
@@ -414,7 +426,7 @@ export default function AddLeadModal({
               />
 
               <FormInput
-                label="Any variations in salary?"
+                label="Any variations in salary? (Please advise on salary stability for credit approval)"
                 children={
                   <select
                     name="salaryVariations"
@@ -429,7 +441,7 @@ export default function AddLeadModal({
               />
 
               <FormInput
-                label="Already using credit cards?"
+                label="Already using credit cards? (Please provide details for credit assessment)"
                 children={
                   <select
                     name="existingCards"
@@ -471,7 +483,7 @@ export default function AddLeadModal({
               />
 
               <FormInput
-                label="Any EMI/Loan paying?"
+                label="Any EMI/Loan paying? (Please specify for debt-to-income ratio calculation)"
                 children={
                   <select
                     name="hasEmi"
@@ -499,7 +511,7 @@ export default function AddLeadModal({
               />
 
               <FormInput
-                label="Applied same bank/product in last 60 days?"
+                label="Applied same bank/product in last 60 days? (Important for eligibility check)"
                 children={
                   <select
                     name="appliedRecently"
@@ -558,7 +570,7 @@ export default function AddLeadModal({
                       className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
                     />
                     <label htmlFor="createTask" className="text-sm text-gray-700">
-                      Create a follow-up task
+                      Create a follow-up task (Recommended for timely lead management)
                     </label>
                   </div>
                   {createTaskOption && (

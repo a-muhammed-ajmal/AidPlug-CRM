@@ -156,7 +156,11 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
 
             {task.priority && (
               <span
-                className={`text-xs font-medium px-2 py-1 rounded ${priorityTagColors[task.priority]}`}
+                className={`text-xs font-medium px-2 py-1 rounded cursor-pointer ${priorityTagColors[task.priority]}`}
+                onClick={() => {
+                  // Open detailed task view or edit modal
+                  onEdit(task);
+                }}
               >
                 {task.priority.toUpperCase()}
               </span>

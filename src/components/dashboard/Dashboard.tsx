@@ -36,7 +36,8 @@ const DashboardKPICard = ({
 }) => (
   <div className="rounded-lg shadow-sm overflow-hidden bg-white flex flex-col">
     <div
-      className={`${color} text-white p-3 relative h-20 flex items-center justify-center`}
+      style={{ backgroundColor: color }}
+      className="text-white p-3 relative h-20 flex items-center justify-center"
     >
       <div className="absolute -right-1 -bottom-1 opacity-20 text-white">
         {icon}
@@ -321,19 +322,19 @@ export default function Dashboard() {
         <DashboardKPICard
           title="Deals Processing"
           value={activeDeals}
-          color="bg-red-500"
+          color="#5d5dff"
           icon={<Briefcase size={56} />}
         />
         <DashboardKPICard
           title="Days Remaining"
           value={daysRemaining}
-          color="bg-orange-500"
+          color="#ff5d5d"
           icon={<Clock size={56} />}
         />
         <DashboardKPICard
           title="Done Successfully"
           value={doneSuccessfully}
-          color="bg-green-500"
+          color="#5dff5d"
           icon={<CheckCircleIcon size={56} />}
         />
       </div>
@@ -392,19 +393,29 @@ export default function Dashboard() {
         </h3>
         {activities.length > 0 ? (
           <div className="space-y-4">
-            {activities.slice(0, 5).map((item: Activity) => (
-              <div key={item.id} className="flex items-center space-x-3">
-                {getActivityIcon(item.type)}
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">
-                    {item.message}
-                  </p>
+            {activities
+              .filter((activity) => {
+                const activityDate = new Date(activity.timestamp);
+                const now = new Date();
+                const diffInHours = (now.getTime() - activityDate.getTime()) / (1000 * 60 * 60);
+                // Filter for very important updates only
+                const importantTypes = ['lead_convert', 'deal_stage_update', 'task_complete'];
+                return diffInHours <= 24 && importantTypes.includes(activity.type);
+              })
+              .slice(0, 5)
+              .map((item: Activity) => (
+                <div key={item.id} className="flex items-center space-x-3">
+                  {getActivityIcon(item.type)}
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">
+                      {item.message}
+                    </p>
+                  </div>
+                  <span className="text-xs text-gray-500 flex-shrink-0">
+                    {timeSince(item.timestamp)}
+                  </span>
                 </div>
-                <span className="text-xs text-gray-500 flex-shrink-0">
-                  {timeSince(item.timestamp)}
-                </span>
-              </div>
-            ))}
+              ))}
           </div>
         ) : (
           <div className="text-center py-4">

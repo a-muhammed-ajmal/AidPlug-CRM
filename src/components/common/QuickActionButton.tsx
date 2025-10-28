@@ -26,7 +26,7 @@ export default function QuickActionButton({
         {icon}
       </div>
       <div className="flex-1">
-        <p className="font-semibold text-gray-900 text-sm">{title}</p>
+        <p className="font-semibold text-gray-900 text-xs">{title}</p>
         <p className="text-xs text-gray-500">{subtitle}</p>
       </div>
     </button>

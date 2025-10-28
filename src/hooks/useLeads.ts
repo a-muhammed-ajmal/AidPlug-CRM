@@ -58,6 +58,8 @@ export function useLeads() {
     onSuccess: (newLead) => {
       logActivity('lead_add', `Created lead: "${newLead.full_name}"`);
       addNotification('Success', 'Lead created successfully.');
+      // Immediate refresh to show real-time updates
+      query.refetch();
     },
     onError: (error) =>
       addNotification('Error', error.message || 'Failed to create lead.'),

@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Home,
   Users,
@@ -8,11 +7,12 @@ import {
   Settings,
   User as UserIcon,
   PieChart,
+  LucideIcon,
 } from 'lucide-react';
 
 export interface NavItem {
   key: string;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
   label: string;
   path: string;
 }

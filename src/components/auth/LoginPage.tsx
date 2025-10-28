@@ -26,8 +26,9 @@ export default function LoginPage() {
       // Pass `false` for `remember` to use sessionStorage by default for email logins.
       await signIn(email, password, false);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to sign in';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -40,7 +41,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/#/dashboard`,
+          redirectTo: `${window.location.origin}/dashboard`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -61,7 +62,7 @@ export default function LoginPage() {
         }
         setGoogleLoading(false);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('An unexpected error occurred. Please try again.');
       setGoogleLoading(false);
     }
