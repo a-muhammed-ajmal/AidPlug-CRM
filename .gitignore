@@ -1,0 +1,38 @@
+# === Original AidPlug CRM Ignores ===
+.env.local
+node_modules
+dist
+.vercel
+
+
+# === AI Assistant Ignores ===
+
+# Environment variables - DO NOT COMMIT
+.env
+.env.*
+
+# Python Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache & artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+build/
+*.egg-info/
+
+# IDE files (optional but good practice)
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Vector database for RAG (AI's memory)
+chroma_db/
+
+# Temporary repo clone for RAG
+AidPlug-CRM/
