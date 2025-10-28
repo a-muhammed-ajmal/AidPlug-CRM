@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLeads } from '../../hooks/useLeads';
 import { useClients } from '../../hooks/useClients';
@@ -8,6 +8,9 @@ import { mockProducts } from '../../lib/constants';
 
 
 import { mainNavItems, secondaryNavItems, NavItem } from '../../lib/navigation';
+
+// Import the account modal
+import AccountModal from '../account/AccountModal';
 
 interface NavListProps {
   onClose?: () => void;
@@ -72,7 +75,8 @@ export default function NavList({ onClose }: NavListProps) {
   const { tasks } = useTasks();
 
 
-
+  // Add account modal state
+  const [showAccountModal, setShowAccountModal] = useState(false);
 
   const pendingTasksCount = tasks.filter((t) => t.status === 'pending').length;
 
@@ -88,7 +92,10 @@ export default function NavList({ onClose }: NavListProps) {
     if (onClose) onClose();
   };
 
-
+  const handleAccountClick = () => {
+    setShowAccountModal(true);
+    if (onClose) onClose();
+  };
 
 
 
@@ -115,6 +122,11 @@ export default function NavList({ onClose }: NavListProps) {
               Account
             </h3>
             <NavListItem
+              item={secondaryNavItems.find((item) => item.key === 'account')!}
+              onClick={handleAccountClick}
+              isAccount={true}
+            />
+            <NavListItem
               item={secondaryNavItems.find((item) => item.key === 'settings')!}
               onClick={handleLinkClick}
             />
@@ -122,7 +134,10 @@ export default function NavList({ onClose }: NavListProps) {
         </div>
       </div>
 
-
+      {/* Account Modal */}
+      {showAccountModal && (
+        <AccountModal onClose={() => setShowAccountModal(false)} />
+      )}
     </>
   );
 }

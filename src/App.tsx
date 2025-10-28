@@ -43,10 +43,6 @@ const ProductListPage = lazy(
 const ProductDetailPage = lazy(
   () => import('./components/products/ProductDetailPage')
 );
-const AccountPage = lazy(() => import('./components/account/AccountPage'));
-const EditProfilePage = lazy(
-  () => import('./components/account/EditProfilePage')
-);
 
 function PublicRoutes() {
   return (
@@ -79,10 +75,6 @@ function ProtectedRoutes() {
             path=":bankSlug/:typeSlug/:productSlug"
             element={<ProductDetailPage />}
           />
-        </Route>
-        <Route path="account">
-          <Route index element={<AccountPage />} />
-          <Route path="edit" element={<EditProfilePage />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>

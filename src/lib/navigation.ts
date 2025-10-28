@@ -27,6 +27,7 @@ export const mainNavItems: NavItem[] = [
 ];
 
 export const secondaryNavItems: NavItem[] = [
+  { key: 'account', icon: UserIcon, label: 'My Account', path: '/account' },
   { key: 'settings', icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
