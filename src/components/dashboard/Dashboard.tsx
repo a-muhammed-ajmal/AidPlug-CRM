@@ -92,7 +92,11 @@ const ThingsToDo = () => {
                 <p className="text-xs text-gray-500">{`Due: ${new Date(task.due_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`}</p>
               </div>
               <span
-                className={`text-xs font-medium px-2 py-1 rounded-full ${task.priority === 'urgent' ? 'bg-red-100 text-red-800' : 'bg-gray-200 text-gray-700'}`}
+                className={`text-xs font-medium px-2 py-1 rounded-full cursor-pointer ${task.priority === 'urgent' ? 'bg-red-100 text-red-800' : 'bg-gray-200 text-gray-700'}`}
+                onClick={() => {
+                  // Open task details modal or edit modal
+                  console.log('Priority clicked for task:', task.id);
+                }}
               >
                 {task.priority}
               </span>
@@ -235,17 +239,20 @@ export default function Dashboard() {
   ).length;
 
   // Calculate days remaining from today until end of sales cycle
-  const daysRemaining = salesCycle && salesCycle.end_date ? (() => {
-    const today = new Date();
-    const endDate = new Date(salesCycle.end_date);
-    today.setHours(0, 0, 0, 0);
-    endDate.setHours(0, 0, 0, 0);
+  const daysRemaining =
+    salesCycle && salesCycle.end_date
+      ? (() => {
+          const today = new Date();
+          const endDate = new Date(salesCycle.end_date);
+          today.setHours(0, 0, 0, 0);
+          endDate.setHours(0, 0, 0, 0);
 
-    const diffTime = endDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          const diffTime = endDate.getTime() - today.getTime();
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    return Math.max(0, diffDays);
-  })() : 0;
+          return Math.max(0, diffDays);
+        })()
+      : 0;
 
   const doneSuccessfully = deals.filter((d) => d.stage === 'completed').length;
 
@@ -397,10 +404,17 @@ export default function Dashboard() {
               .filter((activity) => {
                 const activityDate = new Date(activity.timestamp);
                 const now = new Date();
-                const diffInHours = (now.getTime() - activityDate.getTime()) / (1000 * 60 * 60);
+                const diffInHours =
+                  (now.getTime() - activityDate.getTime()) / (1000 * 60 * 60);
                 // Filter for very important updates only
-                const importantTypes = ['lead_convert', 'deal_stage_update', 'task_complete'];
-                return diffInHours <= 24 && importantTypes.includes(activity.type);
+                const importantTypes = [
+                  'lead_convert',
+                  'deal_stage_update',
+                  'task_complete',
+                ];
+                return (
+                  diffInHours <= 24 && importantTypes.includes(activity.type)
+                );
               })
               .slice(0, 5)
               .map((item: Activity) => (

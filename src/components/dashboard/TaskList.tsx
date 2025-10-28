@@ -61,7 +61,7 @@ export default function TaskList({ tasks }: TaskListProps) {
                       : 'bg-green-100 text-green-700'
               }`}
               onClick={() => {
-                // Add functionality for priority click - could open task details or edit modal
+                // Open task details modal or edit modal
                 console.log('Priority clicked for task:', task.id);
               }}
             >

@@ -165,6 +165,64 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
                 {task.priority.toUpperCase()}
               </span>
             )}
+
+            {/* Action buttons for call, WhatsApp, mail, etc. */}
+            <div className="flex gap-1 mt-2">
+              <button
+                onClick={() => {
+                  // Handle call action
+                  if (
+                    task.related_to_type === 'lead' ||
+                    task.related_to_type === 'client'
+                  ) {
+                    window.open(
+                      `tel:${task.related_to_id ? 'phone-number' : ''}`,
+                      '_self'
+                    );
+                  }
+                }}
+                className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                title="Call"
+              >
+                📞
+              </button>
+              <button
+                onClick={() => {
+                  // Handle WhatsApp action
+                  if (
+                    task.related_to_type === 'lead' ||
+                    task.related_to_type === 'client'
+                  ) {
+                    window.open(
+                      `https://wa.me/${task.related_to_id ? 'phone-number' : ''}`,
+                      '_blank'
+                    );
+                  }
+                }}
+                className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200"
+                title="WhatsApp"
+              >
+                💬
+              </button>
+              <button
+                onClick={() => {
+                  // Handle email action
+                  if (
+                    task.related_to_type === 'lead' ||
+                    task.related_to_type === 'client'
+                  ) {
+                    window.open(
+                      `mailto:${task.related_to_id ? 'email' : ''}`,
+                      '_self'
+                    );
+                  }
+                }}
+                className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200"
+                title="Email"
+              >
+                ✉️
+              </button>
+            </div>
           </div>
         </div>
       </div>
