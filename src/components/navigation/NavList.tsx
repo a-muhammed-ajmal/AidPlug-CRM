@@ -86,11 +86,7 @@ export default function NavList({ onClose }: NavListProps) {
           </h3>
           <NavListItem
             item={secondaryNavItems.find((item) => item.key === 'account')!}
-            onClick={() => {
-              handleLinkClick();
-              // Ensure navigation works on mobile
-              window.location.href = '/account';
-            }}
+            onClick={handleLinkClick}
           />
           <NavListItem
             item={secondaryNavItems.find((item) => item.key === 'settings')!}

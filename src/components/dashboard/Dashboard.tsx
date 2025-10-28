@@ -4,15 +4,17 @@ import {
   Calendar,
   CheckCircle as CheckCircleIcon,
   Clock,
+  Edit3,
   Gift,
   List,
   Plus,
   Star,
+  Trash2,
   User,
   Users,
   Zap,
 } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUI, Activity } from '../../contexts/UIContext';
 import { useClients } from '../../hooks/useClients';
@@ -21,6 +23,7 @@ import { useTasks } from '../../hooks/useTasks';
 import { useSalesCycle } from '../../hooks/useSalesCycle';
 import QuickActionButton from '../common/QuickActionButton';
 import SkeletonLoader from '../common/SkeletonLoader';
+import { Task } from '../../types';
 
 // Reusable component from the monolithic file, now placed here for dashboard use
 const DashboardKPICard = ({
@@ -55,61 +58,219 @@ const DashboardKPICard = ({
 const ThingsToDo = () => {
   const navigate = useNavigate();
   const { tasks } = useTasks();
+  const { showConfirmation, addNotification } = useUI();
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const pendingTasks = tasks.filter((t) => t.status === 'pending');
   const displayedTasks = pendingTasks.slice(0, 5);
 
+  const { updateTask, deleteTask } = useTasks();
+
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+  };
+
+  const handleCompleteTask = (task: Task) => {
+    updateTask.mutate({
+      id: task.id,
+      updates: { status: 'completed' },
+    });
+    setSelectedTask(null);
+  };
+
+  const handleDeleteTask = (task: Task) => {
+    showConfirmation(
+      'Delete Task?',
+      'Are you sure you want to delete this task?',
+      () => {
+        deleteTask.mutate(task.id, {
+          onSuccess: () => {
+            addNotification(
+              'Task Deleted',
+              `"${task.title}" has been removed.`
+            );
+            setSelectedTask(null);
+          },
+        });
+      }
+    );
+  };
+
+  const handleCall = () => {
+    // For now, we'll use a placeholder since tasks don't have direct client contact info
+    // In a real implementation, you'd fetch client data based on related_to_id
+    alert('Call functionality would open phone dialer with client number');
+  };
+
+  const handleWhatsApp = () => {
+    // For now, we'll use a placeholder since tasks don't have direct client contact info
+    alert('WhatsApp functionality would open WhatsApp with client number');
+  };
+
+  const handleEmail = () => {
+    // For now, we'll use a placeholder since tasks don't have direct client contact info
+    alert('Email functionality would open email client with client address');
+  };
+
   return (
-    <div className="bg-white rounded-xl p-4 border shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900 flex items-center">
-          <List className="w-5 h-5 mr-2 text-purple-600" />
-          Things to Get Done
-        </h3>
-        {tasks.length > 5 && (
-          <button
-            onClick={() => navigate('/tasks')}
-            className="text-sm font-medium text-blue-600 hover:underline"
-          >
-            See all
-          </button>
+    <>
+      <div className="bg-white rounded-xl p-4 border shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-900 flex items-center">
+            <List className="w-5 h-5 mr-2 text-purple-600" />
+            Things to Get Done
+          </h3>
+          {tasks.length > 5 && (
+            <button
+              onClick={() => navigate('/tasks')}
+              className="text-sm font-medium text-blue-600 hover:underline"
+            >
+              See all
+            </button>
+          )}
+        </div>
+
+        {displayedTasks.length > 0 ? (
+          <div className="space-y-3">
+            {displayedTasks.map((task) => (
+              <div
+                key={task.id}
+                className="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                onClick={() => handleTaskClick(task)}
+              >
+                <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <List className="w-4 h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-800 truncate">
+                    {task.title}
+                  </p>
+                  <p className="text-xs text-gray-500">{`Due: ${new Date(task.due_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`}</p>
+                </div>
+                <span
+                  className={`text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap ${task.priority === 'urgent' ? 'bg-red-100 text-red-800' : task.priority === 'high' ? 'bg-orange-100 text-orange-800' : task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}
+                >
+                  {task.priority}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-4">
+            <CheckCircleIcon className="w-8 h-8 mx-auto text-gray-300 mb-2" />
+            <p className="text-sm text-gray-500">All tasks completed!</p>
+          </div>
         )}
       </div>
 
-      {displayedTasks.length > 0 ? (
-        <div className="space-y-3">
-          {displayedTasks.map((task) => (
-            <div
-              key={task.id}
-              className="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg"
-            >
-              <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <List className="w-4 h-4" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-800 truncate">
-                  {task.title}
-                </p>
-                <p className="text-xs text-gray-500">{`Due: ${new Date(task.due_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`}</p>
-              </div>
-              <span
-                className={`text-xs font-medium px-2 py-1 rounded-full cursor-pointer ${task.priority === 'urgent' ? 'bg-red-100 text-red-800' : 'bg-gray-200 text-gray-700'}`}
-                onClick={() => {
-                  // Open task details modal or edit modal
-                  console.log('Priority clicked for task:', task.id);
-                }}
+      {/* Task Detail Modal */}
+      {selectedTask && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Task Details
+              </h3>
+              <button
+                onClick={() => setSelectedTask(null)}
+                className="text-gray-400 hover:text-gray-600"
               >
-                {task.priority}
-              </span>
+                ✕
+              </button>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-4">
-          <CheckCircleIcon className="w-8 h-8 mx-auto text-gray-300 mb-2" />
-          <p className="text-sm text-gray-500">All tasks completed!</p>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium text-gray-800">
+                  {selectedTask.title}
+                </h4>
+                {selectedTask.description && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {selectedTask.description}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <div className="flex items-center space-x-1">
+                  <Calendar className="w-4 h-4" />
+                  <span>
+                    {new Date(selectedTask.due_date).toLocaleDateString(
+                      'en-GB'
+                    )}
+                  </span>
+                </div>
+                {selectedTask.time && (
+                  <div className="flex items-center space-x-1">
+                    <Clock className="w-4 h-4" />
+                    <span>{selectedTask.time}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <span
+                  className={`text-xs font-medium px-2 py-1 rounded-full ${selectedTask.priority === 'urgent' ? 'bg-red-100 text-red-800' : selectedTask.priority === 'high' ? 'bg-orange-100 text-orange-800' : selectedTask.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}
+                >
+                  {selectedTask.priority?.toUpperCase() || 'LOW'}
+                </span>
+                <span
+                  className={`text-xs font-medium px-2 py-1 rounded-full ${selectedTask.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
+                >
+                  {selectedTask.status?.toUpperCase() || 'PENDING'}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-4 border-t">
+                <button
+                  onClick={() => handleCompleteTask(selectedTask)}
+                  className="flex items-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition-colors"
+                >
+                  <CheckCircleIcon className="w-4 h-4" />
+                  <span>Complete</span>
+                </button>
+                <button
+                  onClick={() =>
+                    navigate('/tasks', { state: { editTask: selectedTask } })
+                  }
+                  className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  <span>Edit</span>
+                </button>
+                <button
+                  onClick={() => handleDeleteTask(selectedTask)}
+                  className="flex items-center space-x-2 px-3 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete</span>
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-2 border-t">
+                <button
+                  onClick={handleCall}
+                  className="flex items-center space-x-2 px-3 py-2 bg-gray-600 text-white rounded-lg text-sm hover:bg-gray-700 transition-colors"
+                >
+                  📞 <span>Call</span>
+                </button>
+                <button
+                  onClick={handleWhatsApp}
+                  className="flex items-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition-colors"
+                >
+                  💬 <span>WhatsApp</span>
+                </button>
+                <button
+                  onClick={handleEmail}
+                  className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                >
+                  ✉️ <span>Email</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
