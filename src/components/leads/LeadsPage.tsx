@@ -36,11 +36,14 @@ export default function LeadsPage() {
     useState<LeadStatusFilter>('all');
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const initialLeadFilters: LeadFilters = {
-    urgency: 'all',
-    salaryRange: [0, 100000],
-    products: [],
-  };
+  const initialLeadFilters = useMemo<LeadFilters>(
+    () => ({
+      urgency: 'all',
+      salaryRange: [0, 100000],
+      products: [],
+    }),
+    []
+  );
   const [leadFilters, setLeadFilters] = useState(initialLeadFilters);
   const [appliedLeadFilters, setAppliedLeadFilters] =
     useState(initialLeadFilters);
@@ -49,7 +52,7 @@ export default function LeadsPage() {
     return (
       JSON.stringify(appliedLeadFilters) !== JSON.stringify(initialLeadFilters)
     );
-  }, [appliedLeadFilters]);
+  }, [appliedLeadFilters, initialLeadFilters]);
 
   useEffect(() => {
     if (location.state?.showAddModal) {
