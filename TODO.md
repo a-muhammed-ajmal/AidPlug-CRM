@@ -1,23 +1,26 @@
-# Task: Fix Mobile UI Issues
+# TODO: Implement Lead Form and Card Enhancements
 
-## Quick Action Menu Adjustments
+## Part 1: AddLeadModal.tsx Updates
 
-- [x] Decrease title and subtitle font sizes in QuickActionButton.tsx to text-[10px] for single-line display on mobile
+- [x] Implement mobile number validation logic (remove leading '0', extract last 9 digits from +971)
+- [x] Make all form fields optional (remove required attributes)
+- [x] Add "Create Task" checkbox in the form
+- [x] Add "Convert to Deal" button in the footer
+- [x] Add "Delete Lead" button for edit mode
+- [x] Ensure Location is dropdown with UAE Emirates
+- [x] Ensure Monthly Salary is number input labeled in AED
 
-## Things to Get Done Section Enhancements
+## Part 2: LeadCard.tsx Updates
 
-- [x] Make task items in ThingsToDo clickable to show detailed view
-- [x] Add detailed modal for task actions: edit, delete, complete
-- [x] Include additional action buttons: call, WhatsApp, mail
-- [x] Fix priority overflow issue by making it functional
+- [x] Add Bank Applying to card display
+- [x] Add Email action icon alongside Call and WhatsApp
+- [x] Keep card concise and dashboard-optimized
 
-## My Account Navigation Fix
+## Testing
 
-- [x] Remove window.location.href override in NavList.tsx for My Account link
-- [x] Ensure proper React Router navigation on all devices
-
-## Testing and Verification
-
-- [x] Test mobile responsiveness for quick actions
-- [x] Verify task overflow is fixed and actions work
-- [x] Confirm My Account navigation functions on all devices
+- [ ] Test mobile number input validation
+- [ ] Test Create Task functionality
+- [ ] Test Convert to Deal functionality
+- [ ] Test Delete Lead functionality
+- [ ] Test Email action icon
+- [ ] Verify status changes move cards correctly

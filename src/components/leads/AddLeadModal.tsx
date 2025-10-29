@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronDown, Info } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
+import { useDeals } from '../../hooks/useDeals';
 import { useAuth } from '../../contexts/AuthContext';
 import { Lead } from '../../types';
 import { useUI } from '../../contexts/UIContext';
@@ -123,9 +124,10 @@ export default function AddLeadModal({
   onClose,
   initialData,
 }: AddLeadModalProps) {
-  const { createLead, updateLead } = useLeads();
+  const { createLead, updateLead, deleteLead } = useLeads();
+  const { createDeal } = useDeals();
   const { user } = useAuth();
-  const { addNotification } = useUI();
+  const { addNotification, showConfirmation } = useUI();
 
   const [loading, setLoading] = useState(false);
   const mode = initialData ? 'edit' : 'add';
@@ -148,6 +150,7 @@ export default function AddLeadModal({
     emi_amount: initialData?.emi_amount?.toString() || '',
     applied_recently: initialData?.applied_recently || false,
     documents_available: initialData?.documents_available || [],
+    create_task: false,
   });
 
   const [availableProducts, setAvailableProducts] = useState(
@@ -304,14 +307,12 @@ export default function AddLeadModal({
                   <>
                     <FormInput
                       label="Full Name"
-                      required
                       children={
                         <input
                           type="text"
                           name="full_name"
                           value={formData.full_name}
                           onChange={handleChange}
-                          required
                           className="w-full bg-gray-50 border p-3 rounded-lg"
                         />
                       }
@@ -330,7 +331,6 @@ export default function AddLeadModal({
                     />
                     <FormInput
                       label="Mobile Number"
-                      required
                       children={
                         <div className="flex">
                           <span className="inline-flex items-center px-3 bg-gray-200 border rounded-l-lg">
@@ -340,8 +340,22 @@ export default function AddLeadModal({
                             type="tel"
                             name="phone"
                             value={formData.phone}
-                            onChange={handleChange}
-                            required
+                            onChange={(e) => {
+                              let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                              if (value.startsWith('971')) {
+                                value = value.slice(3); // Remove +971 prefix
+                              } else if (
+                                value.startsWith('0') &&
+                                value.length === 10
+                              ) {
+                                value = value.slice(1); // Remove leading 0
+                              }
+                              if (value.length > 9) value = value.slice(0, 9); // Limit to 9 digits
+                              setFormData((prev) => ({
+                                ...prev,
+                                phone: value,
+                              }));
+                            }}
                             className="w-full bg-gray-50 border p-3 rounded-r-lg"
                             placeholder="50 123 4567"
                           />
@@ -540,6 +554,17 @@ export default function AddLeadModal({
                         />
                       }
                     />
+                    <FormInput
+                      className="md:col-span-2"
+                      label=""
+                      children={
+                        <ToggleInput
+                          label="Create a Task"
+                          checked={formData.create_task || false}
+                          onChange={(v) => handleToggle('create_task', v)}
+                        />
+                      }
+                    />
                     <div className="md:col-span-2">
                       <label className="text-sm font-medium text-gray-700 mb-2 block">
                         Documents Available
@@ -569,17 +594,93 @@ export default function AddLeadModal({
             </div>
           </main>
           <footer className="p-4 border-t border-gray-200 flex-shrink-0">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all active:scale-95 shadow disabled:opacity-50"
-            >
-              {loading
-                ? 'Saving...'
-                : mode === 'add'
-                  ? 'Save Lead'
-                  : 'Update Lead'}
-            </button>
+            <div className="flex space-x-3">
+              {mode === 'edit' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (initialData) {
+                      showConfirmation(
+                        'Delete Lead',
+                        `Are you sure you want to delete "${initialData.full_name}"? This action cannot be undone.`,
+                        () => {
+                          deleteLead.mutate(initialData.id, {
+                            onSuccess: () => {
+                              addNotification(
+                                'Lead Deleted',
+                                `${initialData.full_name} has been deleted.`
+                              );
+                              onClose();
+                            },
+                            onError: (err: Error) => {
+                              addNotification('Error', err.message);
+                            },
+                          });
+                        }
+                      );
+                    }
+                  }}
+                  className="flex-1 py-3 px-4 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all active:scale-95 shadow"
+                >
+                  Delete Lead
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  if (initialData) {
+                    const newDeal = {
+                      title: `${initialData.product || 'Deal'} - ${initialData.full_name}`,
+                      amount:
+                        initialData.loan_amount_requested ||
+                        (initialData.monthly_salary || 0) * 3 ||
+                        50000,
+                      stage: 'application_processing' as const,
+                      client_name: initialData.full_name,
+                      expected_close_date: new Date(
+                        Date.now() + 30 * 24 * 60 * 60 * 1000
+                      )
+                        .toISOString()
+                        .split('T')[0],
+                      probability: 25,
+                      product_type: initialData.product
+                        ?.toLowerCase()
+                        .replace(/ /g, '_'),
+                      user_id: user!.id,
+                      application_number: `APP-${Math.floor(10000 + Math.random() * 90000)}`,
+                      bdi_number: `BDI-${Math.floor(10000 + Math.random() * 90000)}`,
+                    };
+
+                    createDeal.mutate(newDeal, {
+                      onSuccess: () => {
+                        addNotification(
+                          'Lead Converted',
+                          `${initialData.full_name} is now a deal.`
+                        );
+                        deleteLead.mutate(initialData.id);
+                        onClose();
+                      },
+                      onError: (e: Error) =>
+                        addNotification('Conversion Failed', e.message),
+                    });
+                  }
+                }}
+                className="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-all active:scale-95 shadow"
+              >
+                Convert to Deal
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 py-3 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all active:scale-95 shadow disabled:opacity-50"
+              >
+                {loading
+                  ? 'Saving...'
+                  : mode === 'add'
+                    ? 'Save Lead'
+                    : 'Update Lead'}
+              </button>
+            </div>
           </footer>
         </form>
       </div>

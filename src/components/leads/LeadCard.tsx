@@ -9,6 +9,7 @@ import {
   ChevronDown,
   Eye,
   AlertTriangle,
+  Mail,
 } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { useDeals } from '../../hooks/useDeals';
@@ -34,12 +35,12 @@ export const LeadCard = React.memo(({ lead }: LeadCardProps) => {
       warm: 'bg-orange-100 text-orange-800 border-orange-500',
       qualified: 'bg-[#74c12d] text-white border-[#74c12d]',
     };
-    return colors[status || 'warm'] || 'bg-gray-100 text-gray-800 border-gray-500';
+    return (
+      colors[status || 'warm'] || 'bg-gray-100 text-gray-800 border-gray-500'
+    );
   };
 
   const hasRecentApplication = lead.applied_recently;
-
-
 
   const handleConvert = () => {
     if (!user) return;
@@ -88,16 +89,18 @@ export const LeadCard = React.memo(({ lead }: LeadCardProps) => {
     );
   };
 
-
-
   return (
     <>
-      <div className={`bg-white border rounded-lg hover:shadow-md transition-all border-l-4 ${getStatusColor(lead.qualification_status).split(' ')[3] || 'border-gray-500'} p-4`}>
+      <div
+        className={`bg-white border rounded-lg hover:shadow-md transition-all border-l-4 ${getStatusColor(lead.qualification_status).split(' ')[3] || 'border-gray-500'} p-4`}
+      >
         {/* 60-day warning banner */}
         {hasRecentApplication && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mb-3 flex items-center space-x-2">
             <AlertTriangle className="w-4 h-4 text-yellow-600 flex-shrink-0" />
-            <span className="text-xs text-yellow-800">Applied in last 60 days</span>
+            <span className="text-xs text-yellow-800">
+              Applied in last 60 days
+            </span>
           </div>
         )}
 
@@ -110,9 +113,14 @@ export const LeadCard = React.memo(({ lead }: LeadCardProps) => {
               >
                 {lead.full_name}
               </h3>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(lead.qualification_status)}`}>
-                {lead.qualification_status === 'appointment_booked' ? 'Appointment' :
-                 lead.qualification_status === 'qualified' ? 'Qualified' : 'Warm'}
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(lead.qualification_status)}`}
+              >
+                {lead.qualification_status === 'appointment_booked'
+                  ? 'Appointment'
+                  : lead.qualification_status === 'qualified'
+                    ? 'Qualified'
+                    : 'Warm'}
               </span>
             </div>
             <p className="text-xs text-gray-600 flex items-center">
@@ -149,6 +157,12 @@ export const LeadCard = React.memo(({ lead }: LeadCardProps) => {
               {lead.location || 'N/A'}
             </span>
           </div>
+          <div className="flex items-center space-x-1 col-span-2">
+            <Briefcase className="w-3 h-3 text-gray-400" />
+            <span className="truncate" title={lead.bank_name || ''}>
+              {lead.bank_name || 'N/A'}
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center justify-between">
@@ -168,13 +182,25 @@ export const LeadCard = React.memo(({ lead }: LeadCardProps) => {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                if (lead.phone) window.location.href = `https://wa.me/${lead.phone.replace(/\s/g, '')}`;
+                if (lead.phone)
+                  window.location.href = `https://wa.me/${lead.phone.replace(/\s/g, '')}`;
               }}
               disabled={!lead.phone}
               className="p-1.5 hover:bg-[#74c12d]/10 rounded-md transition-colors"
               title="WhatsApp"
             >
               <MessageCircle className="w-4 h-4 text-[#74c12d]" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (lead.email) window.location.href = `mailto:${lead.email}`;
+              }}
+              disabled={!lead.email}
+              className="p-1.5 hover:bg-blue-100 rounded-md transition-colors"
+              title="Email"
+            >
+              <Mail className="w-4 h-4 text-blue-600" />
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
@@ -197,7 +223,9 @@ export const LeadCard = React.memo(({ lead }: LeadCardProps) => {
                     handleConvert
                   );
                 } else {
-                  handleStatusChange(value as 'warm' | 'qualified' | 'appointment_booked');
+                  handleStatusChange(
+                    value as 'warm' | 'qualified' | 'appointment_booked'
+                  );
                 }
                 e.target.value = lead.qualification_status || 'warm';
               }}
