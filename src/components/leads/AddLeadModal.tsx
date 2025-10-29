@@ -236,6 +236,8 @@ export default function AddLeadModal({
         : null,
       applied_recently: formData.applied_recently,
       documents_available: formData.documents_available,
+      employment_years: null,
+      existing_loans: null,
       user_id: user.id,
     };
 
