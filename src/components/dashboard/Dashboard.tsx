@@ -523,10 +523,12 @@ export default function Dashboard() {
             colorClass="bg-blue-500"
           />
           <QuickActionButton
-            onClick={() => navigate('/tasks')}
-            icon={<List className="w-6 h-6 text-white" />}
-            title="View Tasks"
-            subtitle="Check Tasks"
+            onClick={() =>
+              navigate('/tasks', { state: { showAddModal: true } })
+            }
+            icon={<Plus className="w-6 h-6 text-white" />}
+            title="Add Task"
+            subtitle="New Task"
             colorClass="bg-green-500"
           />
           <QuickActionButton

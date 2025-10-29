@@ -12,7 +12,6 @@ import { useTasks } from '../../hooks/useTasks';
 import { Task } from '../../types';
 import { useUI } from '../../contexts/UIContext';
 import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
-import { PostgrestError } from '@supabase/supabase-js';
 
 interface TaskCardProps {
   task: Task;
@@ -23,21 +22,21 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
   const { toggleTaskComplete, deleteTask } = useTasks();
   const { showConfirmation, addNotification } = useUI();
 
-  const priorityColors: Record<string, string> = {
+  const priorityColors: { [key: string]: string } = {
     urgent: 'border-red-300',
     high: 'border-orange-300',
     medium: 'border-yellow-300',
     low: 'border-green-300',
   };
 
-  const priorityTagColors: Record<string, string> = {
+  const priorityTagColors: { [key: string]: string } = {
     urgent: 'bg-red-100 text-red-700',
     high: 'bg-orange-100 text-orange-700',
     medium: 'bg-yellow-100 text-yellow-700',
     low: 'bg-green-100 text-green-700',
   };
 
-  const typeIcons: Record<string, string> = {
+  const typeIcons: { [key: string]: string } = {
     call: '📞',
     meeting: '👥',
     documentation: '📄',
@@ -66,8 +65,11 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
               'Task Deleted',
               `"${task.title}" has been removed.`
             ),
-          onError: (error: Error | PostgrestError) =>
-            addNotification('Error', error.message || 'Failed to delete task.'),
+          onError: (error) =>
+            addNotification(
+              'Error',
+              (error as Error).message || 'Failed to delete task.'
+            ),
         });
       }
     );

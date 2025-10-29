@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuthContext';
 import { Task } from '../../types';
 import { useUI } from '../../contexts/UIContext';
-import { useLeads } from '../../hooks/useLeads';
-import { useClients } from '../../hooks/useClients';
-import { useDeals } from '../../hooks/useDeals';
-import { PostgrestError } from '@supabase/supabase-js';
 
 interface AddTaskModalProps {
   onClose: () => void;
@@ -70,9 +66,6 @@ export default function AddTaskModal({
   const { createTask, updateTask } = useTasks();
   const { user } = useAuth();
   const { addNotification } = useUI();
-  const { leads } = useLeads();
-  const { clients } = useClients();
-  const { deals } = useDeals();
 
   const [loading, setLoading] = useState(false);
   const mode = initialData ? 'edit' : 'add';
@@ -134,8 +127,7 @@ export default function AddTaskModal({
           );
           onClose();
         },
-        onError: (err: Error | PostgrestError) =>
-          addNotification('Error', err.message),
+        onError: (err) => addNotification('Error', (err as Error).message),
         onSettled: () => setLoading(false),
       });
     } else if (initialData) {
@@ -149,8 +141,7 @@ export default function AddTaskModal({
             );
             onClose();
           },
-          onError: (err: Error | PostgrestError) =>
-            addNotification('Error', err.message),
+          onError: (err) => addNotification('Error', (err as Error).message),
           onSettled: () => setLoading(false),
         }
       );
@@ -180,19 +171,8 @@ export default function AddTaskModal({
   ];
 
   const getRelatedOptions = () => {
-    switch (formData.related_to_type) {
-      case 'lead':
-        return leads.map((lead) => ({ value: lead.id, label: lead.full_name }));
-      case 'client':
-        return clients.map((client) => ({
-          value: client.id,
-          label: client.full_name,
-        }));
-      case 'deal':
-        return deals.map((deal) => ({ value: deal.id, label: deal.title }));
-      default:
-        return [];
-    }
+    // Placeholder for now, will be implemented with hooks later
+    return [];
   };
 
   return (

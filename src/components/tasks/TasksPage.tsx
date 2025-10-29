@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Plus, List } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import TaskCard from './TaskCard';
@@ -6,14 +6,28 @@ import AddTaskModal from './AddTaskModal';
 import EmptyState from '../common/EmptyState';
 import { Task } from '../../types';
 import SkeletonLoader from '../common/SkeletonLoader';
+import { useUI } from '../../contexts/UIContext';
+import { useLocation } from 'react-router-dom';
 
 type FilterOption = 'all' | 'today' | 'pending' | 'completed';
 
 export default function TasksPage() {
   const { tasks, isLoading } = useTasks();
+  const { setTitle } = useUI();
+  const location = useLocation();
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [filter, setFilter] = useState<FilterOption>('all');
+
+  useEffect(() => {
+    setTitle('Tasks');
+  }, [setTitle]);
+
+  useEffect(() => {
+    if (location.state?.showAddModal) {
+      setShowAddModal(true);
+    }
+  }, [location.state]);
 
   const today = new Date().toISOString().split('T')[0];
 
