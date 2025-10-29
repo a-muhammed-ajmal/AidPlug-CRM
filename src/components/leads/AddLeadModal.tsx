@@ -1,34 +1,53 @@
-import { ChevronDown, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useUI } from '../../contexts/UIContext';
+import React, { useState, useEffect } from 'react';
+import { X, ChevronDown, Info } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
-import { useTasks } from '../../hooks/useTasks';
+import { useAuth } from '../../contexts/AuthContext';
+import { Lead } from '../../types';
+import { useUI } from '../../contexts/UIContext';
 import {
+  UAE_BANK_NAMES,
   EIB_CREDIT_CARDS,
   PRODUCT_TYPES,
-  UAE_BANK_NAMES,
   UAE_EMIRATES,
 } from '../../lib/constants';
-import { Lead, Task } from '../../types';
 
 interface AddLeadModalProps {
   onClose: () => void;
   initialData?: Lead | null;
 }
 
-// Moved component definitions outside the main component function to prevent re-creation on every render.
-// This resolves an issue where input fields would lose focus on mobile devices after typing a single character.
+const Section = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <div className="md:col-span-2 mt-4 first:mt-0">
+    <h3 className="text-base font-semibold text-gray-800 border-b pb-2 mb-4">
+      {title}
+    </h3>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+      {children}
+    </div>
+  </div>
+);
+
 const FormInput = ({
   label,
   children,
+  required,
+  className,
 }: {
   label: string;
   children: React.ReactNode;
+  required?: boolean;
+  className?: string;
 }) => (
-  <div>
+  <div className={className}>
     <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
       {label}
+      {required && <span className="text-red-500 ml-1">*</span>}
     </label>
     {children}
   </div>
@@ -40,12 +59,16 @@ const SelectInput = ({
   value,
   onChange,
   options,
+  required,
+  placeholder,
 }: {
   id: string;
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: string[];
+  required?: boolean;
+  placeholder?: string;
 }) => (
   <div className="relative">
     <select
@@ -53,8 +76,12 @@ const SelectInput = ({
       name={name}
       value={value}
       onChange={onChange}
+      required={required}
       className="w-full appearance-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 pr-10"
     >
+      <option value="" disabled>
+        {placeholder || 'Select...'}
+      </option>
       {options.map((option) => (
         <option key={option} value={option}>
           {option}
@@ -65,12 +92,38 @@ const SelectInput = ({
   </div>
 );
 
+const ToggleInput = ({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) => (
+  <label className="flex items-center justify-between cursor-pointer">
+    <span className="text-sm font-medium text-gray-700">{label}</span>
+    <div
+      className={`relative w-11 h-6 rounded-full transition-colors ${checked ? 'bg-blue-600' : 'bg-gray-200'}`}
+    >
+      <div
+        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transform transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`}
+      ></div>
+    </div>
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      className="hidden"
+    />
+  </label>
+);
+
 export default function AddLeadModal({
   onClose,
   initialData,
 }: AddLeadModalProps) {
   const { createLead, updateLead } = useLeads();
-  const { createTask } = useTasks();
   const { user } = useAuth();
   const { addNotification } = useUI();
 
@@ -78,80 +131,48 @@ export default function AddLeadModal({
   const mode = initialData ? 'edit' : 'add';
 
   const [formData, setFormData] = useState({
-    fullName: initialData?.full_name || '',
+    full_name: initialData?.full_name || '',
+    company_name: initialData?.company_name || '',
+    phone: initialData?.phone?.replace('+971', '').trim() || '',
     email: initialData?.email || '',
-    company: initialData?.company_name || '',
     location: initialData?.location || 'Dubai',
-    mobile: initialData?.phone.replace('+971', '').trim() || '',
-    salary: initialData?.monthly_salary?.toString() || '',
-    bank: initialData?.bank_name || 'Emirates Islamic Bank',
-    productType: initialData?.product_type || 'Credit Card',
+    bank_name: initialData?.bank_name || 'Emirates Islamic Bank',
+    product_type: initialData?.product_type || 'Credit Card',
     product: initialData?.product || EIB_CREDIT_CARDS[0].name,
-    referral: initialData?.referral_source || '',
-    // New credit card application fields
-    salaryMonths: initialData?.salary_months?.toString() || '',
-    salaryVariations: initialData?.salary_variations || false,
-    existingCards: initialData?.existing_cards || false,
-    cardsDuration: initialData?.cards_duration || '',
-    totalCreditLimit: initialData?.total_credit_limit?.toString() || '',
-    hasEmi: initialData?.has_emi || false,
-    emiAmount: initialData?.emi_amount?.toString() || '',
-    appliedRecently: initialData?.applied_recently || false,
-    documentsAvailable: initialData?.documents_available || [],
-  });
-
-  // Set default bank and product based on common selections
-  useEffect(() => {
-    if (!initialData) {
-      setFormData(prev => ({
-        ...prev,
-        bank: 'Emirates Islamic Bank',
-        productType: 'Credit Card',
-        product: EIB_CREDIT_CARDS[0].name,
-      }));
-    }
-  }, [initialData]);
-
-  const [createTaskOption, setCreateTaskOption] = useState(false);
-  const [taskFormData, setTaskFormData] = useState({
-    title: `Follow up with ${formData.fullName || 'Lead'}`,
-    description: `Follow up on lead for ${formData.productType} - ${formData.product}`,
-    type: 'follow_up' as const,
-    priority: 'medium' as const,
-    due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    time: '',
+    monthly_salary: initialData?.monthly_salary?.toString() || '',
+    salary_months: initialData?.salary_months?.toString() || '',
+    salary_variations: initialData?.salary_variations || false,
+    has_existing_cards: initialData?.existing_cards || false,
+    existing_cards_duration: initialData?.cards_duration || '',
+    existing_cards_limit: initialData?.total_credit_limit?.toString() || '',
+    has_emi: initialData?.has_emi || false,
+    emi_amount: initialData?.emi_amount?.toString() || '',
+    applied_in_last_60_days: initialData?.applied_recently || false,
+    documents_available: initialData?.documents_available || [],
   });
 
   const [availableProducts, setAvailableProducts] = useState(
     EIB_CREDIT_CARDS.map((card) => card.name)
   );
-  const [isProductDropdownVisible, setIsProductDropdownVisible] =
-    useState(true);
-
 
   useEffect(() => {
     let newProducts: string[] = [];
-    let dropdownVisible = false;
-
     if (
-      formData.bank === 'Emirates Islamic Bank' &&
-      formData.productType === 'Credit Card'
+      formData.bank_name === 'Emirates Islamic Bank' &&
+      formData.product_type === 'Credit Card'
     ) {
       newProducts = EIB_CREDIT_CARDS.map((card) => card.name);
-      dropdownVisible = true;
-    } else if (formData.productType === 'Account Opening') {
+    } else if (formData.product_type === 'Account Opening') {
       newProducts = ['Personal Account', 'Business Account'];
-      dropdownVisible = true;
     }
-
     setAvailableProducts(newProducts);
-    setIsProductDropdownVisible(dropdownVisible);
-
     setFormData((prev) => ({
       ...prev,
-      product: dropdownVisible ? newProducts[0] || '' : prev.productType,
+      product: newProducts.includes(prev.product)
+        ? prev.product
+        : newProducts[0] || '',
     }));
-  }, [formData.bank, formData.productType]);
+  }, [formData.bank_name, formData.product_type]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -160,13 +181,17 @@ export default function AddLeadModal({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleTaskChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setTaskFormData((prev) => ({ ...prev, [name]: value }));
+  const handleToggle = (name: keyof typeof formData, value: boolean) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDocChange = (doc: string) => {
+    setFormData((prev) => {
+      const newDocs = prev.documents_available.includes(doc)
+        ? prev.documents_available.filter((d) => d !== doc)
+        : [...prev.documents_available, doc];
+      return { ...prev, documents_available: newDocs };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -177,71 +202,58 @@ export default function AddLeadModal({
     }
     setLoading(true);
 
-    const leadData = {
-      full_name: formData.fullName,
-      email: formData.email,
-      phone: `+971 ${formData.mobile}`,
-      company_name: formData.company,
-      monthly_salary: parseInt(formData.salary, 10) || null,
+    const leadData: Omit<
+      Lead,
+      | 'id'
+      | 'created_at'
+      | 'updated_at'
+      | 'last_contact_date'
+      | 'referral_source'
+      | 'product_interest'
+      | 'urgency_level'
+    > & { user_id: string } = {
+      full_name: formData.full_name,
+      phone: `+971 ${formData.phone}`,
+      company_name: formData.company_name,
+      email: formData.email || null,
       loan_amount_requested: 0,
-      product_interest: [formData.product.toLowerCase().replace(/ /g, '_')],
       qualification_status: initialData?.qualification_status || 'warm',
-      last_contact_date: new Date().toISOString().split('T')[0],
-      urgency_level: initialData?.urgency_level || 'medium',
       location: formData.location,
-      referral_source: formData.referral || 'Manual Entry',
-      bank_name: formData.bank,
-      product_type: formData.productType,
+      bank_name: formData.bank_name,
+      product_type: formData.product_type,
       product: formData.product,
+      monthly_salary: parseInt(formData.monthly_salary, 10) || null,
+      salary_months: parseInt(formData.salary_months, 10) || null,
+      salary_variations: formData.salary_variations,
+      has_existing_cards: formData.has_existing_cards,
+      existing_cards_duration: formData.has_existing_cards
+        ? formData.existing_cards_duration
+        : null,
+      existing_cards_limit: formData.has_existing_cards
+        ? parseInt(formData.existing_cards_limit, 10) || null
+        : null,
+      has_emi: formData.has_emi,
+      emi_amount: formData.has_emi
+        ? parseInt(formData.emi_amount, 10) || null
+        : null,
+      applied_in_last_60_days: formData.applied_in_last_60_days,
+      documents_available: formData.documents_available,
       user_id: user.id,
-      // New credit card application fields
-      salary_months: parseInt(formData.salaryMonths, 10) || null,
-      salary_variations: formData.salaryVariations,
-      existing_cards: formData.existingCards,
-      cards_duration: formData.cardsDuration,
-      total_credit_limit: parseFloat(formData.totalCreditLimit) || null,
-      has_emi: formData.hasEmi,
-      emi_amount: parseFloat(formData.emiAmount) || null,
-      applied_recently: formData.appliedRecently,
-      documents_available: formData.documentsAvailable,
     };
 
     if (mode === 'add') {
       createLead.mutate(leadData, {
-        onSuccess: (newLead) => {
+        onSuccess: () => {
           addNotification(
             'Lead Created',
-            `${formData.fullName} has been saved.`
+            `${formData.full_name} has been saved.`
           );
-          if (createTaskOption) {
-            const taskData = {
-              title: taskFormData.title,
-              description: taskFormData.description,
-              type: taskFormData.type as NonNullable<Task['type']>,
-              priority: taskFormData.priority as NonNullable<Task['priority']>,
-              due_date: taskFormData.due_date,
-              time: taskFormData.time || null,
-              status: 'pending' as const,
-              estimated_duration: null,
-              related_to_id: newLead.id,
-              related_to_type: 'lead' as const,
-              user_id: user.id,
-            };
-            createTask.mutate(taskData, {
-              onSuccess: () => {
-                addNotification('Task Created', 'Follow-up task has been added.');
-              },
-              onError: (err: Error) => {
-                addNotification('Task Creation Failed', err.message);
-              },
-            });
-          }
           onClose();
         },
-        onError: (err) => {
-          addNotification('Error', (err as Error).message);
-          setLoading(false);
+        onError: (err: Error) => {
+          addNotification('Error', err.message);
         },
+        onSettled: () => setLoading(false),
       });
     } else {
       updateLead.mutate(
@@ -250,22 +262,30 @@ export default function AddLeadModal({
           onSuccess: () => {
             addNotification(
               'Lead Updated',
-              `${formData.fullName} has been saved.`
+              `${formData.full_name} has been saved.`
             );
             onClose();
           },
-          onError: (err) => {
-            addNotification('Error', (err as Error).message);
-            setLoading(false);
+          onError: (err: Error) => {
+            addNotification('Error', err.message);
           },
+          onSettled: () => setLoading(false),
         }
       );
     }
   };
 
+  const allDocuments = [
+    'Emirates ID Original',
+    'Passport Clear Photo',
+    'Salary Certificate',
+    'Labor Contract / Offer Letter',
+    'Payslips (Last 3 months)',
+  ];
+
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end animate-fade-in sm:items-center">
-      <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl shadow-xl transform transition-transform animate-slide-up flex flex-col max-h-[90vh]">
+      <div className="bg-white w-full max-w-2xl rounded-t-2xl sm:rounded-2xl shadow-xl transform transition-transform animate-slide-up flex flex-col max-h-[90vh]">
         <header className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
           <h1 className="text-lg font-bold text-gray-900">
             {mode === 'add' ? 'Add New Lead' : 'Edit Lead'}
@@ -279,391 +299,278 @@ export default function AddLeadModal({
         </header>
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
           <main className="flex-1 p-6 overflow-y-auto">
-            <div className="space-y-6">
-              <FormInput
-                label="Full Name"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+              <Section
+                title="Personal & Product Info"
                 children={
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  />
-                }
-              />
-              <FormInput
-                label="Email"
-                children={
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                    placeholder="example@email.com"
-                  />
-                }
-              />
-              <FormInput
-                label="Company Name"
-                children={
-                  <input
-                    type="text"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  />
-                }
-              />
-              <FormInput
-                label="Location"
-                children={
-                  <SelectInput
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    options={UAE_EMIRATES}
-                  />
-                }
-              />
-              <FormInput
-                label="Mobile Number"
-                children={
-                  <div className="flex">
-                    <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg">
-                      +971
-                    </span>
-                    <input
-                      type="tel"
-                      name="mobile"
-                      value={formData.mobile}
-                      onChange={handleChange}
-                      className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-r-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                      placeholder="50 123 4567"
+                  <>
+                    <FormInput
+                      label="Full Name"
+                      required
+                      children={
+                        <input
+                          type="text"
+                          name="full_name"
+                          value={formData.full_name}
+                          onChange={handleChange}
+                          required
+                          className="w-full bg-gray-50 border p-3 rounded-lg"
+                        />
+                      }
                     />
-                  </div>
-                }
-              />
-              <FormInput
-                label="Monthly Salary (AED)"
-                children={
-                  <input
-                    type="number"
-                    name="salary"
-                    value={formData.salary}
-                    onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  />
-                }
-              />
-              <FormInput
-                label="Bank Applying"
-                children={
-                  <SelectInput
-                    id="bank"
-                    name="bank"
-                    value={formData.bank}
-                    onChange={handleChange}
-                    options={UAE_BANK_NAMES}
-                  />
-                }
-              />
-              <FormInput
-                label="Product Type"
-                children={
-                  <SelectInput
-                    id="productType"
-                    name="productType"
-                    value={formData.productType}
-                    onChange={handleChange}
-                    options={PRODUCT_TYPES}
-                  />
-                }
-              />
-              {isProductDropdownVisible && (
-                <FormInput
-                  label="Product"
-                  children={
-                    <SelectInput
-                      id="product"
-                      name="product"
-                      value={formData.product}
-                      onChange={handleChange}
-                      options={availableProducts}
+                    <FormInput
+                      label="Company Name"
+                      children={
+                        <input
+                          type="text"
+                          name="company_name"
+                          value={formData.company_name}
+                          onChange={handleChange}
+                          className="w-full bg-gray-50 border p-3 rounded-lg"
+                        />
+                      }
                     />
-                  }
-                />
-              )}
-              <FormInput
-                label="Referral"
-                children={
-                  <input
-                    type="text"
-                    name="referral"
-                    value={formData.referral}
-                    onChange={handleChange}
-                    placeholder="Type name or select from list..."
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  />
-                }
-              />
-
-              {/* New Credit Card Application Fields */}
-              <FormInput
-                label="Salary getting from (months)"
-                children={
-                  <input
-                    type="number"
-                    name="salaryMonths"
-                    value={formData.salaryMonths}
-                    onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  />
-                }
-              />
-
-              <FormInput
-                label="Any variations in salary? (Please advise on salary stability for credit approval)"
-                children={
-                  <select
-                    name="salaryVariations"
-                    value={formData.salaryVariations ? 'yes' : 'no'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, salaryVariations: e.target.value === 'yes' }))}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  >
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                  </select>
-                }
-              />
-
-              <FormInput
-                label="Already using credit cards? (Please provide details for credit assessment)"
-                children={
-                  <select
-                    name="existingCards"
-                    value={formData.existingCards ? 'yes' : 'no'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, existingCards: e.target.value === 'yes' }))}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  >
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                  </select>
-                }
-              />
-
-              <FormInput
-                label="If yes, from how long?"
-                children={
-                  <input
-                    type="text"
-                    name="cardsDuration"
-                    value={formData.cardsDuration}
-                    onChange={handleChange}
-                    placeholder="e.g., 2 years"
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  />
-                }
-              />
-
-              <FormInput
-                label="Total credit limit (AED)"
-                children={
-                  <input
-                    type="number"
-                    name="totalCreditLimit"
-                    value={formData.totalCreditLimit}
-                    onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  />
-                }
-              />
-
-              <FormInput
-                label="Any EMI/Loan paying? (Please specify for debt-to-income ratio calculation)"
-                children={
-                  <select
-                    name="hasEmi"
-                    value={formData.hasEmi ? 'yes' : 'no'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, hasEmi: e.target.value === 'yes' }))}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  >
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                  </select>
-                }
-              />
-
-              <FormInput
-                label="Total EMI amount (AED)"
-                children={
-                  <input
-                    type="number"
-                    name="emiAmount"
-                    value={formData.emiAmount}
-                    onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  />
-                }
-              />
-
-              <FormInput
-                label="Applied same bank/product in last 60 days? (Important for eligibility check)"
-                children={
-                  <select
-                    name="appliedRecently"
-                    value={formData.appliedRecently ? 'yes' : 'no'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, appliedRecently: e.target.value === 'yes' }))}
-                    className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                  >
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                  </select>
-                }
-              />
-
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  Documents Available?
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {[
-                    'Emirates ID',
-                    'Passport Photo',
-                    'Salary Certificate',
-                    'Labor Contract',
-                    'Payslips',
-                  ].map((doc) => (
-                    <label key={doc} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={formData.documentsAvailable.includes(doc)}
-                        onChange={(e) => {
-                          const checked = e.target.checked;
-                          setFormData((prev) => ({
-                            ...prev,
-                            documentsAvailable: checked
-                              ? [...prev.documentsAvailable, doc]
-                              : prev.documentsAvailable.filter((d) => d !== doc),
-                          }));
-                        }}
-                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-700">{doc}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Create Task Option */}
-              {mode === 'add' && (
-                <>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="createTask"
-                      checked={createTaskOption}
-                      onChange={(e) => setCreateTaskOption(e.target.checked)}
-                      className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
-                    />
-                    <label htmlFor="createTask" className="text-sm text-gray-700">
-                      Create a follow-up task (Recommended for timely lead management)
-                    </label>
-                  </div>
-                  {createTaskOption && (
-                    <div className="space-y-4 border-t pt-4">
-                      <FormInput
-                        label="Task Title*"
-                        children={
+                    <FormInput
+                      label="Mobile Number"
+                      required
+                      children={
+                        <div className="flex">
+                          <span className="inline-flex items-center px-3 bg-gray-200 border rounded-l-lg">
+                            +971
+                          </span>
                           <input
-                            type="text"
-                            name="title"
-                            value={taskFormData.title}
-                            onChange={handleTaskChange}
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
                             required
-                            className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                            className="w-full bg-gray-50 border p-3 rounded-r-lg"
+                            placeholder="50 123 4567"
                           />
-                        }
-                      />
+                        </div>
+                      }
+                    />
+                    <FormInput
+                      label="Email Address"
+                      children={
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="w-full bg-gray-50 border p-3 rounded-lg"
+                        />
+                      }
+                    />
+                    <FormInput
+                      label="Location"
+                      children={
+                        <SelectInput
+                          id="location"
+                          name="location"
+                          value={formData.location}
+                          onChange={handleChange}
+                          options={UAE_EMIRATES}
+                        />
+                      }
+                    />
+                    <FormInput
+                      label="Bank Applying"
+                      children={
+                        <SelectInput
+                          id="bank_name"
+                          name="bank_name"
+                          value={formData.bank_name}
+                          onChange={handleChange}
+                          options={UAE_BANK_NAMES}
+                        />
+                      }
+                    />
+                    <FormInput
+                      label="Product Type"
+                      children={
+                        <SelectInput
+                          id="product_type"
+                          name="product_type"
+                          value={formData.product_type}
+                          onChange={handleChange}
+                          options={PRODUCT_TYPES}
+                        />
+                      }
+                    />
+                    {availableProducts.length > 0 && (
                       <FormInput
-                        label="Description"
-                        children={
-                          <textarea
-                            name="description"
-                            value={taskFormData.description}
-                            onChange={handleTaskChange}
-                            rows={3}
-                            className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                          />
-                        }
-                      />
-                      <FormInput
-                        label="Task Type"
+                        label="Product"
                         children={
                           <SelectInput
-                            id="taskType"
-                            name="type"
-                            value={taskFormData.type}
-                            onChange={handleTaskChange}
-                            options={[
-                              'call',
-                              'meeting',
-                              'documentation',
-                              'verification',
-                              'follow_up',
-                            ]}
+                            id="product"
+                            name="product"
+                            value={formData.product}
+                            onChange={handleChange}
+                            options={availableProducts}
                           />
                         }
                       />
+                    )}
+                  </>
+                }
+              />
+
+              <Section
+                title="Salary Information"
+                children={
+                  <>
+                    <FormInput
+                      label="Monthly Salary (AED)"
+                      children={
+                        <input
+                          type="number"
+                          name="monthly_salary"
+                          value={formData.monthly_salary}
+                          onChange={handleChange}
+                          className="w-full bg-gray-50 border p-3 rounded-lg"
+                        />
+                      }
+                    />
+                    <FormInput
+                      className="md:col-span-2"
+                      label=""
+                      children={
+                        <ToggleInput
+                          label="Variations in last 3 months salary?"
+                          checked={formData.salary_variations}
+                          onChange={(v) => handleToggle('salary_variations', v)}
+                        />
+                      }
+                    />
+                    {formData.salary_variations && (
+                      <div className="md:col-span-2 -mt-2 text-xs text-blue-700 bg-blue-50 p-2 rounded-md flex items-center">
+                        <Info className="w-4 h-4 mr-2" /> Note: Payslips will be
+                        required to confirm the reason for variations.
+                      </div>
+                    )}
+                  </>
+                }
+              />
+
+              <Section
+                title="Credit History"
+                children={
+                  <>
+                    <FormInput
+                      className="md:col-span-2"
+                      label=""
+                      children={
+                        <ToggleInput
+                          label="Already using any credit cards?"
+                          checked={formData.has_existing_cards}
+                          onChange={(v) =>
+                            handleToggle('has_existing_cards', v)
+                          }
+                        />
+                      }
+                    />
+                    {formData.has_existing_cards && (
+                      <>
+                        <FormInput
+                          label="Using cards since?"
+                          children={
+                            <input
+                              type="text"
+                              name="existing_cards_duration"
+                              value={formData.existing_cards_duration}
+                              onChange={handleChange}
+                              className="w-full bg-gray-50 border p-3 rounded-lg"
+                              placeholder="e.g., 2 years"
+                            />
+                          }
+                        />
+                        <FormInput
+                          label="Total credit limit of cards"
+                          children={
+                            <input
+                              type="number"
+                              name="existing_cards_limit"
+                              value={formData.existing_cards_limit}
+                              onChange={handleChange}
+                              className="w-full bg-gray-50 border p-3 rounded-lg"
+                            />
+                          }
+                        />
+                      </>
+                    )}
+                    <FormInput
+                      className="md:col-span-2"
+                      label=""
+                      children={
+                        <ToggleInput
+                          label="Paying any EMI for any type of loan?"
+                          checked={formData.has_emi}
+                          onChange={(v) => handleToggle('has_emi', v)}
+                        />
+                      }
+                    />
+                    {formData.has_emi && (
                       <FormInput
-                        label="Priority"
-                        children={
-                          <SelectInput
-                            id="taskPriority"
-                            name="priority"
-                            value={taskFormData.priority}
-                            onChange={handleTaskChange}
-                            options={[
-                              'low',
-                              'medium',
-                              'high',
-                              'urgent',
-                            ]}
-                          />
-                        }
-                      />
-                      <FormInput
-                        label="Due Date*"
+                        label="Total EMI Amount (AED)"
                         children={
                           <input
-                            type="date"
-                            name="due_date"
-                            value={taskFormData.due_date}
-                            onChange={handleTaskChange}
-                            required
-                            className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
+                            type="number"
+                            name="emi_amount"
+                            value={formData.emi_amount}
+                            onChange={handleChange}
+                            className="w-full bg-gray-50 border p-3 rounded-lg"
                           />
                         }
                       />
-                      <FormInput
-                        label="Time (Optional)"
-                        children={
-                          <input
-                            type="time"
-                            name="time"
-                            value={taskFormData.time}
-                            onChange={handleTaskChange}
-                            className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3"
-                          />
-                        }
-                      />
+                    )}
+                  </>
+                }
+              />
+
+              <Section
+                title="Application & Documents"
+                children={
+                  <>
+                    <FormInput
+                      className="md:col-span-2"
+                      label=""
+                      children={
+                        <ToggleInput
+                          label="Applied for same bank/product in last 60 days?"
+                          checked={formData.applied_in_last_60_days}
+                          onChange={(v) =>
+                            handleToggle('applied_in_last_60_days', v)
+                          }
+                        />
+                      }
+                    />
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-gray-700 mb-2 block">
+                        Documents Available
+                      </label>
+                      <div className="space-y-2">
+                        {allDocuments.map((doc) => (
+                          <label
+                            key={doc}
+                            className="flex items-center space-x-2"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={formData.documents_available.includes(
+                                doc
+                              )}
+                              onChange={() => handleDocChange(doc)}
+                              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <span className="text-sm">{doc}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
-                  )}
-                </>
-              )}
+                  </>
+                }
+              />
             </div>
           </main>
           <footer className="p-4 border-t border-gray-200 flex-shrink-0">
