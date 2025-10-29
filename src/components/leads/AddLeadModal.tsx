@@ -142,12 +142,12 @@ export default function AddLeadModal({
     monthly_salary: initialData?.monthly_salary?.toString() || '',
     salary_months: initialData?.salary_months?.toString() || '',
     salary_variations: initialData?.salary_variations || false,
-    has_existing_cards: initialData?.existing_cards || false,
-    existing_cards_duration: initialData?.cards_duration || '',
-    existing_cards_limit: initialData?.total_credit_limit?.toString() || '',
+    existing_cards: initialData?.existing_cards || false,
+    cards_duration: initialData?.cards_duration || '',
+    total_credit_limit: initialData?.total_credit_limit?.toString() || '',
     has_emi: initialData?.has_emi || false,
     emi_amount: initialData?.emi_amount?.toString() || '',
-    applied_in_last_60_days: initialData?.applied_recently || false,
+    applied_recently: initialData?.applied_recently || false,
     documents_available: initialData?.documents_available || [],
   });
 
@@ -181,7 +181,7 @@ export default function AddLeadModal({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleToggle = (name: keyof typeof formData, value: boolean) => {
+  const handleToggle = (name: string, value: boolean) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -225,18 +225,16 @@ export default function AddLeadModal({
       monthly_salary: parseInt(formData.monthly_salary, 10) || null,
       salary_months: parseInt(formData.salary_months, 10) || null,
       salary_variations: formData.salary_variations,
-      has_existing_cards: formData.has_existing_cards,
-      existing_cards_duration: formData.has_existing_cards
-        ? formData.existing_cards_duration
-        : null,
-      existing_cards_limit: formData.has_existing_cards
-        ? parseInt(formData.existing_cards_limit, 10) || null
+      existing_cards: formData.existing_cards,
+      cards_duration: formData.existing_cards ? formData.cards_duration : null,
+      total_credit_limit: formData.existing_cards
+        ? parseInt(formData.total_credit_limit, 10) || null
         : null,
       has_emi: formData.has_emi,
       emi_amount: formData.has_emi
         ? parseInt(formData.emi_amount, 10) || null
         : null,
-      applied_in_last_60_days: formData.applied_in_last_60_days,
+      applied_recently: formData.applied_recently,
       documents_available: formData.documents_available,
       user_id: user.id,
     };
@@ -463,22 +461,20 @@ export default function AddLeadModal({
                       children={
                         <ToggleInput
                           label="Already using any credit cards?"
-                          checked={formData.has_existing_cards}
-                          onChange={(v) =>
-                            handleToggle('has_existing_cards', v)
-                          }
+                          checked={formData.existing_cards}
+                          onChange={(v) => handleToggle('existing_cards', v)}
                         />
                       }
                     />
-                    {formData.has_existing_cards && (
+                    {formData.existing_cards && (
                       <>
                         <FormInput
                           label="Using cards since?"
                           children={
                             <input
                               type="text"
-                              name="existing_cards_duration"
-                              value={formData.existing_cards_duration}
+                              name="cards_duration"
+                              value={formData.cards_duration}
                               onChange={handleChange}
                               className="w-full bg-gray-50 border p-3 rounded-lg"
                               placeholder="e.g., 2 years"
@@ -490,8 +486,8 @@ export default function AddLeadModal({
                           children={
                             <input
                               type="number"
-                              name="existing_cards_limit"
-                              value={formData.existing_cards_limit}
+                              name="total_credit_limit"
+                              value={formData.total_credit_limit}
                               onChange={handleChange}
                               className="w-full bg-gray-50 border p-3 rounded-lg"
                             />
@@ -538,10 +534,8 @@ export default function AddLeadModal({
                       children={
                         <ToggleInput
                           label="Applied for same bank/product in last 60 days?"
-                          checked={formData.applied_in_last_60_days}
-                          onChange={(v) =>
-                            handleToggle('applied_in_last_60_days', v)
-                          }
+                          checked={formData.applied_recently}
+                          onChange={(v) => handleToggle('applied_recently', v)}
                         />
                       }
                     />
