@@ -138,9 +138,8 @@ export default function AddLeadModal({
     location: initialData?.location || 'Dubai',
     bank_name: initialData?.bank_name || 'Emirates Islamic Bank',
     product_type: initialData?.product_type || 'Credit Card',
-    product: initialData?.product || EIB_CREDIT_CARDS[0].name,
+    product: initialData?.product || 'RTA Credit Card',
     monthly_salary: initialData?.monthly_salary?.toString() || '',
-    salary_months: initialData?.salary_months?.toString() || '',
     salary_variations: initialData?.salary_variations || false,
     existing_cards: initialData?.existing_cards || false,
     cards_duration: initialData?.cards_duration || '',
@@ -223,7 +222,6 @@ export default function AddLeadModal({
       product_type: formData.product_type,
       product: formData.product,
       monthly_salary: parseInt(formData.monthly_salary, 10) || null,
-      salary_months: parseInt(formData.salary_months, 10) || null,
       salary_variations: formData.salary_variations,
       existing_cards: formData.existing_cards,
       cards_duration: formData.existing_cards ? formData.cards_duration : null,
@@ -278,9 +276,8 @@ export default function AddLeadModal({
   const allDocuments = [
     'Emirates ID Original',
     'Passport Clear Photo',
-    'Salary Certificate',
-    'Labor Contract / Offer Letter',
-    'Payslips (Last 3 months)',
+    'Salary Certificate (for listed companies) or Labor Contract / Offer Letter (for freezone companies)',
+    'Payslips (Last 3 months for listed companies, or 1 payslip for freezone companies)',
   ];
 
   return (
@@ -437,7 +434,7 @@ export default function AddLeadModal({
                       label=""
                       children={
                         <ToggleInput
-                          label="Variations in last 3 months salary?"
+                          label="Any variations in salary during the last 3 months?"
                           checked={formData.salary_variations}
                           onChange={(v) => handleToggle('salary_variations', v)}
                         />
@@ -445,8 +442,9 @@ export default function AddLeadModal({
                     />
                     {formData.salary_variations && (
                       <div className="md:col-span-2 -mt-2 text-xs text-blue-700 bg-blue-50 p-2 rounded-md flex items-center">
-                        <Info className="w-4 h-4 mr-2" /> Note: Payslips will be
-                        required to confirm the reason for variations.
+                        <Info className="w-4 h-4 mr-2" /> Please provide last
+                        three months payslips to confirm the reason for
+                        variations.
                       </div>
                     )}
                   </>
@@ -462,7 +460,7 @@ export default function AddLeadModal({
                       label=""
                       children={
                         <ToggleInput
-                          label="Already using any credit cards?"
+                          label="Are you currently using any credit cards?"
                           checked={formData.existing_cards}
                           onChange={(v) => handleToggle('existing_cards', v)}
                         />
@@ -502,7 +500,7 @@ export default function AddLeadModal({
                       label=""
                       children={
                         <ToggleInput
-                          label="Paying any EMI for any type of loan?"
+                          label="Are you currently paying any EMI for any type of loan (personal, business, auto, housing, etc.)?"
                           checked={formData.has_emi}
                           onChange={(v) => handleToggle('has_emi', v)}
                         />
@@ -535,7 +533,7 @@ export default function AddLeadModal({
                       label=""
                       children={
                         <ToggleInput
-                          label="Applied for same bank/product in last 60 days?"
+                          label="Have you applied for the same bank/product within the last 60 days?"
                           checked={formData.applied_recently}
                           onChange={(v) => handleToggle('applied_recently', v)}
                         />

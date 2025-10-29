@@ -517,15 +517,15 @@ export default function Dashboard() {
             onClick={() =>
               navigate('/leads', { state: { showAddModal: true } })
             }
-            icon={<Plus className="w-5 h-5 text-white" />}
-            title="NEW LEAD"
+            icon={<Plus className="w-6 h-6 text-white" />}
+            title="New Lead"
             subtitle="Add Prospect"
             colorClass="bg-blue-500"
           />
           <QuickActionButton
             onClick={() => navigate('/tasks')}
-            icon={<List className="w-5 h-5 text-white" />}
-            title="VIEW TASKS"
+            icon={<List className="w-6 h-6 text-white" />}
+            title="View Tasks"
             subtitle="Check Tasks"
             colorClass="bg-green-500"
           />
@@ -533,8 +533,8 @@ export default function Dashboard() {
             onClick={() =>
               navigate('/clients', { state: { showAddModal: true } })
             }
-            icon={<User className="w-5 h-5 text-white" />}
-            title="ADD CLIENT"
+            icon={<User className="w-6 h-6 text-white" />}
+            title="Add Client"
             subtitle="New Account"
             colorClass="bg-purple-500"
           />
@@ -542,8 +542,8 @@ export default function Dashboard() {
             onClick={() =>
               navigate('/deals', { state: { showAddModal: true } })
             }
-            icon={<Briefcase className="w-5 h-5 text-white" />}
-            title="NEW DEAL"
+            icon={<Briefcase className="w-6 h-6 text-white" />}
+            title="New Deal"
             subtitle="Add Journey"
             colorClass="bg-orange-500"
           />
