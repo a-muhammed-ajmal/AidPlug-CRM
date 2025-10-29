@@ -4,6 +4,9 @@ import { useTasks } from '../../hooks/useTasks';
 import { useAuth } from '../../contexts/AuthContext';
 import { Task } from '../../types';
 import { useUI } from '../../contexts/UIContext';
+import { useLeads } from '../../hooks/useLeads';
+import { useClients } from '../../hooks/useClients';
+import { useDeals } from '../../hooks/useDeals';
 
 interface AddTaskModalProps {
   onClose: () => void;
@@ -66,6 +69,9 @@ export default function AddTaskModal({
   const { createTask, updateTask } = useTasks();
   const { user } = useAuth();
   const { addNotification } = useUI();
+  const { leads } = useLeads();
+  const { clients } = useClients();
+  const { deals } = useDeals();
 
   const [loading, setLoading] = useState(false);
   const mode = initialData ? 'edit' : 'add';
@@ -79,6 +85,8 @@ export default function AddTaskModal({
       ? initialData.due_date.split('T')[0]
       : new Date().toISOString().split('T')[0],
     time: initialData?.time || '',
+    related_to_type: initialData?.related_to_type || '',
+    related_to_id: initialData?.related_to_id || '',
   });
 
   const handleChange = (
@@ -105,6 +113,10 @@ export default function AddTaskModal({
       priority: formData.priority as NonNullable<Task['priority']>,
       due_date: formData.due_date,
       time: formData.time || null,
+      related_to_id: formData.related_to_id || null,
+      related_to_type:
+        (formData.related_to_type as NonNullable<Task['related_to_type']>) ||
+        null,
       user_id: user.id,
     };
 
@@ -112,11 +124,8 @@ export default function AddTaskModal({
       const taskData = {
         ...commonData,
         status: 'pending' as const,
-        estimated_duration: null,
-        related_to_id: null,
-        related_to_type: null,
       };
-      createTask.mutate(taskData, {
+      createTask(taskData, {
         onSuccess: () => {
           addNotification(
             'Task Created',
@@ -124,11 +133,11 @@ export default function AddTaskModal({
           );
           onClose();
         },
-        onError: (err: Error) => addNotification('Error', err.message),
+        onError: (err) => addNotification('Error', (err as Error).message),
         onSettled: () => setLoading(false),
       });
     } else if (initialData) {
-      updateTask.mutate(
+      updateTask(
         { id: initialData.id, updates: commonData },
         {
           onSuccess: () => {
@@ -138,7 +147,7 @@ export default function AddTaskModal({
             );
             onClose();
           },
-          onError: (err: Error) => addNotification('Error', err.message),
+          onError: (err) => addNotification('Error', (err as Error).message),
           onSettled: () => setLoading(false),
         }
       );
@@ -159,6 +168,29 @@ export default function AddTaskModal({
     { value: 'high', label: 'High' },
     { value: 'urgent', label: 'Urgent' },
   ];
+
+  const relatedTypeOptions = [
+    { value: '', label: 'None' },
+    { value: 'lead', label: 'Lead' },
+    { value: 'client', label: 'Client' },
+    { value: 'deal', label: 'Deal' },
+  ];
+
+  const getRelatedOptions = () => {
+    switch (formData.related_to_type) {
+      case 'lead':
+        return leads.map((lead) => ({ value: lead.id, label: lead.full_name }));
+      case 'client':
+        return clients.map((client) => ({
+          value: client.id,
+          label: client.full_name,
+        }));
+      case 'deal':
+        return deals.map((deal) => ({ value: deal.id, label: deal.title }));
+      default:
+        return [];
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end animate-fade-in sm:items-center">
@@ -226,6 +258,32 @@ export default function AddTaskModal({
                   />
                 }
               />
+              <FormInput
+                label="Related To"
+                children={
+                  <SelectInput
+                    id="related_to_type"
+                    name="related_to_type"
+                    value={formData.related_to_type}
+                    onChange={handleChange}
+                    options={relatedTypeOptions}
+                  />
+                }
+              />
+              {formData.related_to_type && (
+                <FormInput
+                  label={`${formData.related_to_type.charAt(0).toUpperCase() + formData.related_to_type.slice(1)} Name`}
+                  children={
+                    <SelectInput
+                      id="related_to_id"
+                      name="related_to_id"
+                      value={formData.related_to_id}
+                      onChange={handleChange}
+                      options={getRelatedOptions()}
+                    />
+                  }
+                />
+              )}
               <FormInput
                 label="Due Date*"
                 children={

@@ -1,26 +1,13 @@
-# TODO: Implement Lead Form and Card Enhancements
+# Task Management Update TODO
 
-## Part 1: AddLeadModal.tsx Updates
+## Overview
 
-- [x] Implement mobile number validation logic (remove leading '0', extract last 9 digits from +971)
-- [x] Make all form fields optional (remove required attributes)
-- [x] Add "Create Task" checkbox in the form
-- [x] Add "Convert to Deal" button in the footer
-- [x] Add "Delete Lead" button for edit mode
-- [x] Ensure Location is dropdown with UAE Emirates
-- [x] Ensure Monthly Salary is number input labeled in AED
+Replace existing task components with new provided code, enhance AddTaskModal to include related entity selection (lead, client, deal), and update dashboard quick action to "Add Task" opening the modal.
 
-## Part 2: LeadCard.tsx Updates
+## Steps
 
-- [x] Add Bank Applying to card display
-- [x] Add Email action icon alongside Call and WhatsApp
-- [x] Keep card concise and dashboard-optimized
-
-## Testing
-
-- [ ] Test mobile number input validation
-- [ ] Test Create Task functionality
-- [ ] Test Convert to Deal functionality
-- [ ] Test Delete Lead functionality
-- [ ] Test Email action icon
-- [ ] Verify status changes move cards correctly
+- [ ] Create new TasksPage.tsx with provided code
+- [ ] Create new TaskCard.tsx with provided code
+- [ ] Modify AddTaskModal.tsx: Add related entity selection (type and specific entity)
+- [ ] Update Dashboard.tsx: Change quick action to "Add Task", add modal state and rendering
+- [ ] Test integration: Ensure tasks can be related to leads/clients/deals

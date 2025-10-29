@@ -433,7 +433,6 @@ export interface Database {
           created_at: string | null;
           description: string | null;
           due_date: string;
-          estimated_duration: number | null;
           id: string;
           priority: 'low' | 'medium' | 'high' | 'urgent' | null;
           related_to_id: string | null;
@@ -455,7 +454,6 @@ export interface Database {
           created_at?: string | null;
           description?: string | null;
           due_date: string;
-          estimated_duration?: number | null;
           id?: string;
           priority?: 'low' | 'medium' | 'high' | 'urgent' | null;
           related_to_id?: string | null;
@@ -477,7 +475,6 @@ export interface Database {
           created_at?: string | null;
           description?: string | null;
           due_date?: string;
-          estimated_duration?: number | null;
           id?: string;
           priority?: 'low' | 'medium' | 'high' | 'urgent' | null;
           related_to_id?: string | null;

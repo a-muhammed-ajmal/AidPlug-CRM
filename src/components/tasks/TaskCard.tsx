@@ -19,24 +19,24 @@ interface TaskCardProps {
 }
 
 const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
-  const { updateTask, deleteTask } = useTasks();
+  const { toggleTaskComplete, deleteTask } = useTasks();
   const { showConfirmation, addNotification } = useUI();
 
-  const priorityColors: { [key: string]: string } = {
+  const priorityColors: Record<string, string> = {
     urgent: 'border-red-300',
     high: 'border-orange-300',
     medium: 'border-yellow-300',
     low: 'border-green-300',
   };
 
-  const priorityTagColors: { [key: string]: string } = {
+  const priorityTagColors: Record<string, string> = {
     urgent: 'bg-red-100 text-red-700',
     high: 'bg-orange-100 text-orange-700',
     medium: 'bg-yellow-100 text-yellow-700',
     low: 'bg-green-100 text-green-700',
   };
 
-  const typeIcons: { [key: string]: string } = {
+  const typeIcons: Record<string, string> = {
     call: '📞',
     meeting: '👥',
     documentation: '📄',
@@ -59,14 +59,17 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
       'Delete Task?',
       'Are you sure you want to delete this task? This action cannot be undone.',
       () => {
-        deleteTask.mutate(task.id, {
+        deleteTask(task, {
           onSuccess: () =>
             addNotification(
               'Task Deleted',
               `"${task.title}" has been removed.`
             ),
-          onError: (error: Error) =>
-            addNotification('Error', error.message || 'Failed to delete task.'),
+          onError: (error) =>
+            addNotification(
+              'Error',
+              (error as Error).message || 'Failed to delete task.'
+            ),
         });
       }
     );
@@ -79,12 +82,7 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
       <div className="flex items-start space-x-3">
         <button
           onClick={() =>
-            updateTask.mutate({
-              id: task.id,
-              updates: {
-                status: task.status === 'completed' ? 'pending' : 'completed',
-              },
-            })
+            toggleTaskComplete.mutate({ id: task.id, status: task.status })
           }
           className="mt-1 flex-shrink-0"
         >
@@ -156,11 +154,7 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
 
             {task.priority && (
               <span
-                className={`text-xs font-medium px-2 py-1 rounded cursor-pointer ${priorityTagColors[task.priority]}`}
-                onClick={() => {
-                  // Open detailed task view or edit modal
-                  onEdit(task);
-                }}
+                className={`text-xs font-medium px-2 py-1 rounded ${priorityTagColors[task.priority]}`}
               >
                 {task.priority.toUpperCase()}
               </span>
