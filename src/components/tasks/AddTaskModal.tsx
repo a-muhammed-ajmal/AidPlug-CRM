@@ -7,6 +7,7 @@ import { useUI } from '../../contexts/UIContext';
 import { useLeads } from '../../hooks/useLeads';
 import { useClients } from '../../hooks/useClients';
 import { useDeals } from '../../hooks/useDeals';
+import { PostgrestError } from '@supabase/supabase-js';
 
 interface AddTaskModalProps {
   onClose: () => void;
@@ -125,7 +126,7 @@ export default function AddTaskModal({
         ...commonData,
         status: 'pending' as const,
       };
-      createTask(taskData, {
+      createTask.mutate(taskData, {
         onSuccess: () => {
           addNotification(
             'Task Created',
@@ -133,11 +134,12 @@ export default function AddTaskModal({
           );
           onClose();
         },
-        onError: (err) => addNotification('Error', (err as Error).message),
+        onError: (err: Error | PostgrestError) =>
+          addNotification('Error', err.message),
         onSettled: () => setLoading(false),
       });
     } else if (initialData) {
-      updateTask(
+      updateTask.mutate(
         { id: initialData.id, updates: commonData },
         {
           onSuccess: () => {
@@ -147,7 +149,8 @@ export default function AddTaskModal({
             );
             onClose();
           },
-          onError: (err) => addNotification('Error', (err as Error).message),
+          onError: (err: Error | PostgrestError) =>
+            addNotification('Error', err.message),
           onSettled: () => setLoading(false),
         }
       );

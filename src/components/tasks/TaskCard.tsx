@@ -12,6 +12,7 @@ import { useTasks } from '../../hooks/useTasks';
 import { Task } from '../../types';
 import { useUI } from '../../contexts/UIContext';
 import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
+import { PostgrestError } from '@supabase/supabase-js';
 
 interface TaskCardProps {
   task: Task;
@@ -59,17 +60,14 @@ const TaskCard = React.memo(({ task, onEdit }: TaskCardProps) => {
       'Delete Task?',
       'Are you sure you want to delete this task? This action cannot be undone.',
       () => {
-        deleteTask(task, {
+        deleteTask.mutate(task.id, {
           onSuccess: () =>
             addNotification(
               'Task Deleted',
               `"${task.title}" has been removed.`
             ),
-          onError: (error) =>
-            addNotification(
-              'Error',
-              (error as Error).message || 'Failed to delete task.'
-            ),
+          onError: (error: Error | PostgrestError) =>
+            addNotification('Error', error.message || 'Failed to delete task.'),
         });
       }
     );
