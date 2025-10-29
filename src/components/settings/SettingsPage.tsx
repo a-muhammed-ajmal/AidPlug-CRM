@@ -272,7 +272,7 @@ export default function SettingsPage() {
   const handleDateBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!dateError) {
       const { name, value } = e.target;
-      if (value && (salesCycle?.[name as keyof typeof salesCycle] !== value)) {
+      if (value && salesCycle?.[name as keyof typeof salesCycle] !== value) {
         updateSalesCycle.mutate({ [name]: value });
       }
     }
@@ -322,38 +322,36 @@ export default function SettingsPage() {
           <h3 className="font-semibold text-gray-900">Sales Cycle</h3>
         </div>
         <div className="p-4 space-y-4">
-          <div>
+          <div className="flex items-center justify-between">
             <label
-              htmlFor="start_date"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              htmlFor="startDate"
+              className="text-gray-600 font-medium text-sm"
             >
               Start Date
             </label>
             <input
               type="date"
-              id="start_date"
-              name="start_date"
+              id="startDate"
               value={cycleDates.start_date}
               onChange={handleDateChange}
               onBlur={handleDateBlur}
-              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+              className="p-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <div>
+          <div className="flex items-center justify-between">
             <label
-              htmlFor="end_date"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              htmlFor="endDate"
+              className="text-gray-600 font-medium text-sm"
             >
               End Date
             </label>
             <input
               type="date"
-              id="end_date"
-              name="end_date"
+              id="endDate"
               value={cycleDates.end_date}
               onChange={handleDateChange}
               onBlur={handleDateBlur}
-              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+              className="p-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           {dateError && (
