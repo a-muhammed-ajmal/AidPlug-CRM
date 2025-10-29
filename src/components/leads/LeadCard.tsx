@@ -1,265 +1,193 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Briefcase,
-  Folder,
+  User,
+  Building2,
   DollarSign,
-  MapPin,
+  Briefcase,
+  CreditCard,
+  Edit,
+  TrendingUp,
+  Trash2,
   Phone,
   MessageCircle,
-  ChevronDown,
-  Eye,
-  AlertTriangle,
   Mail,
 } from 'lucide-react';
-import { useLeads } from '../../hooks/useLeads';
-import { useDeals } from '../../hooks/useDeals';
 import { Lead } from '../../types';
-import { useUI } from '../../contexts/UIContext';
-import { useAuth } from '../../contexts/AuthContext';
-import { LeadDetailModal } from './LeadDetailModal';
 
 interface LeadCardProps {
   lead: Lead;
+  onEdit: (lead: Lead) => void;
+  onDelete: (id: string) => void;
+  onStatusChange: (id: string, newStatus: Lead['qualification_status']) => void;
+  onConvertToDeal: (lead: Lead) => void;
 }
 
-export const LeadCard = React.memo(({ lead }: LeadCardProps) => {
-  const { user } = useAuth();
-  const { deleteLead, updateLead } = useLeads();
-  const { createDeal } = useDeals();
-  const { showConfirmation, addNotification, logActivity } = useUI();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const getStatusColor = (status: Lead['qualification_status']) => {
-    const colors = {
-      appointment_booked: 'bg-[#1a68c7] text-white border-[#1a68c7]',
-      warm: 'bg-orange-100 text-orange-800 border-orange-500',
-      qualified: 'bg-[#74c12d] text-white border-[#74c12d]',
-    };
-    return (
-      colors[status || 'warm'] || 'bg-gray-100 text-gray-800 border-gray-500'
-    );
+const LeadCard: React.FC<LeadCardProps> = ({
+  lead,
+  onEdit,
+  onDelete,
+  onStatusChange,
+  onConvertToDeal,
+}) => {
+  const getStatusInfo = (status: Lead['qualification_status']) => {
+    switch (status) {
+      case 'warm':
+        return {
+          color: 'bg-orange-500',
+          text: 'Warm',
+          ring: 'focus:ring-orange-500',
+          bgBorder: 'bg-orange-50 border-orange-300 text-orange-700',
+        };
+      case 'qualified':
+        return {
+          color: 'bg-blue-500',
+          text: 'Qualified',
+          ring: 'focus:ring-blue-500',
+          bgBorder: 'bg-blue-50 border-blue-300 text-blue-700',
+        };
+      case 'appointment_booked':
+        return {
+          color: 'bg-purple-500',
+          text: 'Appointment',
+          ring: 'focus:ring-purple-500',
+          bgBorder: 'bg-purple-50 border-purple-300 text-purple-700',
+        };
+      default:
+        return {
+          color: 'bg-gray-500',
+          text: 'N/A',
+          ring: 'focus:ring-gray-500',
+          bgBorder: 'bg-gray-50 border-gray-300 text-gray-700',
+        };
+    }
   };
 
-  const hasRecentApplication = lead.applied_recently;
+  const statusInfo = getStatusInfo(lead.qualification_status);
 
-  const handleConvert = () => {
-    if (!user) return;
-    const newDeal = {
-      title: `${lead.product || 'Deal'} - ${lead.full_name}`,
-      amount:
-        lead.loan_amount_requested || (lead.monthly_salary || 0) * 3 || 50000,
-      stage: 'application_processing' as const,
-      client_name: lead.full_name,
-      expected_close_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split('T')[0],
-      probability: 25,
-      product_type: lead.product?.toLowerCase().replace(/ /g, '_'),
-      user_id: user.id,
-      application_number: `APP-${Math.floor(10000 + Math.random() * 90000)}`,
-      bdi_number: `BDI-${Math.floor(10000 + Math.random() * 90000)}`,
-    };
-
-    createDeal.mutate(newDeal, {
-      onSuccess: () => {
-        addNotification('Lead Converted', `${lead.full_name} is now a deal.`);
-        logActivity(
-          'lead_convert',
-          `Converted lead "${lead.full_name}" to a deal.`
-        );
-        deleteLead.mutate(lead.id);
-      },
-      onError: (e: Error) => addNotification('Conversion Failed', e.message),
-    });
-  };
-
-  const handleStatusChange = (
-    newStatus: 'warm' | 'qualified' | 'appointment_booked'
-  ) => {
-    updateLead.mutate(
-      { id: lead.id, updates: { qualification_status: newStatus } },
-      {
-        onSuccess: (updatedLead: Lead) =>
-          addNotification(
-            'Status Updated',
-            `${updatedLead.full_name} is now ${newStatus.replace(/_/g, ' ')}.`
-          ),
-        onError: (e: Error) => addNotification('Update Failed', e.message),
-      }
-    );
+  const formatWhatsAppNumber = (mobile: string | null) => {
+    return mobile?.replace(/[^0-9]/g, '') || '';
   };
 
   return (
-    <>
-      <div
-        className={`bg-white border rounded-lg hover:shadow-md transition-all border-l-4 ${getStatusColor(lead.qualification_status).split(' ')[3] || 'border-gray-500'} p-4`}
-      >
-        {/* 60-day warning banner */}
-        {hasRecentApplication && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mb-3 flex items-center space-x-2">
-            <AlertTriangle className="w-4 h-4 text-yellow-600 flex-shrink-0" />
-            <span className="text-xs text-yellow-800">
-              Applied in last 60 days
-            </span>
-          </div>
-        )}
+    <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 group">
+      <div className={`h-1.5 ${statusInfo.color}`}></div>
 
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-2 mb-1">
-              <h3
-                className="font-semibold text-gray-900 text-sm flex items-center"
-                title={lead.full_name}
-              >
-                {lead.full_name}
-              </h3>
-              <span
-                className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(lead.qualification_status)}`}
-              >
-                {lead.qualification_status === 'appointment_booked'
-                  ? 'Appointment'
-                  : lead.qualification_status === 'qualified'
-                    ? 'Qualified'
-                    : 'Warm'}
-              </span>
-            </div>
-            <p className="text-xs text-gray-600 flex items-center">
-              <Briefcase className="w-3 h-3 mr-1 text-gray-400 flex-shrink-0" />
-              <span title={lead.company_name || 'N/A'}>
-                {lead.company_name || 'N/A'}
-              </span>
-            </p>
+      <div className="p-4">
+        <div className="mb-3">
+          <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
+            <User className="w-4 h-4 text-emerald-600" />
+            {lead.full_name}
+          </h3>
+          <div className="flex items-center gap-1.5 text-sm text-gray-600">
+            <Building2 className="w-3.5 h-3.5" />
+            <span>{lead.company_name}</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 text-xs text-gray-700 mb-3">
-          <div className="flex items-center space-x-1">
-            <DollarSign className="w-3 h-3 text-gray-400" />
-            <span>
-              {lead.monthly_salary
-                ? `${(lead.monthly_salary / 1000).toFixed(0)}K AED`
-                : 'N/A'}
+        <div className="space-y-2 mb-3 pb-3 border-b border-gray-100">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-500 flex items-center gap-1.5">
+              <DollarSign className="w-3.5 h-3.5" />
+              Salary
+            </span>
+            <span className="font-semibold text-gray-900">
+              AED {lead.monthly_salary?.toLocaleString() || 'N/A'}
             </span>
           </div>
-          <div className="flex items-center space-x-1">
-            <Phone className="w-3 h-3 text-gray-400" />
-            <span>{lead.phone ? lead.phone.replace(/^\+971/, '') : 'N/A'}</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <Folder className="w-3 h-3 text-gray-400" />
-            <span className="truncate" title={lead.product || ''}>
-              {lead.product || 'N/A'}
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-500 flex items-center gap-1.5">
+              <Briefcase className="w-3.5 h-3.5" />
+              Bank
+            </span>
+            <span className="font-medium text-gray-900 text-xs">
+              {lead.bank_name}
             </span>
           </div>
-          <div className="flex items-center space-x-1">
-            <MapPin className="w-3 h-3 text-gray-400" />
-            <span className="truncate" title={lead.location || ''}>
-              {lead.location || 'N/A'}
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-500 flex items-center gap-1.5">
+              <CreditCard className="w-3.5 h-3.5" />
+              Product
             </span>
-          </div>
-          <div className="flex items-center space-x-1 col-span-2">
-            <Briefcase className="w-3 h-3 text-gray-400" />
-            <span className="truncate" title={lead.bank_name || ''}>
-              {lead.bank_name || 'N/A'}
+            <span className="font-medium text-gray-900 text-xs">
+              {lead.product}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-1">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (lead.phone)
-                  window.location.href = `tel:${lead.phone.replace(/\s/g, '')}`;
-              }}
-              disabled={!lead.phone}
-              className="p-1.5 hover:bg-[#1a68c7]/10 rounded-md transition-colors"
-              title="Call"
-            >
-              <Phone className="w-4 h-4 text-[#1a68c7]" />
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (lead.phone)
-                  window.location.href = `https://wa.me/${lead.phone.replace(/\s/g, '')}`;
-              }}
-              disabled={!lead.phone}
-              className="p-1.5 hover:bg-[#74c12d]/10 rounded-md transition-colors"
-              title="WhatsApp"
-            >
-              <MessageCircle className="w-4 h-4 text-[#74c12d]" />
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (lead.email) window.location.href = `mailto:${lead.email}`;
-              }}
-              disabled={!lead.email}
-              className="p-1.5 hover:bg-blue-100 rounded-md transition-colors"
-              title="Email"
-            >
-              <Mail className="w-4 h-4 text-blue-600" />
-            </button>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
-              title="View Details"
-            >
-              <Eye className="w-4 h-4 text-gray-500" />
-            </button>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <select
-              defaultValue={lead.qualification_status || 'warm'}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === 'convert') {
-                  showConfirmation(
-                    'Convert to Deal?',
-                    `This will create a new deal for "${lead.full_name}" and remove this lead. Are you sure?`,
-                    handleConvert
-                  );
-                } else {
-                  handleStatusChange(
-                    value as 'warm' | 'qualified' | 'appointment_booked'
-                  );
-                }
-                e.target.value = lead.qualification_status || 'warm';
-              }}
-              className={`appearance-none text-xs font-medium px-2 py-1 rounded border ${getStatusColor(lead.qualification_status)} focus:outline-none focus:ring-2 focus:ring-[#1a68c7]/20`}
-            >
-              <option value="warm">Warm</option>
-              <option value="qualified">Qualified</option>
-              <option value="appointment_booked">Appointment</option>
-            </select>
-            <ChevronDown className="w-3 h-3 text-current pointer-events-none" />
-
-            <button
-              onClick={() => {
-                showConfirmation(
-                  'Convert to Deal?',
-                  `This will create a new deal for "${lead.full_name}" and remove this lead. Are you sure?`,
-                  handleConvert
-                );
-              }}
-              className="px-3 py-1 bg-[#74c12d] text-white text-xs font-medium rounded hover:bg-[#62a821] transition-colors"
-            >
-              To Deal
-            </button>
-          </div>
+        <div className="mb-3">
+          <label className="text-xs text-gray-500 mb-1 block">Status</label>
+          <select
+            value={lead.qualification_status || ''}
+            onChange={(e) =>
+              onStatusChange(
+                lead.id,
+                e.target.value as Lead['qualification_status']
+              )
+            }
+            className={`w-full px-3 py-2 text-sm font-medium rounded-lg border-2 transition-all focus:ring-2 ${statusInfo.bgBorder} ${statusInfo.ring}`}
+          >
+            <option value="warm">🔥 Warm</option>
+            <option value="qualified">✅ Qualified</option>
+            <option value="appointment_booked">📅 Appointment</option>
+          </select>
         </div>
+
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <a
+            href={`tel:${lead.phone}`}
+            className="flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition-all"
+            title="Call"
+          >
+            <Phone className="w-3.5 h-3.5" />
+            Call
+          </a>
+          <a
+            href={`https://wa.me/${formatWhatsAppNumber(lead.whatsapp_number)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1.5 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition-all"
+            title="WhatsApp"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            WhatsApp
+          </a>
+          <a
+            href={`mailto:${lead.email}`}
+            className="flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-xs font-medium transition-all"
+            title="Email"
+          >
+            <Mail className="w-3.5 h-3.5" />
+            Email
+          </a>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => onEdit(lead)}
+            className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+          >
+            <Edit className="w-3.5 h-3.5" />
+            Edit
+          </button>
+          <button
+            onClick={() => onConvertToDeal(lead)}
+            className="px-3 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            To Deal
+          </button>
+        </div>
+
+        <button
+          onClick={() => onDelete(lead.id)}
+          className="w-full mt-2 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded-lg transition-all flex items-center justify-center gap-1"
+        >
+          <Trash2 className="w-3 h-3" />
+          Delete Lead
+        </button>
       </div>
-
-      <LeadDetailModal
-        lead={lead}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
-    </>
+    </div>
   );
-});
+};
 
 export default LeadCard;
