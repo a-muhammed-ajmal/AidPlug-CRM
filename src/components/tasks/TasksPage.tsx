@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Plus, List } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import TaskCard from './TaskCard';

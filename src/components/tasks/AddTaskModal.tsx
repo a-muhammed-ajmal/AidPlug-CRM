@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
-import { useAuth } from '../../hooks/useAuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { Task } from '../../types';
 import { useUI } from '../../contexts/UIContext';
 
