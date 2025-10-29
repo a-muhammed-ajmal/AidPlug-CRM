@@ -25,7 +25,7 @@ export default function LeadsPage() {
     setTitle('Leads');
   }, [setTitle]);
   const location = useLocation();
-  const { leads, isLoading } = useLeads();
+  const { leads, isLoading, updateLead, deleteLead } = useLeads();
   const [showAddModal, setShowAddModal] = useState(
     location.state?.showAddModal || false
   );
@@ -128,11 +128,30 @@ export default function LeadsPage() {
     );
   }
 
-
-
   const handleCloseModal = () => {
     setShowAddModal(false);
     setEditingLead(null);
+  };
+
+  const handleEditLead = (lead: Lead) => {
+    setEditingLead(lead);
+    setShowAddModal(true);
+  };
+
+  const handleDeleteLead = (id: string) => {
+    deleteLead.mutate(id);
+  };
+
+  const handleStatusChange = (
+    id: string,
+    newStatus: Lead['qualification_status']
+  ) => {
+    updateLead.mutate({ id, updates: { qualification_status: newStatus } });
+  };
+
+  const handleConvertToDeal = (lead: Lead) => {
+    // Placeholder for conversion logic
+    console.log('Convert to deal:', lead);
   };
 
   return (
@@ -192,7 +211,14 @@ export default function LeadsPage() {
         <div className="space-y-4">
           {filteredLeads.length > 0 ? (
             filteredLeads.map((lead) => (
-              <LeadCard key={lead.id} lead={lead} />
+              <LeadCard
+                key={lead.id}
+                lead={lead}
+                onEdit={handleEditLead}
+                onDelete={handleDeleteLead}
+                onStatusChange={handleStatusChange}
+                onConvertToDeal={handleConvertToDeal}
+              />
             ))
           ) : (
             <EmptyState
