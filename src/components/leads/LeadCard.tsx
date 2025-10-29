@@ -142,7 +142,7 @@ const LeadCard: React.FC<LeadCardProps> = ({
             Call
           </a>
           <a
-            href={`https://wa.me/${formatWhatsAppNumber(lead.whatsapp_number)}`}
+            href={`https://wa.me/${formatWhatsAppNumber(lead.phone)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-1.5 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition-all"
