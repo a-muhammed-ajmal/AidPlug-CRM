@@ -222,6 +222,7 @@ export default function AddLeadModal({
       product_type: formData.product_type,
       product: formData.product,
       monthly_salary: parseInt(formData.monthly_salary, 10) || null,
+      salary_months: null,
       salary_variations: formData.salary_variations,
       existing_cards: formData.existing_cards,
       cards_duration: formData.existing_cards ? formData.cards_duration : null,
