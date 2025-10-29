@@ -1,4 +1,5 @@
-import { Bell } from 'lucide-react';
+import { Bell, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useUI, Notification } from '../../contexts/UIContext';
 
 interface DesktopHeaderProps {
@@ -7,6 +8,7 @@ interface DesktopHeaderProps {
 
 export default function DesktopHeader({ title }: DesktopHeaderProps) {
   const { notifications, setShowNotifications } = useUI();
+  const navigate = useNavigate();
 
   const unreadCount = notifications.filter(
     (n: Notification) => n.unread
@@ -31,6 +33,12 @@ export default function DesktopHeader({ title }: DesktopHeaderProps) {
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
+          </button>
+          <button
+            onClick={() => navigate('/account')}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <User className="w-5 h-5 text-gray-600" />
           </button>
         </div>
       </div>
