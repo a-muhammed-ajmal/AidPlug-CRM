@@ -1,10 +1,16 @@
-# Clients Components and Database Schema Update
+# Fix PWA Issues on Vercel
 
-## Tasks
+## Issues Identified
 
-- [x] Update ClientsPage.tsx with ClientDetailsModal component
-- [x] Update ClientCard.tsx to match provided code
-- [x] Update AddClientModal.tsx to match provided code
-- [x] Create remove_unused_clients_columns.sql to drop unused columns
-- [x] Create clients_rls_policies.sql for RLS policies
-- [x] Git add, commit, push changes
+- Service Worker (sw.js) returns HTML instead of JS (MIME type issue + authentication blocking)
+- Manifest (site.webmanifest) returns 401 Unauthorized (authentication blocking)
+
+## Steps to Fix
+
+- [ ] Update vercel.json with proper headers for PWA files
+- [ ] Commit changes including sw.js move to public folder
+- [ ] Deploy to Vercel and test PWA functionality
+
+## Files to Edit
+
+- vercel.json: Add headers and rewrites for sw.js and site.webmanifest

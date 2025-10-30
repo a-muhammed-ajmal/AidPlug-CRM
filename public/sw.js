@@ -3,7 +3,6 @@ const API_CACHE_NAME = 'aidplug-crm-api-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/index.css',
   '/site.webmanifest',
   '/favicon.ico',
   '/apple-touch-icon.png',
@@ -13,14 +12,16 @@ const urlsToCache = [
 
 // Install: Caches app shell
 self.addEventListener('install', (event) => {
-  console.log('Service worker installing');
+  console.log('[Service Worker] Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Opened app shell cache');
+        console.log('[Service Worker] Caching app shell');
         return cache.addAll(urlsToCache);
       })
-      .catch(err => console.error("Failed to cache app shell", err))
+      .catch(err => {
+        console.error('[Service Worker] Failed to cache app shell:', err);
+      })
   );
   // Force activation of new service worker
   self.skipWaiting();
@@ -28,14 +29,14 @@ self.addEventListener('install', (event) => {
 
 // Activate: Cleans up old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service worker activating');
+  console.log('[Service Worker] Activating...');
   const cacheWhitelist = [CACHE_NAME, API_CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Deleting old cache:', cacheName);
+            console.log('[Service Worker] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -49,8 +50,13 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
+  // Skip non-http(s) requests
+  if (!requestUrl.protocol.startsWith('http')) {
+    return;
+  }
+
   // Strategy 1: Network First for Supabase API calls
-  if (requestUrl.hostname.endsWith('supabase.co')) {
+  if (requestUrl.hostname.includes('supabase.co')) {
     event.respondWith(
       caches.open(API_CACHE_NAME).then((cache) => {
         return fetch(event.request)
@@ -79,11 +85,11 @@ self.addEventListener('fetch', (event) => {
           return response;
         }
         
-        // Not in cache - fetch from network, cache, and return
+        // Not in cache - fetch from network
         return fetch(event.request).then(
           (networkResponse) => {
             // Check if we received a valid response to cache
-            if (!networkResponse || !networkResponse.ok || !event.request.url.startsWith('http')) {
+            if (!networkResponse || networkResponse.status !== 200 || networkResponse.type === 'error') {
               return networkResponse;
             }
 
@@ -95,7 +101,10 @@ self.addEventListener('fetch', (event) => {
 
             return networkResponse;
           }
-        );
+        ).catch(() => {
+          // Return a fallback if both cache and network fail
+          console.log('[Service Worker] Failed to fetch:', event.request.url);
+        });
       })
   );
 });
