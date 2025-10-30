@@ -7,8 +7,8 @@
 
 ## Steps to Fix
 
-- [ ] Update vercel.json with proper headers for PWA files
-- [ ] Commit changes including sw.js move to public folder
+- [x] Update vercel.json with proper headers for PWA files
+- [x] Commit changes including sw.js move to public folder
 - [ ] Deploy to Vercel and test PWA functionality
 
 ## Files to Edit
