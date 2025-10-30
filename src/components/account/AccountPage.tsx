@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Edit3,
-  User,
-  LogOut,
-  KeyRound,
-  Eye,
-  EyeOff,
-  X,
-} from 'lucide-react';
+import { Edit3, User, LogOut, KeyRound, Eye, EyeOff, X } from 'lucide-react';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUI } from '../../contexts/UIContext';
@@ -29,13 +21,21 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     setLoading(true);
     try {
       await updateUserPassword(password);
       addNotification('Success', 'Your password has been updated.');
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Failed to update password.');
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to update password.'
+      );
     } finally {
       setLoading(false);
     }
@@ -114,15 +114,40 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
 };
 
 export default function AccountPage() {
-  const { profile, isLoading } = useUserProfile();
+  const { profile, isLoading, error } = useUserProfile();
   const { signOut } = useAuth();
   const { showConfirmation } = useUI();
   const navigate = useNavigate();
   const [showChangePassword, setShowChangePassword] = useState(false);
 
   const handleSignOut = () => {
-    showConfirmation('Sign Out', 'Are you sure you want to sign out?', signOut);
+    showConfirmation('Sign Out', 'Are you sure you want to sign out?', () => {
+      signOut();
+      navigate('/');
+    });
   };
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl">
+          <p className="font-semibold">Error Loading Profile</p>
+          <p className="text-sm mt-1">
+            {error instanceof Error
+              ? error.message
+              : 'Unable to load your account information.'}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-3 text-sm font-medium text-red-600 hover:underline"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -137,6 +162,21 @@ export default function AccountPage() {
         </div>
         <SkeletonLoader className="h-24 rounded-xl" />
         <SkeletonLoader className="h-14 rounded-lg" />
+      </div>
+    );
+  }
+
+  // Handle missing profile
+  if (!profile) {
+    return (
+      <div className="space-y-4">
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-xl">
+          <p className="font-semibold">Profile Not Found</p>
+          <p className="text-sm mt-1">
+            Your profile information could not be loaded. Please try refreshing
+            the page.
+          </p>
+        </div>
       </div>
     );
   }
@@ -157,7 +197,7 @@ export default function AccountPage() {
         </div>
         <div className="flex-1">
           <h2 className="text-xl font-bold text-gray-900">
-            {profile?.full_name}
+            {profile?.full_name || 'User'}
           </h2>
           <p className="text-sm text-gray-600">
             {profile?.designation || 'N/A'}

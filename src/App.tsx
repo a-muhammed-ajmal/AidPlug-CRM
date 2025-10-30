@@ -9,6 +9,7 @@ import { queryClient } from './lib/queryClient';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AuthLayout from './components/auth/AuthLayout';
 import MainLayout from './components/MainLayout';
+import AuthCallbackHandler from './components/auth/AuthCallbackHandler';
 
 import ErrorBoundary from './components/common/ErrorBoundary';
 import FullPageSpinner from './components/common/FullPageSpinner';
@@ -43,16 +44,23 @@ const ProductListPage = lazy(
 const ProductDetailPage = lazy(
   () => import('./components/products/ProductDetailPage')
 );
+const AccountPage = lazy(() => import('./components/account/AccountPage'));
+const EditProfilePage = lazy(
+  () => import('./components/account/EditProfilePage')
+);
 
 function PublicRoutes() {
   return (
-    <Route element={<AuthLayout />}>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password" element={<ResetPasswordPage />} />
-      <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
-    </Route>
+    <>
+      <Route path="/" element={<AuthCallbackHandler />} />
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
+      </Route>
+    </>
   );
 }
 
@@ -67,6 +75,8 @@ function ProtectedRoutes() {
         <Route path="deals" element={<DealsPage />} />
         <Route path="tasks" element={<TasksPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="account" element={<AccountPage />} />
+        <Route path="account/edit" element={<EditProfilePage />} />
         <Route path="products">
           <Route index element={<ProductsPage />} />
           <Route path=":bankSlug" element={<ProductTypesPage />} />

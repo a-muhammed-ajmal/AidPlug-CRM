@@ -1,27 +1,11 @@
-# Fix PWA Issues on Vercel
+# Account Page Fixes
 
-## Issues Identified
+## Current Status
 
-- Service Worker (sw.js) returns HTML instead of JS (MIME type issue + authentication blocking)
-- Manifest (site.webmanifest) returns 401 Unauthorized (authentication blocking)
-
-## Steps to Fix
-
-- [x] Update vercel.json with proper headers for PWA files
-- [x] Commit changes including sw.js move to public folder
-- [x] Deploy to Vercel and test PWA functionality
-
-## Files to Edit
-
-- vercel.json: Add headers and rewrites for sw.js and site.webmanifest
-
-## Summary
-
-Updated vercel.json with:
-
-- Proper Content-Type headers for sw.js (application/javascript) and site.webmanifest (application/manifest+json)
-- Service-Worker-Allowed header for sw.js
-- Cache-Control headers for static assets
-- Updated rewrites to exclude PWA files from SPA routing
-
-Changes committed and pushed to main branch. Vercel should automatically deploy the fixes.
+- [x] Update AccountPage.tsx with improved error handling and navigation fixes
+- [x] Create AuthCallbackHandler.tsx to handle OAuth redirects
+- [x] Update AuthContext.tsx with better OAuth state management
+- [x] Update ProtectedRoute.tsx with proper loading states
+- [x] Update App.tsx routing to include new components and protected routes
+- [ ] Test account page functionality
+- [ ] Git add, commit, and push changes
