@@ -1,6 +1,6 @@
 import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';
 import { leadsService } from '../services/leadsService';
-import { useUI } from '../contexts/UIContextDefinitions;
+import { useUI } from '../contexts/UIContextDefinitions';
 import { Lead, Database } from '../types';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';

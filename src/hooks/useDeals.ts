@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './useAuth';
-import { useUI } from '../contexts/UIContextDefinitions;
+import { useUI } from '../contexts/UIContextDefinitions';
 import { dealsService } from '../services/dealsService';
 import { Database, Deal } from '../types';
 import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';

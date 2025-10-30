@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { salesCycleService } from '../services/salesCycleService';
 import { useAuth } from './useAuth';
 import { Database } from '../types';
-import { useUI } from '../contexts/UIContextDefinitions;
+import { useUI } from '../contexts/UIContextDefinitions';
 
 type SalesCycleUpdate = Partial<
   Database['public']['Tables']['sales_cycles']['Row']

@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userService } from '../services/userService';
 import { useAuth } from '../hooks/useAuth';
 import { Database } from '../types';
-import { useUI } from '../contexts/UIContextDefinitions;
+import { useUI } from '../contexts/UIContextDefinitions';
 
 type UserProfileUpdate =
   Database['public']['Tables']['user_profiles']['Update'];

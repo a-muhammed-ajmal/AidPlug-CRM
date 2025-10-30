@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';
 import { tasksService } from '../services/tasksService';
-import { useUI } from '../contexts/UIContextDefinitions;
+import { useUI } from '../contexts/UIContextDefinitions';
 import { Task, Database } from '../types';
 import { useAuth } from './useAuth';
 
