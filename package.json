@@ -41,7 +41,11 @@
     "postcss": "^8.4.40",
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.7",
+<<<<<<< HEAD
     "typescript": "^5.9.3",
+=======
+    "typescript": "^5.5.4",
+>>>>>>> 426c8a46d0b0378dbcdbb2c2fa063f63526b5d68
     "vite": "^5.3.5"
   },
   "lint-staged": {

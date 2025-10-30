@@ -12,6 +12,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   updateUserPassword: (newPassword: string) => Promise<void>;
 }
+
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -147,5 +148,3 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
-
