@@ -43,6 +43,8 @@ const Avatar = ({ name }: { name: string }) => {
 interface DealCardProps {
   deal: Deal;
   onView: (deal: Deal) => void;
+  onEdit: (deal: Deal) => void;
+  onDelete: (deal: Deal) => void;
 }
 
 const WhatsAppIcon = () => (
