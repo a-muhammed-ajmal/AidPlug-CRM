@@ -15,7 +15,6 @@ import {
   Briefcase,
   MapPin,
   Calendar,
-  CheckCircle,
   Hash,
   Globe,
   Users as GenderIcon,
@@ -51,7 +50,7 @@ const Section = ({
     <h4 className="text-sm font-semibold text-gray-800 border-b pb-2 mb-4">
       {title}
     </h4>
-    <div className="space-y-4">{children}</div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>
   </div>
 );
 
@@ -161,31 +160,19 @@ const ClientDetailsModal = ({
           <Section
             title="Personal & Contact Details"
             children={
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+              <>
+                <DetailItem label="Mobile" value={client.phone} icon={Phone} />
+                <DetailItem label="Email" value={client.email} icon={Mail} />
                 <DetailItem
-                  label="Mobile Number"
-                  value={client.phone}
-                  icon={Phone}
-                />
-                <DetailItem
-                  label="WhatsApp Number"
-                  value={client.whatsapp_number}
-                  icon={Phone}
-                />
-                <DetailItem
-                  label="Email Address"
-                  value={client.email}
+                  label="Official Email"
+                  value={client.official_email}
                   icon={Mail}
                 />
                 <DetailItem
                   label="Date of Birth"
                   value={
                     client.dob
-                      ? new Date(client.dob).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                        })
+                      ? new Date(client.dob).toLocaleDateString()
                       : null
                   }
                   icon={Calendar}
@@ -200,47 +187,37 @@ const ClientDetailsModal = ({
                   value={client.nationality}
                   icon={Globe}
                 />
-              </div>
-            }
-          />
-          <Section
-            title="Identification & Residency"
-            children={
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <DetailItem
-                  label="Emirates ID"
-                  value={client.emirates_id}
-                  icon={Hash}
-                />
-                <DetailItem
-                  label="Passport"
-                  value={client.passport}
-                  icon={Hash}
-                />
                 <DetailItem
                   label="Emirate"
                   value={client.emirate}
                   icon={MapPin}
                 />
-                <DetailItem
-                  label="Visa Status"
-                  value={client.visa_status}
-                  icon={CheckCircle}
-                />
-              </div>
+              </>
             }
           />
           <Section
-            title="Employment Details"
+            title="Identification"
             children={
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+              <>
                 <DetailItem
-                  label="Employment Status"
-                  value={client.employment_status}
-                  icon={EmploymentIcon}
+                  label="EID Number"
+                  value={client.emirates_id}
+                  icon={Hash}
                 />
                 <DetailItem
-                  label="Company"
+                  label="Passport Number"
+                  value={client.passport}
+                  icon={Hash}
+                />
+              </>
+            }
+          />
+          <Section
+            title="Employment & Financial Details"
+            children={
+              <>
+                <DetailItem
+                  label="Company Name"
                   value={client.company_name}
                   icon={Building}
                 />
@@ -250,41 +227,35 @@ const ClientDetailsModal = ({
                   icon={Briefcase}
                 />
                 <DetailItem
-                  label="Monthly Salary (AED)"
-                  value={client.monthly_salary?.toLocaleString() || null}
+                  label="Salary"
+                  value={
+                    client.monthly_salary
+                      ? `AED ${client.monthly_salary.toLocaleString()}`
+                      : null
+                  }
                   icon={DollarSign}
                 />
                 <DetailItem
-                  label="Salary Transferred to"
+                  label="Salary Bank"
                   value={client.salary_transferred_to}
                   icon={Landmark}
                 />
-                <DetailItem
-                  label="Client Since"
-                  value={
-                    client.client_since
-                      ? new Date(client.client_since).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                        })
-                      : null
-                  }
-                  icon={Calendar}
-                />
-              </div>
-            }
-          />
-          <Section
-            title="Financial & Risk Details"
-            children={
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <DetailItem
                   label="AECB Score"
                   value={client.aecb_score}
                   icon={EmploymentIcon}
                 />
-              </div>
+                <DetailItem
+                  label="Company Landline"
+                  value={client.company_landline}
+                  icon={Phone}
+                />
+                <DetailItem
+                  label="Company Website"
+                  value={client.company_website}
+                  icon={Globe}
+                />
+              </>
             }
           />
         </main>

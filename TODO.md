@@ -1,11 +1,10 @@
-# TODO: Update Tasks Components and Types, Add RLS Policies
+# Clients Components and Database Schema Update
 
-## Steps to Complete
+## Tasks
 
-- [x] Review current task components (AddTaskModal.tsx, TaskCard.tsx, TasksPage.tsx)
-- [x] Review current types in src/types.ts
-- [x] Review existing RLS policies in tasks_rls_policies.sql
-- [x] Identify what updates are needed based on user requirements
-- [x] Implement the necessary changes: Update task components with provided code, change dashboard quick action to "Add Task" opening modal, confirm Supabase columns and policies
-- [x] Test the changes: Build successful
-- [x] Git push: Pushed to remote successfully
+- [x] Update ClientsPage.tsx with ClientDetailsModal component
+- [x] Update ClientCard.tsx to match provided code
+- [x] Update AddClientModal.tsx to match provided code
+- [x] Create remove_unused_clients_columns.sql to drop unused columns
+- [x] Create clients_rls_policies.sql for RLS policies
+- [ ] Git add, commit, push changes

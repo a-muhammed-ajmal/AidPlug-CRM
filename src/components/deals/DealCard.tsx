@@ -1,23 +1,48 @@
-import {
-  Briefcase,
-  Building,
-  Calendar,
-  DollarSign,
-  Edit3,
-  Mail,
-  MoreVertical,
-  Phone,
-  Trash2
-} from 'lucide-react';
 import React from 'react';
+import { Phone, Mail, Info, Building, Briefcase } from 'lucide-react';
 import { Deal } from '../../types';
-import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
+
+const getInitials = (name: string) => {
+  if (!name) return '?';
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+};
+
+const Avatar = ({ name }: { name: string }) => {
+  const initials = getInitials(name);
+  const hashCode = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+  };
+  const colors = [
+    'bg-blue-100 text-blue-800',
+    'bg-purple-100 text-purple-800',
+    'bg-green-100 text-green-800',
+    'bg-yellow-100 text-yellow-800',
+    'bg-red-100 text-red-800',
+    'bg-indigo-100 text-indigo-800',
+  ];
+  const color = colors[Math.abs(hashCode(name)) % colors.length];
+
+  return (
+    <div
+      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${color} flex-shrink-0`}
+    >
+      {initials}
+    </div>
+  );
+};
 
 interface DealCardProps {
   deal: Deal;
   onView: (deal: Deal) => void;
-  onEdit: (deal: Deal) => void;
-  onDelete: (deal: Deal) => void;
 }
 
 const WhatsAppIcon = () => (
@@ -32,135 +57,95 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
-const DealCard = React.memo(
-  ({ deal, onView, onEdit, onDelete }: DealCardProps) => {
-    const handleActionClick = (e: React.MouseEvent, action: () => void) => {
-      e.stopPropagation();
-      action();
-    };
+const DealCard = React.memo(({ deal, onView }: DealCardProps) => {
+  const handleActionClick = (e: React.MouseEvent, action: () => void) => {
+    e.stopPropagation();
+    action();
+  };
 
-    const handleCall = () => {
-      if (deal.mobile_number)
-        window.location.href = `tel:${deal.mobile_number.replace(/\s/g, '')}`;
-    };
-    const handleEmail = () => {
-      if (deal.email_address)
-        window.location.href = `mailto:${deal.email_address}`;
-    };
-    const handleWhatsApp = () => {
-      if (deal.whatsapp_number) {
-        const whatsappNumber = deal.whatsapp_number.replace(/[^0-9]/g, '');
-        window.open(`https://wa.me/${whatsappNumber}`, '_blank');
-      }
-    };
+  const handleCall = () => {
+    if (deal.mobile_number)
+      window.location.href = `tel:${deal.mobile_number.replace(/\s/g, '')}`;
+  };
+  const handleEmail = () => {
+    if (deal.email_address)
+      window.location.href = `mailto:${deal.email_address}`;
+  };
+  const handleWhatsApp = () => {
+    if (deal.whatsapp_number) {
+      const whatsappNumber = deal.whatsapp_number.replace(/[^0-9]/g, '');
+      window.open(`https://wa.me/${whatsappNumber}`, '_blank');
+    }
+  };
 
-    return (
-      <div
-        onClick={() => onView(deal)}
-        className="bg-white rounded-lg shadow-sm p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer active:scale-95"
-      >
-        <div className="flex justify-between items-start mb-3">
-          <div className="flex-1 pr-2">
-            <h4 className="font-semibold text-gray-800">{deal.client_name}</h4>
-            <p
-              className="text-sm text-gray-600 mt-1 truncate"
-              title={deal.title}
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-3 border border-gray-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 active:scale-98">
+      <div className="flex justify-between items-start mb-2">
+        <div className="flex items-center space-x-3 flex-1 min-w-0">
+          <Avatar name={deal.client_name} />
+          <div className="flex-1 min-w-0">
+            <h4
+              className="font-bold text-gray-900 truncate"
+              title={deal.client_name}
             >
-              {deal.title}
+              {deal.client_name}
+            </h4>
+            <p
+              className="text-xs text-gray-500 truncate"
+              title={deal.company_name || 'N/A'}
+            >
+              {deal.company_name || 'No Company'}
             </p>
           </div>
-          <DropdownMenu
-            trigger={<MoreVertical className="w-4 h-4 text-gray-500" />}
-            children={
-              <>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(deal);
-                  }}
-                  icon={<Edit3 className="w-4 h-4 mr-2" />}
-                  children="Edit"
-                />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(deal);
-                  }}
-                  icon={<Trash2 className="w-4 h-4 mr-2" />}
-                  className="text-red-600"
-                  children="Delete"
-                />
-              </>
-            }
-          />
         </div>
+        <button
+          onClick={(e) => handleActionClick(e, () => onView(deal))}
+          className="p-1 -mr-1 rounded-full hover:bg-gray-100"
+        >
+          <Info className="w-5 h-5 text-gray-500" />
+        </button>
+      </div>
 
-        <div className="space-y-2 text-sm border-t pt-3">
-          <div className="flex items-center space-x-2 text-gray-600">
-            <Building className="w-3.5 h-3.5 flex-shrink-0" />
-            <span
-              className="truncate"
-              title={`${deal.designation} at ${deal.company_name}`}
-            >
-              {deal.designation} at {deal.company_name}
-            </span>
-          </div>
-          <div className="flex items-center space-x-2 text-gray-600">
-            <DollarSign className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="font-medium">
-              AED {deal.monthly_salary?.toLocaleString() || 'N/A'}
-            </span>
-          </div>
-          <div className="flex items-center space-x-2 text-gray-600">
-            <Briefcase className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="truncate" title={deal.product || undefined}>
-              {deal.product}
-            </span>
-          </div>
-          <div className="flex items-center space-x-2 text-gray-500">
-            <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-            <span>
-              Submitted:{' '}
-              {new Date(deal.created_at || Date.now()).toLocaleDateString(
-                'en-GB',
-                {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                }
-              )}
-            </span>
-          </div>
+      <div className="space-y-2 text-sm text-gray-700 my-3 border-t border-gray-100 pt-3">
+        <div className="flex items-center text-xs">
+          <Building className="w-3.5 h-3.5 mr-2 text-gray-400 flex-shrink-0" />
+          <span className="truncate" title={deal.bank_applying || ''}>
+            {deal.bank_applying || 'N/A'}
+          </span>
         </div>
-
-        <div className="border-t border-gray-100 pt-3 mt-3">
-          <div className="grid grid-cols-3 gap-1">
-            <button
-              onClick={(e) => handleActionClick(e, handleCall)}
-              disabled={!deal.mobile_number}
-              className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Phone className="w-3.5 h-3.5 mr-1.5" /> Call
-            </button>
-            <button
-              onClick={(e) => handleActionClick(e, handleWhatsApp)}
-              disabled={!deal.whatsapp_number}
-              className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <WhatsAppIcon /> <span className="ml-1.5">WhatsApp</span>
-            </button>
-            <button
-              onClick={(e) => handleActionClick(e, handleEmail)}
-              disabled={!deal.email_address}
-              className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Mail className="w-3.5 h-3.5 mr-1.5" /> Email
-            </button>
-          </div>
+        <div className="flex items-center text-xs">
+          <Briefcase className="w-3.5 h-3.5 mr-2 text-gray-400 flex-shrink-0" />
+          <span className="truncate" title={deal.product || ''}>
+            {deal.product || 'N/A'}
+          </span>
         </div>
       </div>
-    );
-  }
-);
+
+      <div className="grid grid-cols-3 gap-1">
+        <button
+          onClick={(e) => handleActionClick(e, handleCall)}
+          disabled={!deal.mobile_number}
+          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Phone className="w-3.5 h-3.5 mr-1.5" /> Call
+        </button>
+        <button
+          onClick={(e) => handleActionClick(e, handleWhatsApp)}
+          disabled={!deal.whatsapp_number}
+          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <WhatsAppIcon /> <span className="ml-1.5">WhatsApp</span>
+        </button>
+        <button
+          onClick={(e) => handleActionClick(e, handleEmail)}
+          disabled={!deal.email_address}
+          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Mail className="w-3.5 h-3.5 mr-1.5" /> Email
+        </button>
+      </div>
+    </div>
+  );
+});
 
 export default DealCard;
