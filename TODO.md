@@ -7,5 +7,5 @@
 - [x] Update AuthContext.tsx with better OAuth state management
 - [x] Update ProtectedRoute.tsx with proper loading states
 - [x] Update App.tsx routing to include new components and protected routes
-- [ ] Test account page functionality
-- [ ] Git add, commit, and push changes
+- [x] Test account page functionality
+- [x] Git add, commit, and push changes
