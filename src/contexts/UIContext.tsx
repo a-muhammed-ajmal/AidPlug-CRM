@@ -1,40 +1,12 @@
 import {
-  createContext,
-  useContext,
   useState,
   ReactNode,
   useCallback,
   useEffect,
   useMemo,
 } from 'react';
-import { useAuth } from './AuthContext';
-
-// EXPORTED so other files can use it
-export interface Notification {
-  id: number;
-  title: string;
-  message: string;
-  time: string;
-  unread: boolean;
-}
-
-// EXPORTED so other files can use it
-export interface Activity {
-  id: string;
-  type:
-    | 'lead_add'
-    | 'lead_update'
-    | 'lead_delete'
-    | 'lead_convert'
-    | 'client_add'
-    | 'deal_add'
-    | 'deal_stage_update'
-    | 'deal_delete'
-    | 'task_add'
-    | 'task_complete';
-  message: string;
-  timestamp: string;
-}
+import { useAuth } from '../hooks/useAuth';
+import { UIContext, Notification, Activity } from './UIContextDefinitions';
 
 interface ConfirmationState {
   isOpen: boolean;
@@ -43,37 +15,6 @@ interface ConfirmationState {
   onConfirm: () => void;
   onCancel: () => void;
 }
-
-interface UIContextType {
-  title: string;
-  setTitle: (title: string) => void;
-  confirmation: ConfirmationState;
-  showConfirmation: (
-    title: string,
-    message: string,
-    onConfirm: () => void
-  ) => void;
-  hideConfirmation: () => void;
-  notifications: Notification[];
-  addNotification: (title: string, message: string) => void;
-  dismissNotification: (id: number) => void;
-  clearAllNotifications: () => void;
-  showNotifications: boolean;
-  setShowNotifications: (show: boolean) => void;
-  activities: Activity[];
-  logActivity: (type: Activity['type'], message: string) => void;
-}
-
-const UIContext = createContext<UIContextType | undefined>(undefined);
-
-// EXPORTED so other files can use it
-export const useUI = () => {
-  const context = useContext(UIContext);
-  if (!context) {
-    throw new Error('useUI must be used within a UIProvider');
-  }
-  return context;
-};
 
 const MAX_ACTIVITIES = 30;
 
@@ -156,33 +97,33 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
     setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
   }, []);
 
-  const logActivity = useCallback((type: Activity['type'], message: string) => {
-    const storageKey = getActivityStorageKey();
-    if (!storageKey) return; // Don't log if no user
+  const logActivity = useCallback(
+    (type: Activity['type'], message: string) => {
+      const storageKey = getActivityStorageKey();
+      if (!storageKey) return; // Don't log if no user
 
-    const newActivity: Activity = {
-      id: `${Date.now()}-${Math.random()}`,
-      type,
-      message,
-      timestamp: new Date().toISOString(),
-    };
+      const newActivity: Activity = {
+        id: `${Date.now()}-${Math.random()}`,
+        type,
+        message,
+        timestamp: new Date().toISOString(),
+      };
 
-    setActivities((prevActivities) => {
-      const updatedActivities = [newActivity, ...prevActivities].slice(
-        0,
-        MAX_ACTIVITIES
-      );
-      try {
-        localStorage.setItem(
-          storageKey,
-          JSON.stringify(updatedActivities)
+      setActivities((prevActivities) => {
+        const updatedActivities = [newActivity, ...prevActivities].slice(
+          0,
+          MAX_ACTIVITIES
         );
-      } catch (error) {
-        console.error('Failed to save activities to localStorage', error);
-      }
-      return updatedActivities;
-    });
-  }, [getActivityStorageKey]);
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(updatedActivities));
+        } catch (error) {
+          console.error('Failed to save activities to localStorage', error);
+        }
+        return updatedActivities;
+      });
+    },
+    [getActivityStorageKey]
+  );
 
   const value = useMemo(
     () => ({

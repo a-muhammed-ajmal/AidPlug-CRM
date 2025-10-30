@@ -6,7 +6,7 @@ import AddTaskModal from './AddTaskModal';
 import EmptyState from '../common/EmptyState';
 import { Task } from '../../types';
 import SkeletonLoader from '../common/SkeletonLoader';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import { useLocation } from 'react-router-dom';
 
 type FilterOption = 'all' | 'today' | 'pending' | 'completed';

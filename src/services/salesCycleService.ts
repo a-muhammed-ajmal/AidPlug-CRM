@@ -60,7 +60,9 @@ export const salesCycleService = {
         return data;
       } else {
         // No existing record and incomplete data, throw error
-        throw new Error('Cannot create sales cycle without both start and end dates');
+        throw new Error(
+          'Cannot create sales cycle without both start and end dates'
+        );
       }
     }
   },

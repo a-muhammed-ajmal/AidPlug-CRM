@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '../contexts/AuthContext';
-import { useUI } from '../contexts/UIContext';
+import { useAuth } from './useAuth';
+import { useUI } from '../contexts/UIContextDefinitions;
 import { dealsService } from '../services/dealsService';
 import { Database, Deal } from '../types';
 import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';
@@ -8,8 +8,11 @@ import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';
 type DealInsert = Database['public']['Tables']['deals']['Insert'];
 type DealUpdate = Database['public']['Tables']['deals']['Update'];
 
-const { useGetAll, useCreateMutation, useUpdateMutation } =
-  createCrudHooks<Deal, DealInsert, DealUpdate>('deals', dealsService);
+const { useGetAll, useCreateMutation, useUpdateMutation } = createCrudHooks<
+  Deal,
+  DealInsert,
+  DealUpdate
+>('deals', dealsService);
 
 const useDeleteMutation = createDeleteMutationHook<Deal>('deals', dealsService);
 

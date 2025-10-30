@@ -1,7 +1,7 @@
 import { ChevronRight, CreditCard } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 
 // In a real app, this would be fetched based on the bankSlug
 const productTypes = [

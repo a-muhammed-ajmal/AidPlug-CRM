@@ -1,7 +1,7 @@
 import { Filter, Plus, Search, Users } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import { useLeads } from '../../hooks/useLeads';
 import { Lead } from '../../types';
 import EmptyState from '../common/EmptyState';

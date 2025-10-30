@@ -4,7 +4,7 @@ import {
   CreditCard,
   DollarSign,
   Home,
-  User
+  User,
 } from 'lucide-react';
 
 export const mockProducts = [

@@ -9,8 +9,8 @@ import {
   Camera,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useUI } from '../../contexts/UIContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import { supabase } from '../../lib/supabase';
 
@@ -42,9 +42,6 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
-
-
-
   // Password change state
   const [passwordData, setPasswordData] = useState({
     password: '',
@@ -68,8 +65,6 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
       setAvatarPreview(profile.photo_url || null);
     }
   }, [profile]);
-
-
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -107,9 +102,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
         throw uploadError;
       }
 
-      const { data } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
 
       setAvatarPreview(data.publicUrl);
     } catch (error) {
@@ -158,13 +151,14 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
       addNotification('Success', 'Your password has been updated.');
       setPasswordData({ password: '', confirmPassword: '' });
     } catch (err: unknown) {
-      addNotification('Error', err instanceof Error ? err.message : 'Failed to update password.');
+      addNotification(
+        'Error',
+        err instanceof Error ? err.message : 'Failed to update password.'
+      );
     } finally {
       setChangingPassword(false);
     }
   };
-
-
 
   if (isLoading) {
     return (
@@ -362,7 +356,13 @@ const AccountModal: React.FC<AccountModalProps> = ({ onClose }) => {
               <div className="flex justify-between items-center p-4 border-t bg-gray-50 flex-shrink-0">
                 <button
                   type="button"
-                  onClick={() => showConfirmation('Sign Out', 'Are you sure you want to sign out?', signOut)}
+                  onClick={() =>
+                    showConfirmation(
+                      'Sign Out',
+                      'Are you sure you want to sign out?',
+                      signOut
+                    )
+                  }
                   className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 flex items-center"
                 >
                   <LogOut className="w-4 h-4 mr-2" /> Sign Out

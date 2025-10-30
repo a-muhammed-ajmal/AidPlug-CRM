@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, KeyRound } from 'lucide-react';
 import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator';
@@ -36,8 +36,8 @@ export default function ResetPasswordPage() {
       navigate('/login', {
         state: { message: 'Your password has been reset. Please sign in.' },
       });
-    } catch (err: any) {
-      setError(err.message || 'Failed to update password');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to update password');
     } finally {
       setLoading(false);
     }

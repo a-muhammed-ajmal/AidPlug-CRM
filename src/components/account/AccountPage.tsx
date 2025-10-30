@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Edit3, User, LogOut, KeyRound, Eye, EyeOff, X } from 'lucide-react';
 import { useUserProfile } from '../../hooks/useUserProfile';
-import { useAuth } from '../../contexts/AuthContext';
-import { useUI } from '../../contexts/UIContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import PasswordStrengthIndicator from '../common/PasswordStrengthIndicator';
 import SkeletonLoader from '../common/SkeletonLoader';
 

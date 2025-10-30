@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Upload, CheckCircle } from 'lucide-react';
 import { useUserProfile } from '../../hooks/useUserProfile';
-import { useAuth } from '../../contexts/AuthContext';
-import { useUI } from '../../contexts/UIContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import { supabase } from '../../lib/supabase';
 import SkeletonLoader from '../common/SkeletonLoader';
 
@@ -77,10 +77,11 @@ export default function EditProfilePage() {
           .getPublicUrl(filePath);
 
         newAvatarUrl = urlData.publicUrl;
-      } catch (err: any) {
+      } catch (err: unknown) {
         addNotification(
           'Upload Failed',
-          err.message || 'An error occurred while uploading the avatar.'
+          (err as Error).message ||
+            'An error occurred while uploading the avatar.'
         );
         setIsSaving(false);
         return; // Stop execution if upload fails
@@ -105,7 +106,7 @@ export default function EditProfilePage() {
         );
         navigate('/account');
       },
-      onError: (err: any) => {
+      onError: (err: Error) => {
         addNotification(
           'Save Failed',
           err.message || 'An error occurred while saving your profile.'

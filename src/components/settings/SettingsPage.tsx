@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useUserPreferences } from '../../hooks/useUserPreferences';
 import { useSalesCycle } from '../../hooks/useSalesCycle';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import SkeletonLoader from '../common/SkeletonLoader';
 
 const Toggle = ({

@@ -6,14 +6,20 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signIn: (email: string, password: string, remember?: boolean) => Promise<void>;
+  signIn: (
+    email: string,
+    password: string,
+    remember?: boolean
+  ) => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateUserPassword: (newPassword: string) => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);

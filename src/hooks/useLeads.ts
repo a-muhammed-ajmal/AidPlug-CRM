@@ -1,6 +1,6 @@
 import { createCrudHooks, createDeleteMutationHook } from './createCrudHooks';
 import { leadsService } from '../services/leadsService';
-import { useUI } from '../contexts/UIContext';
+import { useUI } from '../contexts/UIContextDefinitions;
 import { Lead, Database } from '../types';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
@@ -8,8 +8,11 @@ import { supabase } from '../lib/supabase';
 type LeadInsert = Database['public']['Tables']['leads']['Insert'];
 type LeadUpdate = Database['public']['Tables']['leads']['Update'];
 
-const { useCreateMutation, useUpdateMutation } =
-  createCrudHooks<Lead, LeadInsert, LeadUpdate>('leads', leadsService);
+const { useCreateMutation, useUpdateMutation } = createCrudHooks<
+  Lead,
+  LeadInsert,
+  LeadUpdate
+>('leads', leadsService);
 
 const useDeleteMutation = createDeleteMutationHook<Lead>('leads', leadsService);
 
@@ -22,7 +25,8 @@ export function useLeads() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('leads')
-        .select(`
+        .select(
+          `
           id,
           created_at,
           full_name,
@@ -46,7 +50,8 @@ export function useLeads() {
           emi_amount,
           applied_recently,
           documents_available
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       if (error) throw new Error(error.message);

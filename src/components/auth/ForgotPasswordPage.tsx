@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Mail } from 'lucide-react';
 
@@ -22,8 +22,8 @@ export default function ForgotPasswordPage() {
       setMessage(
         `If an account exists for ${email}, you will receive an email with password reset instructions.`
       );
-    } catch (err: any) {
-      setError(err.message || 'Failed to send reset email');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to send reset email');
     } finally {
       setLoading(false);
     }

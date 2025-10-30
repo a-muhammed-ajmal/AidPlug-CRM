@@ -9,18 +9,17 @@ import {
   Plus,
   Search,
   TrendingUp,
-  X
+  X,
 } from 'lucide-react';
 import React, {
-  ComponentType,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { useUI } from '../../contexts/UIContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import { useDeals } from '../../hooks/useDeals';
 import {
   EIB_CREDIT_CARDS,
@@ -72,7 +71,7 @@ const DetailItem = ({
   label,
   value,
 }: {
-  icon: ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string | number | null;
 }) => (
@@ -187,7 +186,7 @@ function DealModal({
     if (!newProducts.includes(formData.product)) {
       setFormData((prev) => ({ ...prev, product: newProducts[0] || '' }));
     }
-  }, [formData.bank_applying, formData.product_type]);
+  }, [formData.bank_applying, formData.product_type, formData.product]);
 
   useEffect(() => {
     if (initialData) {

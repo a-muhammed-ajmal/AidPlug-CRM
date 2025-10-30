@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -31,8 +31,8 @@ export default function SignupPage() {
       setMessage(
         'Please check your email and click the confirmation link to activate your account.'
       );
-    } catch (err: any) {
-      setError(err.message || 'Failed to create account');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to create account');
     } finally {
       setLoading(false);
     }
@@ -66,7 +66,7 @@ export default function SignupPage() {
         }
         setGoogleLoading(false);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('An unexpected error occurred. Please try again.');
       setGoogleLoading(false);
     }

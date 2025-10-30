@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { useClients } from '../../hooks/useClients';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Client } from '../../types';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import {
   UAE_EMIRATES,
   UAE_BANK_NAMES,

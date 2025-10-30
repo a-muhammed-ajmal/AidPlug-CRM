@@ -1,4 +1,4 @@
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 
 const ConfirmationModal = () => {
   const { confirmation } = useUI();

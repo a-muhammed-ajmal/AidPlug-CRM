@@ -1,5 +1,6 @@
 import { X } from 'lucide-react';
-import { useUI, Notification } from '../../contexts/UIContext'; // Corrected import path
+import { useUI } from '../../contexts/UIContextDefinitions';
+import { Notification } from '../../contexts/UIContextDefinitions';
 
 export default function NotificationPanel() {
   const {

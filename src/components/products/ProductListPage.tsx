@@ -1,7 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import { EIB_CREDIT_CARDS } from '../../lib/constants';
 import { productDetailsData } from '../../lib/productData';
 

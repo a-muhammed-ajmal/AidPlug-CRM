@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Task } from '../../types';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 
 interface AddTaskModalProps {
   onClose: () => void;

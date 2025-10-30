@@ -1,7 +1,7 @@
 import { Building, ChevronRight } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 
 const banks = [
   {

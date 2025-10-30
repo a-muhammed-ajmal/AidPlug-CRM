@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Trash2, Save } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { Lead } from '../../types';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 
 interface LeadDetailModalProps {
   lead: Lead | null;
@@ -37,10 +37,10 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
         type === 'checkbox'
           ? checked
           : type === 'number'
-          ? value === ''
-            ? null
-            : Number(value)
-          : value,
+            ? value === ''
+              ? null
+              : Number(value)
+            : value,
     }));
   };
 
@@ -60,7 +60,10 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
       { id: lead.id, updates: formData },
       {
         onSuccess: () => {
-          addNotification('Lead Updated', 'Lead details have been saved successfully.');
+          addNotification(
+            'Lead Updated',
+            'Lead details have been saved successfully.'
+          );
           onClose();
         },
         onError: (error: Error) => {
@@ -79,7 +82,10 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
       () => {
         deleteLead.mutate(lead.id, {
           onSuccess: () => {
-            addNotification('Lead Deleted', 'Lead has been deleted successfully.');
+            addNotification(
+              'Lead Deleted',
+              'Lead has been deleted successfully.'
+            );
             onClose();
           },
           onError: (error: Error) => {
@@ -128,7 +134,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
               </legend>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Name</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Name
+                  </label>
                   <input
                     type="text"
                     name="full_name"
@@ -138,7 +146,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Company</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Company
+                  </label>
                   <input
                     type="text"
                     name="company_name"
@@ -148,7 +158,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Mobile</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Mobile
+                  </label>
                   <input
                     type="tel"
                     name="phone"
@@ -158,7 +170,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Location</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Location
+                  </label>
                   <input
                     type="text"
                     name="location"
@@ -177,7 +191,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
               </legend>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Bank Applying</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Bank Applying
+                  </label>
                   <input
                     type="text"
                     name="bank_name"
@@ -187,7 +203,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Product Type</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Product Type
+                  </label>
                   <input
                     type="text"
                     name="product_type"
@@ -197,7 +215,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-1">Specific Product</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Specific Product
+                  </label>
                   <input
                     type="text"
                     name="product"
@@ -216,7 +236,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
               </legend>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Salary (AED)</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Salary (AED)
+                  </label>
                   <input
                     type="number"
                     name="monthly_salary"
@@ -226,7 +248,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Salary getting from (months)</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Salary getting from (months)
+                  </label>
                   <input
                     type="number"
                     name="salary_months"
@@ -236,18 +260,26 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-1">Any variations in salary?</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Any variations in salary?
+                  </label>
                   <select
                     name="salary_variations"
                     value={formData.salary_variations ? 'yes' : 'no'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, salary_variations: e.target.value === 'yes' }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        salary_variations: e.target.value === 'yes',
+                      }))
+                    }
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1a68c7] focus:border-transparent"
                   >
                     <option value="no">No</option>
                     <option value="yes">Yes</option>
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
-                    If yes, last 3 months payslips are required to confirm the reason.
+                    If yes, last 3 months payslips are required to confirm the
+                    reason.
                   </p>
                 </div>
               </div>
@@ -260,11 +292,18 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
               </legend>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Already using credit cards?</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Already using credit cards?
+                  </label>
                   <select
                     name="existing_cards"
                     value={formData.existing_cards ? 'yes' : 'no'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, existing_cards: e.target.value === 'yes' }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        existing_cards: e.target.value === 'yes',
+                      }))
+                    }
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1a68c7] focus:border-transparent"
                   >
                     <option value="no">No</option>
@@ -272,7 +311,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">If yes, from how long?</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    If yes, from how long?
+                  </label>
                   <input
                     type="text"
                     name="cards_duration"
@@ -283,7 +324,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Total credit limit (AED)</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Total credit limit (AED)
+                  </label>
                   <input
                     type="number"
                     name="total_credit_limit"
@@ -293,11 +336,18 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Any EMI/Loan paying?</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Any EMI/Loan paying?
+                  </label>
                   <select
                     name="has_emi"
                     value={formData.has_emi ? 'yes' : 'no'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, has_emi: e.target.value === 'yes' }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        has_emi: e.target.value === 'yes',
+                      }))
+                    }
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1a68c7] focus:border-transparent"
                   >
                     <option value="no">No</option>
@@ -305,7 +355,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   </select>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-1">Total EMI amount (AED)</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Total EMI amount (AED)
+                  </label>
                   <input
                     type="number"
                     name="emi_amount"
@@ -330,7 +382,12 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   <select
                     name="applied_recently"
                     value={formData.applied_recently ? 'yes' : 'no'}
-                    onChange={(e) => setFormData(prev => ({ ...prev, applied_recently: e.target.value === 'yes' }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        applied_recently: e.target.value === 'yes',
+                      }))
+                    }
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1a68c7] focus:border-transparent"
                   >
                     <option value="no">No</option>
@@ -338,7 +395,9 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   </select>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-2">Documents Available?</label>
+                  <label className="block text-sm text-gray-600 mb-2">
+                    Documents Available?
+                  </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {[
                       'Emirates ID',
@@ -350,8 +409,12 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                       <label key={doc} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          checked={(formData.documents_available || []).includes(doc)}
-                          onChange={(e) => handleDocumentChange(doc, e.target.checked)}
+                          checked={(
+                            formData.documents_available || []
+                          ).includes(doc)}
+                          onChange={(e) =>
+                            handleDocumentChange(doc, e.target.checked)
+                          }
                           className="rounded border-gray-300 text-[#1a68c7] focus:ring-[#1a68c7]"
                         />
                         <span className="text-sm text-gray-700">{doc}</span>

@@ -26,7 +26,7 @@ import ClientCard from './ClientCard';
 import AddClientModal from './AddClientModal';
 import EmptyState from '../common/EmptyState';
 import { Client } from '../../types';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
 import SkeletonLoader from '../common/SkeletonLoader';
 

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { X, ChevronDown, Info } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { useDeals } from '../../hooks/useDeals';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Lead } from '../../types';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import {
   UAE_BANK_NAMES,
   EIB_CREDIT_CARDS,

@@ -16,7 +16,8 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUI, Activity } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
+import { Activity } from '../../contexts/UIContextDefinitions';
 import { useClients } from '../../hooks/useClients';
 import { useDeals } from '../../hooks/useDeals';
 import { useTasks } from '../../hooks/useTasks';
@@ -564,7 +565,7 @@ export default function Dashboard() {
         {activities.length > 0 ? (
           <div className="space-y-4">
             {activities
-              .filter((activity) => {
+              .filter((activity: Activity) => {
                 const activityDate = new Date(activity.timestamp);
                 const now = new Date();
                 const diffInHours =

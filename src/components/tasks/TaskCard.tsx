@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { Task } from '../../types';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
 
 interface TaskCardProps {

@@ -20,17 +20,20 @@ AidPlug CRM is a cutting-edge, mobile-first Progressive Web App (PWA) designed s
 ## ✨ Key Features
 
 ### Core Functionality
+
 - **Intelligent Dashboard:** Comprehensive overview of sales performance with real-time KPIs, pending tasks, and recent activity feeds.
 - **Advanced Lead Management:** Streamlined lead capture, qualification, and conversion workflows with powerful filtering and search capabilities.
 - **Comprehensive Client Profiles:** 360-degree client view with personal, contact, employment, and financial information in a structured, accessible format.
 - **Visual Deal Pipeline:** Interactive Kanban board for tracking sales progress through customizable stages from prospect to completion.
 
 ### Productivity Tools
+
 - **Task Management System:** Prioritized task creation, assignment, and tracking to maintain productivity and meet deadlines.
 - **Product Knowledge Base:** Detailed banking product catalog with features, benefits, pricing, and eligibility criteria for instant client consultations.
 - **Quick Actions:** One-click access to frequently used functions for rapid workflow execution.
 
 ### Security & Accessibility
+
 - **Secure Authentication:** Robust login with email/password and Google OAuth integration.
 - **Progressive Web App (PWA):** Installable, native app-like experience on any device with offline data access.
 - **Responsive Design:** Optimized for desktop, tablet, and mobile devices with consistent performance across platforms.
@@ -38,24 +41,26 @@ AidPlug CRM is a cutting-edge, mobile-first Progressive Web App (PWA) designed s
 ## 🛠️ Technology Stack
 
 ### Frontend Architecture
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| **Framework** | React 19 | Modern component-based UI development |
-| **Language** | TypeScript | Type-safe JavaScript with enhanced developer experience |
-| **Build Tool** | Vite | Fast development server and optimized production builds |
-| **Styling** | Tailwind CSS | Utility-first CSS framework for responsive design |
-| **Routing** | React Router | Client-side navigation and route management |
-| **Icons** | Lucide React | Consistent, scalable icon library |
-| **Forms** | React Hook Form & Zod | Performant form handling and schema validation |
+
+| Component      | Technology            | Purpose                                                 |
+| -------------- | --------------------- | ------------------------------------------------------- |
+| **Framework**  | React 19              | Modern component-based UI development                   |
+| **Language**   | TypeScript            | Type-safe JavaScript with enhanced developer experience |
+| **Build Tool** | Vite                  | Fast development server and optimized production builds |
+| **Styling**    | Tailwind CSS          | Utility-first CSS framework for responsive design       |
+| **Routing**    | React Router          | Client-side navigation and route management             |
+| **Icons**      | Lucide React          | Consistent, scalable icon library                       |
+| **Forms**      | React Hook Form & Zod | Performant form handling and schema validation          |
 
 ### Backend & Infrastructure
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| **Database** | Supabase PostgreSQL | Scalable relational database with real-time capabilities |
-| **Authentication** | Supabase Auth | Secure user authentication with OAuth support |
-| **File Storage** | Supabase Storage | Secure file upload and management for avatars |
-| **State Management** | TanStack Query | Efficient server state management, caching, and optimistic updates |
-| **Deployment** | Vercel | Global CDN deployment with automatic scaling and CI/CD |
+
+| Component            | Technology          | Purpose                                                            |
+| -------------------- | ------------------- | ------------------------------------------------------------------ |
+| **Database**         | Supabase PostgreSQL | Scalable relational database with real-time capabilities           |
+| **Authentication**   | Supabase Auth       | Secure user authentication with OAuth support                      |
+| **File Storage**     | Supabase Storage    | Secure file upload and management for avatars                      |
+| **State Management** | TanStack Query      | Efficient server state management, caching, and optimistic updates |
+| **Deployment**       | Vercel              | Global CDN deployment with automatic scaling and CI/CD             |
 
 ## 🚀 Quick Start Guide
 
@@ -72,6 +77,7 @@ Get AidPlug CRM up and running on your local machine in minutes.
 ### Installation Steps
 
 #### 1. Clone and Setup Project
+
 ```bash
 git clone https://github.com/a-muhammed-ajmal/AidPlug-CRM.git
 cd AidPlug-CRM
@@ -85,8 +91,8 @@ npm install
 2.  **Database Setup**: Navigate to **SQL Editor** in your new project and execute the entire contents of `db-optimizations.sql` to create the database schema.
 
 3.  **Authentication & Storage**:
-    *   Go to **Authentication > Providers** and enable **Google**.
-    *   Go to **Storage** and create a new **public** bucket named `avatars`.
+    - Go to **Authentication > Providers** and enable **Google**.
+    - Go to **Storage** and create a new **public** bucket named `avatars`.
 
 4.  **API Credentials**: Go to **Project Settings > API** and copy your **Project URL** and **anon public key**.
 
@@ -126,12 +132,12 @@ Access the application at **`http://localhost:3001`**.
 
 ## ⚙️ Available Scripts
 
--   `npm run dev`: Starts the development server with Hot Module Replacement.
--   `npm run build`: Type-checks and builds the app for production.
--   `npm run preview`: Serves the production build locally for testing.
--   `npm run lint`: Runs ESLint to find and fix code quality issues.
--   `npm run format`: Formats all files with Prettier.
--   `npm run typecheck`: Checks the entire project for TypeScript errors without building.
+- `npm run dev`: Starts the development server with Hot Module Replacement.
+- `npm run build`: Type-checks and builds the app for production.
+- `npm run preview`: Serves the production build locally for testing.
+- `npm run lint`: Runs ESLint to find and fix code quality issues.
+- `npm run format`: Formats all files with Prettier.
+- `npm run typecheck`: Checks the entire project for TypeScript errors without building.
 
 ## 📁 Project Architecture
 
@@ -200,8 +206,8 @@ Please ensure all linting checks and tests pass before submitting a pull request
 
 ## 📞 Support
 
--   **Bugs & Feature Requests**: [GitHub Issues](https://github.com/a-muhammed-ajmal/AidPlug-CRM/issues)
--   **General Questions**: [GitHub Discussions](https://github.com/a-muhammed-ajmal/AidPlug-CRM/discussions)
+- **Bugs & Feature Requests**: [GitHub Issues](https://github.com/a-muhammed-ajmal/AidPlug-CRM/issues)
+- **General Questions**: [GitHub Discussions](https://github.com/a-muhammed-ajmal/AidPlug-CRM/discussions)
 
 ## 📄 License
 

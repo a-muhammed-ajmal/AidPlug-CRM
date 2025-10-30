@@ -1,6 +1,7 @@
 import { Bell, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useUI, Notification } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
+import { Notification } from '../../contexts/UIContextDefinitions';
 
 interface DesktopHeaderProps {
   title: string;

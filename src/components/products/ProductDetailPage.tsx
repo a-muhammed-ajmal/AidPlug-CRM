@@ -14,7 +14,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import EmptyState from '../common/EmptyState';
-import { useUI } from '../../contexts/UIContext';
+import { useUI } from '../../contexts/UIContextDefinitions';
 
 const InfoSection = React.memo(
   ({

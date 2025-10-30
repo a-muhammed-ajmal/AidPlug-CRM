@@ -620,3 +620,28 @@ export interface BeforeInstallPromptEvent extends Event {
   }>;
   prompt(): Promise<void>;
 }
+
+export interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  time: string;
+  unread: boolean;
+}
+
+export interface Activity {
+  id: string;
+  type:
+    | 'lead_add'
+    | 'lead_update'
+    | 'lead_delete'
+    | 'lead_convert'
+    | 'client_add'
+    | 'deal_add'
+    | 'deal_stage_update'
+    | 'deal_delete'
+    | 'task_add'
+    | 'task_complete';
+  message: string;
+  timestamp: string;
+}
