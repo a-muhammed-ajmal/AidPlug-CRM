@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Upload, CheckCircle } from 'lucide-react';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import { useAuth } from '../../hooks/useAuth';
-import { useUI } from '../../contexts/UIContextDefinitions';
+import { useUI } from '../../hooks/useUI';
 import { supabase } from '../../lib/supabase';
 import SkeletonLoader from '../common/SkeletonLoader';
 

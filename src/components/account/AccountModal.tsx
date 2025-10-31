@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { useUI } from '../../contexts/UIContextDefinitions';
+import { useUI } from '../../hooks/useUI';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import { supabase } from '../../lib/supabase';
 
