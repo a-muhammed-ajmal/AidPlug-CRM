@@ -25,7 +25,7 @@ export default function LeadsPage() {
     setTitle('Leads');
   }, [setTitle]);
   const location = useLocation();
-  const { leads, isLoading, updateLead, deleteLead } = useLeads();
+  const { leads, isLoading } = useLeads();
   const [showAddModal, setShowAddModal] = useState(
     location.state?.showAddModal || false
   );
@@ -141,21 +141,6 @@ export default function LeadsPage() {
     setShowAddModal(true);
   };
 
-  const handleDeleteLead = (id: string) => {
-    deleteLead.mutate(id);
-  };
-
-  const handleStatusChange = (
-    id: string,
-    newStatus: Lead['qualification_status']
-  ) => {
-    updateLead.mutate({ id, updates: { qualification_status: newStatus } });
-  };
-
-  const handleConvertToDeal = (lead: Lead) => {
-    // Placeholder for conversion logic
-    console.log('Convert to deal:', lead);
-  };
 
   return (
     <div className="relative pb-20">
@@ -218,9 +203,6 @@ export default function LeadsPage() {
                 key={lead.id}
                 lead={lead}
                 onEdit={handleEditLead}
-                onDelete={handleDeleteLead}
-                onStatusChange={handleStatusChange}
-                onConvertToDeal={handleConvertToDeal}
               />
             ))
           ) : (

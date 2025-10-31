@@ -1,193 +1,153 @@
 import React from 'react';
-import {
-  User,
-  Building2,
-  DollarSign,
-  Briefcase,
-  CreditCard,
-  Edit,
-  TrendingUp,
-  Trash2,
-  Phone,
-  MessageCircle,
-  Mail,
-} from 'lucide-react';
+import { Phone, Mail, Building, Briefcase } from 'lucide-react';
 import { Lead } from '../../types';
+
+const getInitials = (name: string) => {
+  if (!name) return '?';
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+};
+
+const Avatar = ({ name }: { name: string }) => {
+  const initials = getInitials(name);
+  const hashCode = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+  };
+  const colors = [
+    'bg-blue-100 text-blue-800',
+    'bg-purple-100 text-purple-800',
+    'bg-green-100 text-green-800',
+    'bg-yellow-100 text-yellow-800',
+    'bg-red-100 text-red-800',
+    'bg-indigo-100 text-indigo-800',
+  ];
+  const color = colors[Math.abs(hashCode(name)) % colors.length];
+
+  return (
+    <div
+      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${color} flex-shrink-0`}
+    >
+      {initials}
+    </div>
+  );
+};
 
 interface LeadCardProps {
   lead: Lead;
   onEdit: (lead: Lead) => void;
-  onDelete: (id: string) => void;
-  onStatusChange: (id: string, newStatus: Lead['qualification_status']) => void;
-  onConvertToDeal: (lead: Lead) => void;
 }
 
-const LeadCard: React.FC<LeadCardProps> = ({
-  lead,
-  onEdit,
-  onDelete,
-  onStatusChange,
-  onConvertToDeal,
-}) => {
-  const getStatusInfo = (status: Lead['qualification_status']) => {
-    switch (status) {
-      case 'warm':
-        return {
-          color: 'bg-orange-500',
-          text: 'Warm',
-          ring: 'focus:ring-orange-500',
-          bgBorder: 'bg-orange-50 border-orange-300 text-orange-700',
-        };
-      case 'qualified':
-        return {
-          color: 'bg-blue-500',
-          text: 'Qualified',
-          ring: 'focus:ring-blue-500',
-          bgBorder: 'bg-blue-50 border-blue-300 text-blue-700',
-        };
-      case 'appointment_booked':
-        return {
-          color: 'bg-purple-500',
-          text: 'Appointment',
-          ring: 'focus:ring-purple-500',
-          bgBorder: 'bg-purple-50 border-purple-300 text-purple-700',
-        };
-      default:
-        return {
-          color: 'bg-gray-500',
-          text: 'N/A',
-          ring: 'focus:ring-gray-500',
-          bgBorder: 'bg-gray-50 border-gray-300 text-gray-700',
-        };
+const WhatsAppIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.903-.52-5.586-1.456l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.269.654 4.495 1.932 6.22l-1.023 3.744 3.845-1.004zm-3.837 1.387l.494.296c1.695 1.011 3.58 1.574 5.63 1.576 6.245 0 11.33-5.084 11.332-11.33.001-6.247-5.085-11.332-11.334-11.332-6.245 0-11.331 5.085-11.333 11.331.001 2.431.792 4.78 2.215 6.64l.43.586-1.24 4.545 4.66-1.219z" />
+  </svg>
+);
+
+const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
+  const handleActionClick = (e: React.MouseEvent, action: () => void) => {
+    e.stopPropagation();
+    action();
+  };
+
+  const handleCall = () => {
+    if (lead.phone)
+      window.location.href = `tel:${lead.phone.replace(/\s/g, '')}`;
+  };
+  const handleEmail = () => {
+    if (lead.email)
+      window.location.href = `mailto:${lead.email}`;
+  };
+  const handleWhatsApp = () => {
+    if (lead.phone) {
+      const whatsappNumber = lead.phone.replace(/[^0-9]/g, '');
+      window.open(`https://wa.me/${whatsappNumber}`, '_blank');
     }
   };
 
-  const statusInfo = getStatusInfo(lead.qualification_status);
-
-  const formatWhatsAppNumber = (mobile: string | null) => {
-    return mobile?.replace(/[^0-9]/g, '') || '';
-  };
-
   return (
-    <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 group">
-      <div className={`h-1.5 ${statusInfo.color}`}></div>
-
-      <div className="p-4">
-        <div className="mb-3">
-          <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
-            <User className="w-4 h-4 text-emerald-600" />
-            {lead.full_name}
-          </h3>
-          <div className="flex items-center gap-1.5 text-sm text-gray-600">
-            <Building2 className="w-3.5 h-3.5" />
-            <span>{lead.company_name}</span>
+    <div className="bg-white rounded-lg shadow-sm p-3 border border-gray-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 active:scale-98">
+      <div className="flex justify-between items-start mb-2">
+        <div className="flex items-center space-x-3 flex-1 min-w-0">
+          <Avatar name={lead.full_name} />
+          <div className="flex-1 min-w-0">
+            <h4
+              className="font-bold text-gray-900 truncate"
+              title={lead.full_name}
+            >
+              {lead.full_name}
+            </h4>
+            <p
+              className="text-xs text-gray-500 truncate"
+              title={lead.company_name || 'N/A'}
+            >
+              {lead.company_name || 'No Company'}
+            </p>
           </div>
         </div>
-
-        <div className="space-y-2 mb-3 pb-3 border-b border-gray-100">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500 flex items-center gap-1.5">
-              <DollarSign className="w-3.5 h-3.5" />
-              Salary
-            </span>
-            <span className="font-semibold text-gray-900">
-              AED {lead.monthly_salary?.toLocaleString() || 'N/A'}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500 flex items-center gap-1.5">
-              <Briefcase className="w-3.5 h-3.5" />
-              Bank
-            </span>
-            <span className="font-medium text-gray-900 text-xs">
-              {lead.bank_name}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500 flex items-center gap-1.5">
-              <CreditCard className="w-3.5 h-3.5" />
-              Product
-            </span>
-            <span className="font-medium text-gray-900 text-xs">
-              {lead.product}
-            </span>
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <label className="text-xs text-gray-500 mb-1 block">Status</label>
-          <select
-            value={lead.qualification_status || ''}
-            onChange={(e) =>
-              onStatusChange(
-                lead.id,
-                e.target.value as Lead['qualification_status']
-              )
-            }
-            className={`w-full px-3 py-2 text-sm font-medium rounded-lg border-2 transition-all focus:ring-2 ${statusInfo.bgBorder} ${statusInfo.ring}`}
-          >
-            <option value="warm">🔥 Warm</option>
-            <option value="qualified">✅ Qualified</option>
-            <option value="appointment_booked">📅 Appointment</option>
-          </select>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2 mb-3">
-          <a
-            href={`tel:${lead.phone}`}
-            className="flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition-all"
-            title="Call"
-          >
-            <Phone className="w-3.5 h-3.5" />
-            Call
-          </a>
-          <a
-            href={`https://wa.me/${formatWhatsAppNumber(lead.phone)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1.5 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition-all"
-            title="WhatsApp"
-          >
-            <MessageCircle className="w-3.5 h-3.5" />
-            WhatsApp
-          </a>
-          <a
-            href={`mailto:${lead.email}`}
-            className="flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-xs font-medium transition-all"
-            title="Email"
-          >
-            <Mail className="w-3.5 h-3.5" />
-            Email
-          </a>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={() => onEdit(lead)}
-            className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
-          >
-            <Edit className="w-3.5 h-3.5" />
-            Edit
-          </button>
-          <button
-            onClick={() => onConvertToDeal(lead)}
-            className="px-3 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
-          >
-            <TrendingUp className="w-3.5 h-3.5" />
-            To Deal
-          </button>
-        </div>
-
         <button
-          onClick={() => onDelete(lead.id)}
-          className="w-full mt-2 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded-lg transition-all flex items-center justify-center gap-1"
+          onClick={(e) => handleActionClick(e, () => onEdit(lead))}
+          className="p-1 -mr-1 rounded-full hover:bg-gray-100"
         >
-          <Trash2 className="w-3 h-3" />
-          Delete Lead
+          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="space-y-2 text-sm text-gray-700 my-3 border-t border-gray-100 pt-3">
+        <div className="flex items-center text-xs">
+          <Building className="w-3.5 h-3.5 mr-2 text-gray-400 flex-shrink-0" />
+          <span className="truncate" title={lead.bank_name || ''}>
+            {lead.bank_name || 'N/A'}
+          </span>
+        </div>
+        <div className="flex items-center text-xs">
+          <Briefcase className="w-3.5 h-3.5 mr-2 text-gray-400 flex-shrink-0" />
+          <span className="truncate" title={lead.product || ''}>
+            {lead.product || 'N/A'}
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-1">
+        <button
+          onClick={(e) => handleActionClick(e, handleCall)}
+          disabled={!lead.phone}
+          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Phone className="w-3.5 h-3.5 mr-1.5" /> Call
+        </button>
+        <button
+          onClick={(e) => handleActionClick(e, handleWhatsApp)}
+          disabled={!lead.phone}
+          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <WhatsAppIcon /> <span className="ml-1.5">WhatsApp</span>
+        </button>
+        <button
+          onClick={(e) => handleActionClick(e, handleEmail)}
+          disabled={!lead.email}
+          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Mail className="w-3.5 h-3.5 mr-1.5" /> Email
         </button>
       </div>
     </div>
   );
-};
+});
 
 export default LeadCard;
