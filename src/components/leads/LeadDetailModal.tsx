@@ -1,36 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Trash2, Save, ChevronDown } from 'lucide-react';
+import { X, Trash2, Save } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
-import { useDeals } from '../../hooks/useDeals';
 import { Lead } from '../../types';
 import { useUI } from '../../contexts/UIContextDefinitions';
-import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
-
-const getStageColor = (stage: string | null) => {
-  switch (stage) {
-    case 'warm':
-      return 'bg-yellow-100 text-yellow-800';
-    case 'qualified':
-      return 'bg-blue-100 text-blue-800';
-    case 'appointment_booked':
-      return 'bg-green-100 text-green-800';
-    default:
-      return 'bg-gray-100 text-gray-800';
-  }
-};
-
-const getStageLabel = (stage: string | null) => {
-  switch (stage) {
-    case 'warm':
-      return 'Warm';
-    case 'qualified':
-      return 'Qualified';
-    case 'appointment_booked':
-      return 'Appointment';
-    default:
-      return 'Not Set';
-  }
-};
 
 interface LeadDetailModalProps {
   lead: Lead | null;
@@ -44,7 +16,6 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
   onClose,
 }) => {
   const { updateLead, deleteLead } = useLeads();
-  const { createDeal } = useDeals();
   const { showConfirmation, addNotification } = useUI();
   const [formData, setFormData] = useState<Partial<Lead>>({});
 
@@ -121,43 +92,6 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
             addNotification('Delete Failed', error.message);
           },
         });
-      }
-    );
-  };
-
-  const handleConvertToDeal = () => {
-    if (!lead) return;
-
-    showConfirmation(
-      'Convert to Deal',
-      `Are you sure you want to convert "${lead.full_name}" to a deal? This will create a new deal record.`,
-      () => {
-        createDeal.mutate(
-          {
-            title: `${lead.full_name} - ${lead.product || 'Product'}`,
-            client_name: lead.full_name,
-            company_name: lead.company_name,
-            mobile_number: lead.phone,
-            email_address: lead.email,
-            product: lead.product,
-            product_type: lead.product_type,
-            amount: lead.loan_amount_requested || 0,
-            monthly_salary: lead.monthly_salary,
-            user_id: lead.user_id,
-          },
-          {
-            onSuccess: () => {
-              addNotification(
-                'Deal Created',
-                'Lead has been successfully converted to a deal.'
-              );
-              onClose();
-            },
-            onError: (error: Error) => {
-              addNotification('Conversion Failed', error.message);
-            },
-          }
-        );
       }
     );
   };
@@ -435,38 +369,6 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
               </div>
             </fieldset>
 
-            {/* Lead Stage */}
-            <fieldset className="border border-gray-200 rounded-lg p-4">
-              <legend className="text-sm font-semibold text-[#1a68c7] px-2">
-                Lead Stage
-              </legend>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-1">
-                    Qualification Status
-                  </label>
-                  <DropdownMenu
-                    trigger={
-                      <button className={`w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1a68c7] focus:border-transparent flex items-center justify-between ${getStageColor(formData.stage)}`}>
-                        <span>{getStageLabel(formData.stage)}</span>
-                        <ChevronDown className="w-4 h-4" />
-                      </button>
-                    }
-                  >
-                    <DropdownMenuItem onClick={() => setFormData(prev => ({ ...prev, stage: 'warm' }))}>
-                      Warm
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setFormData(prev => ({ ...prev, stage: 'qualified' }))}>
-                      Qualified
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setFormData(prev => ({ ...prev, stage: 'appointment_booked' }))}>
-                      Appointment
-                    </DropdownMenuItem>
-                  </DropdownMenu>
-                </div>
-              </div>
-            </fieldset>
-
             {/* Application History & Documents */}
             <fieldset className="border border-gray-200 rounded-lg p-4">
               <legend className="text-sm font-semibold text-[#1a68c7] px-2">
@@ -526,28 +428,20 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-200">
+        <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
           <button
-            onClick={handleConvertToDeal}
-            className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors flex items-center space-x-2"
+            onClick={onClose}
+            className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
           >
-            <span>Convert to Deal</span>
+            Cancel
           </button>
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 bg-[#1a68c7] text-white hover:bg-[#1455a6] rounded-lg transition-colors flex items-center space-x-2"
-            >
-              <Save className="w-4 h-4" />
-              <span>Save Changes</span>
-            </button>
-          </div>
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 bg-[#1a68c7] text-white hover:bg-[#1455a6] rounded-lg transition-colors flex items-center space-x-2"
+          >
+            <Save className="w-4 h-4" />
+            <span>Save Changes</span>
+          </button>
         </div>
       </div>
     </div>
