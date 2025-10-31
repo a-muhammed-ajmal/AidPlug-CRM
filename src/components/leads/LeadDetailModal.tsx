@@ -412,8 +412,8 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   </label>
                   <DropdownMenu
                     trigger={
-                      <button className={`w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1a68c7] focus:border-transparent flex items-center justify-between ${getStageColor(formData.stage)}`}>
-                        <span>{getStageLabel(formData.stage)}</span>
+                      <button className={`w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1a68c7] focus:border-transparent flex items-center justify-between ${getStageColor(formData.stage || null)}`}>
+                        <span>{getStageLabel(formData.stage || null)}</span>
                         <ChevronDown className="w-4 h-4" />
                       </button>
                     }
