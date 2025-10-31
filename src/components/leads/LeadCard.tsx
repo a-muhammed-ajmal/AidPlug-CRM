@@ -1,6 +1,8 @@
 import React from 'react';
-import { Phone, Mail, Building, Briefcase } from 'lucide-react';
+import { Phone, Mail, Building, Briefcase, ChevronDown } from 'lucide-react';
 import { Lead } from '../../types';
+import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
+import { useLeads } from '../../hooks/useLeads';
 
 const getInitials = (name: string) => {
   if (!name) return '?';
@@ -45,6 +47,32 @@ interface LeadCardProps {
   onEdit: (lead: Lead) => void;
 }
 
+const getStageColor = (stage: string | null) => {
+  switch (stage) {
+    case 'warm':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'qualified':
+      return 'bg-blue-100 text-blue-800';
+    case 'appointment_booked':
+      return 'bg-green-100 text-green-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
+
+const getStageLabel = (stage: string | null) => {
+  switch (stage) {
+    case 'warm':
+      return 'Warm';
+    case 'qualified':
+      return 'Qualified';
+    case 'appointment_booked':
+      return 'Appointment';
+    default:
+      return 'Not Set';
+  }
+};
+
 const WhatsAppIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -58,9 +86,18 @@ const WhatsAppIcon = () => (
 );
 
 const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
+  const { updateLead } = useLeads();
+
   const handleActionClick = (e: React.MouseEvent, action: () => void) => {
     e.stopPropagation();
     action();
+  };
+
+  const handleStageChange = (newStage: string) => {
+    updateLead.mutate({
+      id: lead.id,
+      updates: { stage: newStage as Lead['stage'] },
+    });
   };
 
   const handleCall = () => {
@@ -98,14 +135,35 @@ const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
             </p>
           </div>
         </div>
-        <button
-          onClick={(e) => handleActionClick(e, () => onEdit(lead))}
-          className="p-1 -mr-1 rounded-full hover:bg-gray-100"
-        >
-          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-        </button>
+        <div className="flex items-center space-x-1 md:space-x-2">
+          <DropdownMenu
+            trigger={
+              <button className={`px-1.5 py-0.5 md:px-2 md:py-1 text-xs font-medium rounded-full flex items-center space-x-1 ${getStageColor(lead.stage)}`}>
+                <span className="hidden sm:inline">{getStageLabel(lead.stage)}</span>
+                <span className="sm:hidden">{getStageLabel(lead.stage).charAt(0)}</span>
+                <ChevronDown className="w-3 h-3" />
+              </button>
+            }
+          >
+            <DropdownMenuItem onClick={() => handleStageChange('warm')}>
+              Warm
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStageChange('qualified')}>
+              Qualified
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStageChange('appointment_booked')}>
+              Appointment
+            </DropdownMenuItem>
+          </DropdownMenu>
+          <button
+            onClick={(e) => handleActionClick(e, () => onEdit(lead))}
+            className="p-1 -mr-1 rounded-full hover:bg-gray-100"
+          >
+            <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div className="space-y-2 text-sm text-gray-700 my-3 border-t border-gray-100 pt-3">
@@ -127,23 +185,26 @@ const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
         <button
           onClick={(e) => handleActionClick(e, handleCall)}
           disabled={!lead.phone}
-          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center justify-center py-2 px-1 md:px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Phone className="w-3.5 h-3.5 mr-1.5" /> Call
+          <Phone className="w-3.5 h-3.5 mr-1 md:mr-1.5" />
+          <span className="hidden sm:inline">Call</span>
         </button>
         <button
           onClick={(e) => handleActionClick(e, handleWhatsApp)}
           disabled={!lead.phone}
-          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center justify-center py-2 px-1 md:px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <WhatsAppIcon /> <span className="ml-1.5">WhatsApp</span>
+          <WhatsAppIcon />
+          <span className="ml-1 md:ml-1.5 hidden sm:inline">WhatsApp</span>
         </button>
         <button
           onClick={(e) => handleActionClick(e, handleEmail)}
           disabled={!lead.email}
-          className="flex items-center justify-center py-2 px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center justify-center py-2 px-1 md:px-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Mail className="w-3.5 h-3.5 mr-1.5" /> Email
+          <Mail className="w-3.5 h-3.5 mr-1 md:mr-1.5" />
+          <span className="hidden sm:inline">Email</span>
         </button>
       </div>
     </div>

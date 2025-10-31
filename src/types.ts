@@ -257,7 +257,7 @@ export interface Database {
           product: string | null;
           product_interest: string[] | null;
           product_type: string | null;
-          qualification_status:
+          stage:
             | 'warm'
             | 'qualified'
             | 'appointment_booked'
@@ -293,7 +293,7 @@ export interface Database {
           product?: string | null;
           product_interest?: string[] | null;
           product_type?: string | null;
-          qualification_status?:
+          stage?:
             | 'warm'
             | 'qualified'
             | 'appointment_booked'
@@ -329,7 +329,7 @@ export interface Database {
           product?: string | null;
           product_interest?: string[] | null;
           product_type?: string | null;
-          qualification_status?:
+          stage?:
             | 'warm'
             | 'qualified'
             | 'appointment_booked'
