@@ -1,10 +1,10 @@
 # TODO: Lead Stage Dropdown and Convert Deal Enhancements
 
 ## Tasks
-- [ ] Update LeadDetailModal.tsx: Add confirmation modal to the "Convert to Deal" button using showConfirmation.
-- [ ] Update LeadCard.tsx: Optimize mobile view - position stage dropdown at bottom on mobile to avoid overflow, ensure texts are shortened.
-- [ ] Verify Supabase setup: Ensure stage column exists in leads table and RLS policies are applied.
-- [ ] Git commit and push changes to main branch.
+- [x] Update LeadDetailModal.tsx: Add confirmation modal to the "Convert to Deal" button using showConfirmation.
+- [x] Update LeadCard.tsx: Optimize mobile view - position stage dropdown at bottom on mobile to avoid overflow, ensure texts are shortened.
+- [x] Verify Supabase setup: Ensure stage column exists in leads table and RLS policies are applied.
+- [x] Git commit and push changes to main branch.
 
 ## Notes
 - Stage dropdown already exists in both components.
