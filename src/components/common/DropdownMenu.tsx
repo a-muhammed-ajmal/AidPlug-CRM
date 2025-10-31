@@ -24,9 +24,10 @@ export const DropdownMenuItem = ({
 interface DropdownMenuProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
+  placement?: 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
 }
 
-const DropdownMenu = ({ trigger, children }: DropdownMenuProps) => {
+const DropdownMenu = ({ trigger, children, placement = 'bottom-end' }: DropdownMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -51,7 +52,12 @@ const DropdownMenu = ({ trigger, children }: DropdownMenuProps) => {
         {trigger}
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20 border">
+        <div className={`absolute w-48 bg-white rounded-md shadow-lg z-20 border ${
+          placement === 'top-start' ? 'bottom-full left-0 mb-2' :
+          placement === 'top-end' ? 'bottom-full right-0 mb-2' :
+          placement === 'bottom-start' ? 'top-full left-0 mt-2' :
+          'top-full right-0 mt-2'
+        }`}>
           <div className="py-1">
             {React.Children.map(children, (child) =>
               React.isValidElement<DropdownMenuItemProps>(child)

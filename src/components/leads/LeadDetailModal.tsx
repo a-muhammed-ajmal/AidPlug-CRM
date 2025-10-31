@@ -496,27 +496,33 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
             onClick={() => {
               if (!lead || !user) return;
 
-              const newDeal = {
-                title: `${lead.product || 'Deal'} - ${lead.full_name}`,
-                amount: lead.loan_amount_requested || (lead.monthly_salary || 0) * 3 || 50000,
-                stage: 'application_processing' as const,
-                client_name: lead.full_name,
-                expected_close_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                probability: 25,
-                product_type: lead.product_type?.toLowerCase().replace(/ /g, '_'),
-                user_id: user.id,
-                application_number: `APP-${Math.floor(10000 + Math.random() * 90000)}`,
-                bdi_number: `BDI-${Math.floor(10000 + Math.random() * 90000)}`,
-              };
+              showConfirmation(
+                'Convert Lead to Deal',
+                `Are you sure you want to convert "${lead.full_name}" to a deal? This will create a new deal and remove the lead.`,
+                () => {
+                  const newDeal = {
+                    title: `${lead.product || 'Deal'} - ${lead.full_name}`,
+                    amount: lead.loan_amount_requested || (lead.monthly_salary || 0) * 3 || 50000,
+                    stage: 'application_processing' as const,
+                    client_name: lead.full_name,
+                    expected_close_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    probability: 25,
+                    product_type: lead.product_type?.toLowerCase().replace(/ /g, '_'),
+                    user_id: user.id,
+                    application_number: `APP-${Math.floor(10000 + Math.random() * 90000)}`,
+                    bdi_number: `BDI-${Math.floor(10000 + Math.random() * 90000)}`,
+                  };
 
-              createDeal.mutate(newDeal, {
-                onSuccess: () => {
-                  addNotification('Lead Converted', `${lead.full_name} is now a deal.`);
-                  deleteLead.mutate(lead.id);
-                  onClose();
-                },
-                onError: (e: Error) => addNotification('Conversion Failed', e.message),
-              });
+                  createDeal.mutate(newDeal, {
+                    onSuccess: () => {
+                      addNotification('Lead Converted', `${lead.full_name} is now a deal.`);
+                      deleteLead.mutate(lead.id);
+                      onClose();
+                    },
+                    onError: (e: Error) => addNotification('Conversion Failed', e.message),
+                  });
+                }
+              );
             }}
             className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors flex items-center space-x-2"
           >

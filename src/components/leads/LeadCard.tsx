@@ -144,6 +144,7 @@ const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
                 <ChevronDown className="w-3 h-3" />
               </button>
             }
+            placement="bottom-end"
           >
             <DropdownMenuItem onClick={() => handleStageChange('warm')}>
               Warm
