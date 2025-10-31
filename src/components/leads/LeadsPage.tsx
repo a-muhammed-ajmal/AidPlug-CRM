@@ -10,7 +10,7 @@ import AddLeadModal from './AddLeadModal';
 import LeadCard from './LeadCard';
 import LeadFilterModal from './LeadFilterModal';
 
-type LeadStatusFilter = 'all' | NonNullable<Lead['qualification_status']>;
+type LeadStatusFilter = 'all' | NonNullable<Lead['stage']>;
 type LeadUrgencyFilter = 'all' | NonNullable<Lead['urgency_level']>;
 
 interface LeadFilters {
@@ -85,7 +85,7 @@ export default function LeadsPage() {
 
       const statusMatch =
         leadStatusFilter === 'all' ||
-        lead.qualification_status === leadStatusFilter;
+        lead.stage === leadStatusFilter;
 
       const urgencyMatch =
         appliedLeadFilters.urgency === 'all' ||

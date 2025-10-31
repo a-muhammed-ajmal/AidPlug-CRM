@@ -219,7 +219,7 @@ export default function AddLeadModal({
       company_name: formData.company_name,
       email: formData.email || null,
       loan_amount_requested: 0,
-      qualification_status: initialData?.qualification_status || 'warm',
+      stage: initialData?.stage || 'warm',
       location: formData.location,
       bank_name: formData.bank_name,
       product_type: formData.product_type,

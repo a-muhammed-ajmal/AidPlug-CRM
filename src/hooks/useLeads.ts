@@ -38,7 +38,7 @@ export function useLeads() {
           product,
           product_type,
           bank_name,
-          qualification_status,
+          stage,
           user_id,
           loan_amount_requested,
           salary_months,

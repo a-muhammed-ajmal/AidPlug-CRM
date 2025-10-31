@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Trash2, Save, ChevronDown } from 'lucide-react';
 import { useLeads } from '../../hooks/useLeads';
 import { useDeals } from '../../hooks/useDeals';
+import { useAuth } from '../../hooks/useAuth';
 import { Lead } from '../../types';
 import { useUI } from '../../contexts/UIContextDefinitions';
 import DropdownMenu, { DropdownMenuItem } from '../common/DropdownMenu';
@@ -45,6 +46,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
 }) => {
   const { updateLead, deleteLead } = useLeads();
   const { createDeal } = useDeals();
+  const { user } = useAuth();
   const { showConfirmation, addNotification } = useUI();
   const [formData, setFormData] = useState<Partial<Lead>>({});
 
@@ -406,7 +408,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div className="md:col-span-2">
                   <label className="block text-sm text-gray-600 mb-1">
-                    Qualification Status
+                    Lead Stage
                   </label>
                   <DropdownMenu
                     trigger={
@@ -491,7 +493,31 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
         {/* Footer */}
         <div className="flex items-center justify-between p-6 border-t border-gray-200">
           <button
-            onClick={handleConvertToDeal}
+            onClick={() => {
+              if (!lead || !user) return;
+
+              const newDeal = {
+                title: `${lead.product || 'Deal'} - ${lead.full_name}`,
+                amount: lead.loan_amount_requested || (lead.monthly_salary || 0) * 3 || 50000,
+                stage: 'application_processing' as const,
+                client_name: lead.full_name,
+                expected_close_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                probability: 25,
+                product_type: lead.product_type?.toLowerCase().replace(/ /g, '_'),
+                user_id: user.id,
+                application_number: `APP-${Math.floor(10000 + Math.random() * 90000)}`,
+                bdi_number: `BDI-${Math.floor(10000 + Math.random() * 90000)}`,
+              };
+
+              createDeal.mutate(newDeal, {
+                onSuccess: () => {
+                  addNotification('Lead Converted', `${lead.full_name} is now a deal.`);
+                  deleteLead.mutate(lead.id);
+                  onClose();
+                },
+                onError: (e: Error) => addNotification('Conversion Failed', e.message),
+              });
+            }}
             className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors flex items-center space-x-2"
           >
             <span>Convert to Deal</span>
