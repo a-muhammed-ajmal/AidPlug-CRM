@@ -447,19 +447,19 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   </label>
                   <DropdownMenu
                     trigger={
-                      <button className={`w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1a68c7] focus:border-transparent flex items-center justify-between ${getStageColor(formData.qualification_status)}`}>
-                        <span>{getStageLabel(formData.qualification_status)}</span>
+                      <button className={`w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1a68c7] focus:border-transparent flex items-center justify-between ${getStageColor(formData.stage)}`}>
+                        <span>{getStageLabel(formData.stage)}</span>
                         <ChevronDown className="w-4 h-4" />
                       </button>
                     }
                   >
-                    <DropdownMenuItem onClick={() => setFormData(prev => ({ ...prev, qualification_status: 'warm' }))}>
+                    <DropdownMenuItem onClick={() => setFormData(prev => ({ ...prev, stage: 'warm' }))}>
                       Warm
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setFormData(prev => ({ ...prev, qualification_status: 'qualified' }))}>
+                    <DropdownMenuItem onClick={() => setFormData(prev => ({ ...prev, stage: 'qualified' }))}>
                       Qualified
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setFormData(prev => ({ ...prev, qualification_status: 'appointment_booked' }))}>
+                    <DropdownMenuItem onClick={() => setFormData(prev => ({ ...prev, stage: 'appointment_booked' }))}>
                       Appointment
                     </DropdownMenuItem>
                   </DropdownMenu>

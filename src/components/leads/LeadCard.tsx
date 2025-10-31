@@ -96,7 +96,7 @@ const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
   const handleStageChange = (newStage: string) => {
     updateLead.mutate({
       id: lead.id,
-      updates: { qualification_status: newStage as Lead['qualification_status'] },
+      updates: { stage: newStage as Lead['stage'] },
     });
   };
 
@@ -138,9 +138,9 @@ const LeadCard = React.memo(({ lead, onEdit }: LeadCardProps) => {
         <div className="flex items-center space-x-1 md:space-x-2">
           <DropdownMenu
             trigger={
-              <button className={`px-1.5 py-0.5 md:px-2 md:py-1 text-xs font-medium rounded-full flex items-center space-x-1 ${getStageColor(lead.qualification_status)}`}>
-                <span className="hidden sm:inline">{getStageLabel(lead.qualification_status)}</span>
-                <span className="sm:hidden">{getStageLabel(lead.qualification_status).charAt(0)}</span>
+              <button className={`px-1.5 py-0.5 md:px-2 md:py-1 text-xs font-medium rounded-full flex items-center space-x-1 ${getStageColor(lead.stage)}`}>
+                <span className="hidden sm:inline">{getStageLabel(lead.stage)}</span>
+                <span className="sm:hidden">{getStageLabel(lead.stage).charAt(0)}</span>
                 <ChevronDown className="w-3 h-3" />
               </button>
             }
