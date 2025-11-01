@@ -1,12 +1,3 @@
-# TODO: Lead Stage Dropdown and Convert Deal Enhancements
-
-## Tasks
-- [x] Update LeadDetailModal.tsx: Add confirmation modal to the "Convert to Deal" button using showConfirmation.
-- [x] Update LeadCard.tsx: Optimize mobile view - position stage dropdown at bottom on mobile to avoid overflow, ensure texts are shortened.
-- [x] Verify Supabase setup: Ensure stage column exists in leads table and RLS policies are applied.
-- [x] Git commit and push changes to main branch.
-
-## Notes
-- Stage dropdown already exists in both components.
-- Mobile optimization: Use Tailwind responsive classes and possibly DropdownMenu placement.
-- Confirmation: Use the existing ConfirmationModal via showConfirmation from UIContext.
+- [ ] Fix TypeScript error in AddLeadModal.tsx: Cast stage value to non-null union type in onChange handler
+- [ ] Fix vite.config.ts: Move 'base' from build options to top-level config
+- [ ] Run build to verify fixes

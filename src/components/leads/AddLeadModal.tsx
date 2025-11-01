@@ -432,7 +432,7 @@ export default function AddLeadModal({
                           id="stage"
                           name="stage"
                           value={formData.stage || 'warm'}
-                          onChange={(e) => setFormData((prev) => ({ ...prev, stage: e.target.value as Lead['stage'] }))}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, stage: e.target.value as "warm" | "qualified" | "appointment_booked" }))}
                           options={['warm', 'qualified', 'appointment_booked']}
                           placeholder="Select Stage"
                         />
