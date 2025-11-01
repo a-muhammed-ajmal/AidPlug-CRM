@@ -42,5 +42,10 @@ export default defineConfig({
       // This RE-ENABLES code-splitting for your JavaScript. This is ESSENTIAL for
       // React.lazy() to work correctly, ensuring small initial bundle sizes and fast
       // load times. The code for different pages will now be loaded on demand.
+      rollupOptions: {
+        output: {
+          manualChunks: undefined, // Let Vite handle chunking automatically
+        },
+      },
     },
 });
