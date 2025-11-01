@@ -1,62 +1,63 @@
-import path from 'path';
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react'
+import path from 'path'
+import { defineConfig } from 'vite'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-    base: '/',
-    // Server configuration for development
-    server: {
-      port: 3001,
-      // Exposes the server to the local network for testing on other devices
-      host: '0.0.0.0',
+  plugins: [react()],
+
+  // Critical: Set base path for assets
+  base: '/',
+
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
     },
+  },
 
-    // List of Vite plugins. @vitejs/plugin-react enables React Fast Refresh.
-    plugins: [react()],
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
 
-    // Specifies the directory for static assets. 'public' is the default.
-    publicDir: 'public',
+    // Generate manifest for asset tracking
+    manifest: true,
 
-    // REASON: The 'define' block was removed.
-    // CRITICAL: Secret API keys like GEMINI_API_KEY must NOT be exposed to the client.
-    // They should be used in a secure backend or a serverless function.
-    // For non-secret keys (e.g., Supabase URL), prefix them with 'VITE_' in your .env file
-    // and access them in your code via `import.meta.env.VITE_YOUR_KEY`.
-    // Vite handles this automatically without needing a 'define' block.
-
-    // Path aliases for cleaner imports
-    resolve: {
-      alias: {
-        // REASON: Pointing '@' to the 'src' directory is a common and convenient convention.
-        '@': path.resolve(__dirname, './src'),
-      },
-    },
-
-    // Production build configuration
-    build: {
-      sourcemap: false, // Disable source maps in production
-      minify: 'terser', // Better minification
-      target: 'esnext',
-      // REASON: `cssCodeSplit` is now `true` (by default, by removing the line).
-      // This allows the browser to only load the CSS needed for the current page,
-      // improving initial load performance.
-      // REASON: `rollupOptions.output.inlineDynamicImports` has been removed.
-      // This RE-ENABLES code-splitting for your JavaScript. This is ESSENTIAL for
-      // React.lazy() to work correctly, ensuring small initial bundle sizes and fast
-      // load times. The code for different pages will now be loaded on demand.
-      rollupOptions: {
-        output: {
-          manualChunks: (id) => {
-            // Better code splitting
-            if (id.includes('node_modules')) {
-              if (id.includes('react')) return 'react-vendor';
-              if (id.includes('supabase')) return 'supabase-vendor';
-              return 'vendor';
-            }
-            return undefined;
-          },
+    // Ensure chunks are properly named
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['lucide-react', '@tanstack/react-query'],
+          'supabase-vendor': ['@supabase/supabase-js'],
         },
+        // Consistent naming
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
-});
+
+    // Increase chunk size warning limit
+    chunkSizeWarningLimit: 1000,
+
+    // Source maps for debugging (disable in production if needed)
+    sourcemap: false,
+
+    // Minification
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
+
+  server: {
+    port: 3001,
+    host: '0.0.0.0',
+  },
+
+  preview: {
+    port: 3001,
+  },
+})
