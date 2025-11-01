@@ -1,3 +1,7 @@
-- [ ] Fix TypeScript error in AddLeadModal.tsx: Cast stage value to non-null union type in onChange handler
-- [ ] Fix vite.config.ts: Move 'base' from build options to top-level config
-- [ ] Run build to verify fixes
+# Vercel Deployment Fixes
+
+- [x] Update vercel.json: Remove invalid builds config, add modern structure, security headers
+- [x] Update package.json: Downgrade React to 18.3.1, change node version, add vercel-build script
+- [x] Update vite.config.ts: Add production build optimizations
+- [x] Run npm install to update dependencies
+- [x] Test build locally with npm run build && npm run preview

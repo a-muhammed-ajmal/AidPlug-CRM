@@ -35,6 +35,9 @@ export default defineConfig({
 
     // Production build configuration
     build: {
+      sourcemap: false, // Disable source maps in production
+      minify: 'terser', // Better minification
+      target: 'esnext',
       // REASON: `cssCodeSplit` is now `true` (by default, by removing the line).
       // This allows the browser to only load the CSS needed for the current page,
       // improving initial load performance.
@@ -44,7 +47,15 @@ export default defineConfig({
       // load times. The code for different pages will now be loaded on demand.
       rollupOptions: {
         output: {
-          manualChunks: undefined, // Let Vite handle chunking automatically
+          manualChunks: (id) => {
+            // Better code splitting
+            if (id.includes('node_modules')) {
+              if (id.includes('react')) return 'react-vendor';
+              if (id.includes('supabase')) return 'supabase-vendor';
+              return 'vendor';
+            }
+            return undefined;
+          },
         },
       },
     },
