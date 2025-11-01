@@ -59,7 +59,7 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
-const DealCard = React.memo(({ deal, onView }: DealCardProps) => {
+const DealCard = React.memo(({ deal, onView, onDelete }: DealCardProps) => {
   const handleActionClick = (e: React.MouseEvent, action: () => void) => {
     e.stopPropagation();
     action();
