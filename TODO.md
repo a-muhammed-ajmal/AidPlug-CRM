@@ -1,5 +1,5 @@
-# TODO: Add Delete Option to Deal Cards
+# TODO List for Updating README.md
 
-## Steps to Complete
-- [x] Modify DealCard.tsx to add a delete button (using Trash icon) next to the existing info button in the card header. The delete button will call onDelete(deal) with event stopPropagation to prevent card click.
-- [x] Test the delete functionality after changes.
+- [x] Edit README.md with the new developer-oriented structure, incorporating project specifics (technology stack, scripts, environment variables, etc.).
+- [x] Commit the updated README.md to git.
+- [x] Push the commit to the main branch on GitHub (https://github.com/a-muhammed-ajmal/AidPlug-CRM).
