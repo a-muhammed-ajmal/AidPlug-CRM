@@ -34,6 +34,7 @@ export default defineConfig({
 
   // Production build configuration
   build: {
+    base: './',
     // REASON: `cssCodeSplit` is now `true` (by default, by removing the line).
     // This allows the browser to only load the CSS needed for the current page,
     // improving initial load performance.

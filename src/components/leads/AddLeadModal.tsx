@@ -153,41 +153,6 @@ export default function AddLeadModal({
 
   const [loading, setLoading] = useState(false);
   const mode = initialData ? 'edit' : 'add';
-=======
-  const [formData, setFormData] = useState({
-    full_name: initialData?.full_name || '',
-    company_name: initialData?.company_name || '',
-    phone: initialData?.phone?.replace('+971', '').trim() || '',
-    email: initialData?.email || '',
-    location: initialData?.location || 'Dubai',
-    bank_name: initialData?.bank_name || 'Emirates Islamic Bank',
-    product_type: initialData?.product_type || 'Credit Card',
-    product: initialData?.product || 'RTA Credit Card',
-    stage: initialData?.stage || 'warm',
-    monthly_salary: initialData?.monthly_salary?.toString() || '',
-    salary_variations: initialData?.salary_variations || false,
-    existing_cards: initialData?.existing_cards || false,
-    cards_duration: initialData?.cards_duration || '',
-    total_credit_limit: initialData?.total_credit_limit?.toString() || '',
-    has_emi: initialData?.has_emi || false,
-    emi_amount: initialData?.emi_amount?.toString() || '',
-    applied_recently: initialData?.applied_recently || false,
-    documents_available: initialData?.documents_available || [],
-    create_task: false,
-  });
-=======
->>>>>>> e58ba9031e343ca11d6d05469052335dbf66b294
-    monthly_salary: initialData?.monthly_salary?.toString() || '',
-    salary_variations: initialData?.salary_variations || false,
-    existing_cards: initialData?.existing_cards || false,
-    cards_duration: initialData?.cards_duration || '',
-    total_credit_limit: initialData?.total_credit_limit?.toString() || '',
-    has_emi: initialData?.has_emi || false,
-    emi_amount: initialData?.emi_amount?.toString() || '',
-    applied_recently: initialData?.applied_recently || false,
-    documents_available: initialData?.documents_available || [],
-    create_task: false,
-  });
 
   const [availableProducts, setAvailableProducts] = useState(
     EIB_CREDIT_CARDS.map((card) => card.name)
@@ -256,12 +221,6 @@ export default function AddLeadModal({
       email: formData.email || null,
       loan_amount_requested: 0,
       stage: formData.stage,
-=======
-      loan_amount_requested: 0,
-      stage: formData.stage,
-=======
-      stage: initialData?.stage || 'warm',
->>>>>>> e58ba9031e343ca11d6d05469052335dbf66b294
       location: formData.location,
       bank_name: formData.bank_name,
       product_type: formData.product_type,
@@ -453,19 +412,19 @@ export default function AddLeadModal({
                       }
                     />
                     {availableProducts.length > 0 && (
-<<<<<<< HEAD
-                    <FormInput
-                      label="Product"
-                      children={
-                        <SelectInput
-                          id="product"
-                          name="product"
-                          value={formData.product}
-                          onChange={handleChange}
-                          options={availableProducts}
-                        />
-                      }
-                    />
+                      <FormInput
+                        label="Product"
+                        children={
+                          <SelectInput
+                            id="product"
+                            name="product"
+                            value={formData.product}
+                            onChange={handleChange}
+                            options={availableProducts}
+                          />
+                        }
+                      />
+                    )}
                     <FormInput
                       label="Stage"
                       children={
@@ -479,21 +438,6 @@ export default function AddLeadModal({
                         />
                       }
                     />
-=======
-                      <FormInput
-                        label="Product"
-                        children={
-                          <SelectInput
-                            id="product"
-                            name="product"
-                            value={formData.product}
-                            onChange={handleChange}
-                            options={availableProducts}
-                          />
-                        }
-                      />
->>>>>>> e58ba9031e343ca11d6d05469052335dbf66b294
-                    )}
                   </>
                 }
               />
@@ -624,8 +568,6 @@ export default function AddLeadModal({
                         />
                       }
                     />
-<<<<<<< HEAD
-=======
                     <FormInput
                       className="md:col-span-2"
                       label=""
@@ -637,7 +579,6 @@ export default function AddLeadModal({
                         />
                       }
                     />
->>>>>>> e58ba9031e343ca11d6d05469052335dbf66b294
                     <div className="md:col-span-2">
                       <label className="text-sm font-medium text-gray-700 mb-2 block">
                         Documents Available
@@ -702,7 +643,6 @@ export default function AddLeadModal({
                 type="button"
                 onClick={() => {
                   if (initialData) {
-<<<<<<< HEAD
                     showConfirmation(
                       'Convert Lead to Deal',
                       `Are you sure you want to convert "${initialData.full_name}" to a deal? This will move the lead to the deals pipeline.`,
@@ -743,42 +683,6 @@ export default function AddLeadModal({
                         });
                       }
                     );
-=======
-                    const newDeal = {
-                      title: `${initialData.product || 'Deal'} - ${initialData.full_name}`,
-                      amount:
-                        initialData.loan_amount_requested ||
-                        (initialData.monthly_salary || 0) * 3 ||
-                        50000,
-                      stage: 'application_processing' as const,
-                      client_name: initialData.full_name,
-                      expected_close_date: new Date(
-                        Date.now() + 30 * 24 * 60 * 60 * 1000
-                      )
-                        .toISOString()
-                        .split('T')[0],
-                      probability: 25,
-                      product_type: initialData.product
-                        ?.toLowerCase()
-                        .replace(/ /g, '_'),
-                      user_id: user!.id,
-                      application_number: `APP-${Math.floor(10000 + Math.random() * 90000)}`,
-                      bdi_number: `BDI-${Math.floor(10000 + Math.random() * 90000)}`,
-                    };
-
-                    createDeal.mutate(newDeal, {
-                      onSuccess: () => {
-                        addNotification(
-                          'Lead Converted',
-                          `${initialData.full_name} is now a deal.`
-                        );
-                        deleteLead.mutate(initialData.id);
-                        onClose();
-                      },
-                      onError: (e: Error) =>
-                        addNotification('Conversion Failed', e.message),
-                    });
->>>>>>> e58ba9031e343ca11d6d05469052335dbf66b294
                   }
                 }}
                 className="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-all active:scale-95 shadow"
