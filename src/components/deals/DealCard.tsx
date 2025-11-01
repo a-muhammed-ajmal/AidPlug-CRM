@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, Info, Building, Briefcase } from 'lucide-react';
+import { Phone, Mail, Info, Building, Briefcase, Trash2 } from 'lucide-react';
 import { Deal } from '../../types';
 
 const getInitials = (name: string) => {
@@ -100,12 +100,20 @@ const DealCard = React.memo(({ deal, onView }: DealCardProps) => {
             </p>
           </div>
         </div>
-        <button
-          onClick={(e) => handleActionClick(e, () => onView(deal))}
-          className="p-1 -mr-1 rounded-full hover:bg-gray-100"
-        >
-          <Info className="w-5 h-5 text-gray-500" />
-        </button>
+        <div className="flex space-x-1">
+          <button
+            onClick={(e) => handleActionClick(e, () => onView(deal))}
+            className="p-1 rounded-full hover:bg-gray-100"
+          >
+            <Info className="w-5 h-5 text-gray-500" />
+          </button>
+          <button
+            onClick={(e) => handleActionClick(e, () => onDelete(deal))}
+            className="p-1 rounded-full hover:bg-red-100"
+          >
+            <Trash2 className="w-5 h-5 text-red-500" />
+          </button>
+        </div>
       </div>
 
       <div className="space-y-2 text-sm text-gray-700 my-3 border-t border-gray-100 pt-3">

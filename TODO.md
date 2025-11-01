@@ -1,7 +1,5 @@
-# Vercel Deployment Fixes
+# TODO: Add Delete Option to Deal Cards
 
-- [x] Update vercel.json: Remove invalid builds config, add modern structure, security headers
-- [x] Update package.json: Downgrade React to 18.3.1, change node version, add vercel-build script
-- [x] Update vite.config.ts: Add production build optimizations
-- [x] Run npm install to update dependencies
-- [x] Test build locally with npm run build && npm run preview
+## Steps to Complete
+- [x] Modify DealCard.tsx to add a delete button (using Trash icon) next to the existing info button in the card header. The delete button will call onDelete(deal) with event stopPropagation to prevent card click.
+- [x] Test the delete functionality after changes.
